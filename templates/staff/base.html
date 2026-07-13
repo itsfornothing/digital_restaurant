@@ -254,21 +254,25 @@ document.addEventListener('hide.bs.modal', function() {
   var url = protocol + '//' + location.host + wsPath;
   console.log('[WS] Connecting to', url);
   var ws = null;
+  var retries = 0;
   function connect() {
     ws = new WebSocket(protocol + '//' + location.host + wsPath);
-    ws.onopen = function () { console.log('[WS] Connected'); };
+    ws.onopen = function () { retries = 0; console.log('[WS] Connected'); };
     ws.onmessage = function (e) {
       try {
         var msg = JSON.parse(e.data);
         console.log('[WS] Message received:', msg.type, msg.payload);
         if (msg.type === 'order.new') showOrderNotification(msg.payload);
         else if (msg.type === 'order_status_changed') showStatusNotification(msg.payload);
-        // Forward to page-specific handlers via custom event
         document.dispatchEvent(new CustomEvent('staff:wsmsg', { detail: msg }));
       } catch (_) {}
     };
-    ws.onclose = function (e) { console.warn('[WS] Closed (code=' + e.code + '), reconnecting in 3s'); setTimeout(connect, 3000); };
-    ws.onerror = function (e) { console.error('[WS] Error', e); };
+    ws.onclose = function (e) {
+      retries++;
+      if (retries > 1) console.warn('[WS] Closed (code=' + e.code + '), reconnecting in 3s');
+      setTimeout(connect, 3000);
+    };
+    ws.onerror = function () {};
   }
   connect();
 })();
