@@ -59,6 +59,8 @@ class TenantMiddleware(TenantMainMiddleware):
                     },
                     status=404,
                 )
+            # Fallback: set tenant directly to bypass parent's domain lookup
+            return self._activate_tenant(request, domain.tenant)
 
         tenant = domain.tenant
         if not tenant.is_active:
@@ -75,6 +77,14 @@ class TenantMiddleware(TenantMainMiddleware):
 
         # Delegate schema switching (and public-tenant handling) to parent
         return super().process_request(request)
+
+    @staticmethod
+    def _activate_tenant(request, tenant):
+        """Set the tenant on the connection and request, bypassing domain lookup."""
+        from django.db import connection
+        request.tenant = tenant
+        connection.set_tenant(request.tenant)
+        return None
 
     @staticmethod
     def _fallback_domain(request):
