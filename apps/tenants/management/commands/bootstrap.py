@@ -4,9 +4,7 @@ default branch/table/QR code.  Idempotent (skips if Tenant exists).
 """
 
 import os
-import sys
 
-from django.conf import settings
 from django.core.management.base import BaseCommand
 from django.db import connection
 
@@ -83,7 +81,6 @@ class Command(BaseCommand):
                 "role": "Super_Admin",
                 "is_active": True,
                 "is_staff": True,
-                "email_verified": True,
             },
         )
         if created:
@@ -101,7 +98,7 @@ class Command(BaseCommand):
             owner.save(update_fields=["password"])
             self.stdout.write(f"  Tenant_Owner password set: admin@demo.localhost / admin1234")
 
-        # 6. Create default branch
+        # 6. Create default branch, tables, QR codes in tenant context
         from apps.branches.models import Branch
         branch, _ = Branch.objects.get_or_create(
             name="Main Branch",
@@ -109,58 +106,29 @@ class Command(BaseCommand):
                 "address": "Bole Road",
                 "phone": "+251-911-000000",
                 "email": "info@myrestaurant.com",
-                "timezone": settings.TIME_ZONE if hasattr(settings, 'TIME_ZONE') else "Africa/Addis_Ababa",
-                "currency": "ETB",
                 "is_active": True,
             },
         )
         self.stdout.write(f"  Branch: {branch.name}")
 
-        # Assign the Super_Admin to the branch
-        admin.branch = branch
-        admin.save(update_fields=["branch"])
-
-        # 7. Create a default table
         from apps.branches.models import Table
-        table, _ = Table.objects.get_or_create(
-            branch=branch,
-            number="1",
-            defaults={"seat_count": 4},
-        )
-        self.stdout.write(f"  Table: #{table.number} ({table.seat_count} seats)")
-
-        # 8. Create a QR code for that table
         from apps.qr.models import QRCode
-        QRCode.objects.get_or_create(
-            table=table,
-            defaults={"is_active": True},
-        )
-        self.stdout.write("  QR code created for Table #1")
-
-        # 9. Create a sample table and room for variety
-        Table.objects.get_or_create(
-            branch=branch,
-            number="2",
-            defaults={"seat_count": 6},
-        )
-        table3, _ = Table.objects.get_or_create(
-            branch=branch,
-            number="3",
-            defaults={"seat_count": 2},
-        )
-        QRCode.objects.get_or_create(
-            table=table3,
-            defaults={"is_active": True},
-        )
+        for num in ("1", "2", "3"):
+            tbl, _ = Table.objects.get_or_create(
+                branch=branch, number=num,
+                defaults={"seat_count": 6 if num == "2" else 4},
+            )
+            if num in ("1", "3"):
+                QRCode.objects.get_or_create(table=tbl, defaults={"is_active": True})
+        self.stdout.write("  Tables #1, #2, #3 created (QR codes for #1 and #3)")
 
         from apps.branches.models import Room
         Room.objects.get_or_create(
-            branch=branch,
-            name="VIP Room",
-            defaults={"seat_count": 10},
+            branch=branch, name="VIP Room",
+            defaults={"capacity": 10},
         )
 
-        # Reset schema
+        # Reset to public schema
         connection.set_schema_to_public()
 
         self.stdout.write(self.style.SUCCESS("Bootstrap complete."))
