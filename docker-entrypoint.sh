@@ -16,6 +16,9 @@ python manage.py migrate_schemas --shared --noinput -v 3 2>&1 | tail -50
 echo "[entrypoint] Running tenant schema migrations…"
 python manage.py migrate_schemas --noinput -v 3 2>&1 | tail -50
 
+echo "[entrypoint] Bootstrapping first tenant (if needed)…"
+python manage.py bootstrap -v 2 2>&1 || echo "[entrypoint] Bootstrap skipped."
+
 # Replace port arg with $PORT if set (Render sets this automatically)
 ARGS="$*"
 if [ -n "$PORT" ]; then
