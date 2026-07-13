@@ -12,6 +12,11 @@ DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
 
+CSRF_TRUSTED_ORIGINS = [
+    "http://localhost:8000",
+    "https://*.ngrok-free.dev",
+]
+
 # ---------------------------------------------------------------------------
 # Security overrides for local dev (no HTTPS)
 # ---------------------------------------------------------------------------

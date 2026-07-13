@@ -14,6 +14,7 @@ from .base import INSTALLED_APPS, MIDDLEWARE  # noqa: F401
 DEBUG = False
 
 ALLOWED_HOSTS = config("ALLOWED_HOSTS", default="").split(",")
+CSRF_TRUSTED_ORIGINS = config("CSRF_TRUSTED_ORIGINS", default="").split(",")
 
 SECRET_KEY = config("DJANGO_SECRET_KEY")
 
