@@ -1,0 +1,92 @@
+---
+# Docker Compose monitoring overlay for the Restaurant Platform.
+#
+# Usage:
+#   docker compose -f docker-compose.yml -f docker-compose.monitoring.yml up
+#
+# Services added:
+#   - prometheus  — scrapes Django /metrics and probes /health
+#   - grafana     — pre-provisioned with Prometheus datasource and dashboard
+#   - alertmanager — receives and routes alerts from Prometheus
+#
+# Requirements: 6.4, 6.5, 6.6, 6.7
+
+version: "3.9"
+
+services:
+
+  # -------------------------------------------------------------------------
+  # Prometheus — metrics collection and alert evaluation
+  # -------------------------------------------------------------------------
+  prometheus:
+    image: prom/prometheus:v2.53.0
+    container_name: restaurant_prometheus
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.path=/prometheus"
+      - "--web.console.libraries=/usr/share/prometheus/console_libraries"
+      - "--web.console.templates=/usr/share/prometheus/consoles"
+      - "--web.enable-lifecycle"
+    volumes:
+      - ./monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./monitoring/alertmanager/alerts.yml:/etc/prometheus/alerts.yml:ro
+      - prometheus_data:/prometheus
+    ports:
+      - "9090:9090"
+    networks:
+      - default
+    restart: unless-stopped
+    depends_on:
+      - web
+
+  # -------------------------------------------------------------------------
+  # Grafana — dashboards and visualisation
+  # -------------------------------------------------------------------------
+  grafana:
+    image: grafana/grafana:11.2.0
+    container_name: restaurant_grafana
+    environment:
+      GF_SECURITY_ADMIN_USER: ${GRAFANA_ADMIN_USER:-admin}
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD:-admin}
+      GF_USERS_ALLOW_SIGN_UP: "false"
+    volumes:
+      # Datasource provisioning
+      - ./monitoring/grafana/provisioning/datasources:/etc/grafana/provisioning/datasources:ro
+      # Dashboard provisioning config
+      - ./monitoring/grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards:ro
+      # Dashboard JSON
+      - ./monitoring/grafana/dashboard.json:/var/lib/grafana/dashboards/restaurant-platform.json:ro
+      - grafana_data:/var/lib/grafana
+    ports:
+      - "3000:3000"
+    networks:
+      - default
+    restart: unless-stopped
+    depends_on:
+      - prometheus
+
+  # -------------------------------------------------------------------------
+  # Alertmanager — alert routing and notification delivery
+  # -------------------------------------------------------------------------
+  alertmanager:
+    image: prom/alertmanager:v0.27.0
+    container_name: restaurant_alertmanager
+    command:
+      - "--config.file=/etc/alertmanager/alertmanager.yml"
+      - "--storage.path=/alertmanager"
+    volumes:
+      - ./monitoring/alertmanager/alertmanager.yml:/etc/alertmanager/alertmanager.yml:ro
+      - alertmanager_data:/alertmanager
+    ports:
+      - "9093:9093"
+    networks:
+      - default
+    restart: unless-stopped
+
+# ---------------------------------------------------------------------------
+# Additional named volumes for monitoring data persistence
+# ---------------------------------------------------------------------------
+volumes:
+  prometheus_data:
+  grafana_data:
+  alertmanager_data:

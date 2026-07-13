@@ -1,0 +1,3 @@
+"""
+privacy/views.py — stub.
+"""

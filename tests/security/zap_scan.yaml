@@ -1,0 +1,203 @@
+---
+# OWASP ZAP Automation Framework Configuration
+# Restaurant Management & Smart Ordering Platform — Security Scan
+#
+# Targets:
+#   - XSS via menu item name fields (including Amharic / Ethiopic U+1200–U+137F strings)
+#   - CSRF on order placement and all state-changing endpoints
+#   - SQL injection via QR token parameter and all query inputs
+#   - Tenant boundary crossing via URL manipulation (IDOR / path traversal)
+#
+# Scan policy: FAIL on CRITICAL or HIGH findings (risk >= 2 maps to HIGH in ZAP's 0-3 scale)
+# Run mode: standard (passive + active)
+
+env:
+  contexts:
+    - name: "restaurant-platform-staging"
+      urls:
+        - "${STAGING_URL}"
+      includePaths:
+        - "${STAGING_URL}/.*"
+      excludePaths:
+        # Exclude static assets and health endpoint from active scan
+        - "${STAGING_URL}/static/.*"
+        - "${STAGING_URL}/media/.*"
+        - "${STAGING_URL}/health"
+        - "${STAGING_URL}/metrics"
+      authentication:
+        method: "form"
+        parameters:
+          loginPageUrl: "${STAGING_URL}/api/v1/auth/login/"
+          loginRequestData: "email={%username%}&password={%password%}"
+          usernameParameter: "email"
+          passwordParameter: "password"
+        verification:
+          method: "response"
+          loggedInRegex: "\"role\":"
+          loggedOutRegex: "AUTHENTICATION_REQUIRED"
+      sessionManagement:
+        method: "cookie"
+        parameters:
+          cookieName: "sessionid"
+      users:
+        - name: "branch-manager"
+          credentials:
+            username: "${ZAP_TEST_USER}"
+            password: "${ZAP_TEST_PASSWORD}"
+
+  parameters:
+    failOnError: true
+    failOnWarning: false
+    progressToStdout: true
+
+jobs:
+  # -------------------------------------------------------------------------
+  # 1. Spider — crawl the application to build a site map
+  # -------------------------------------------------------------------------
+  - type: spider
+    parameters:
+      context: "restaurant-platform-staging"
+      user: "branch-manager"
+      maxDuration: 5         # minutes
+      maxDepth: 10
+      acceptCookies: true
+    name: "spider-crawl"
+
+  # -------------------------------------------------------------------------
+  # 2. Ajax Spider — handle JavaScript-rendered pages (React KDS, dashboards)
+  # -------------------------------------------------------------------------
+  - type: spiderAjax
+    parameters:
+      context: "restaurant-platform-staging"
+      user: "branch-manager"
+      maxDuration: 5         # minutes
+      maxCrawlDepth: 10
+      runOnlyIfModern: true
+    name: "ajax-spider"
+
+  # -------------------------------------------------------------------------
+  # 3. Passive scan — analyse all traffic captured during spidering
+  # -------------------------------------------------------------------------
+  - type: passiveScan-wait
+    parameters:
+      maxDuration: 10        # minutes — wait for passive scan queue to drain
+    name: "passive-scan"
+
+  # -------------------------------------------------------------------------
+  # 4. Active scan — run targeted attack rules against the application
+  #
+  # Rule IDs enabled (OWASP ZAP scan rule IDs):
+  #   40012 — Cross Site Scripting (Reflected)
+  #   40014 — Cross Site Scripting (Persistent)
+  #   40016 — Cross Site Scripting (Persistent — Prime)
+  #   40017 — Cross Site Scripting (Persistent — Spider)
+  #   40018 — SQL Injection
+  #   20012 — Anti-CSRF Tokens Check
+  #       6  — Path Traversal (covers tenant boundary / IDOR via path)
+  #   90011 — Charset Mismatch (relevant for Amharic/Ethiopic UTF-8 handling)
+  # -------------------------------------------------------------------------
+  - type: activeScan
+    parameters:
+      context: "restaurant-platform-staging"
+      user: "branch-manager"
+      scanPolicyName: "restaurant-platform-policy"
+      maxRuleDurationInMins: 5
+      maxScanDurationInMins: 60
+      threadPerHost: 4
+      delayInMs: 0
+      addQueryParam: false
+      handleAntiCSRFTokens: true
+      injectPluginIdInHeader: false
+    policyDefinition:
+      defaultStrength: "medium"
+      defaultThreshold: "medium"
+      rules:
+        # XSS — Reflected
+        - id: 40012
+          name: "Cross Site Scripting (Reflected)"
+          strength: "high"
+          threshold: "medium"
+        # XSS — Persistent
+        - id: 40014
+          name: "Cross Site Scripting (Persistent)"
+          strength: "high"
+          threshold: "medium"
+        # XSS — Persistent Prime
+        - id: 40016
+          name: "Cross Site Scripting (Persistent — Prime)"
+          strength: "high"
+          threshold: "medium"
+        # XSS — Persistent Spider
+        - id: 40017
+          name: "Cross Site Scripting (Persistent — Spider)"
+          strength: "high"
+          threshold: "medium"
+        # SQL Injection (covers QR token parameter and all user inputs)
+        - id: 40018
+          name: "SQL Injection"
+          strength: "high"
+          threshold: "medium"
+        # CSRF token check (order placement, all state-changing POSTs)
+        - id: 20012
+          name: "Anti-CSRF Tokens Check"
+          strength: "high"
+          threshold: "medium"
+        # Path Traversal — covers tenant boundary crossing via URL manipulation
+        - id: 6
+          name: "Path Traversal"
+          strength: "high"
+          threshold: "medium"
+        # Charset mismatch — relevant for Amharic (Ethiopic U+1200–U+137F) inputs
+        - id: 90011
+          name: "Charset Mismatch"
+          strength: "medium"
+          threshold: "low"
+    name: "active-scan"
+
+  # -------------------------------------------------------------------------
+  # 5. Report generation
+  # -------------------------------------------------------------------------
+  - type: report
+    parameters:
+      template: "traditional-html"
+      reportDir: "/zap/reports"
+      reportFile: "zap-report"
+      reportTitle: "Restaurant Platform — OWASP ZAP Security Scan"
+      reportDescription: >
+        Automated OWASP ZAP scan targeting XSS (menu item names including Amharic
+        strings), CSRF on order placement, SQL injection via QR token parameters,
+        and tenant boundary crossing via URL manipulation.
+      displayReport: false
+    risks:
+      - high
+      - medium
+      - low
+      - informational
+    confidences:
+      - confirmed
+      - high
+      - medium
+      - low
+    name: "html-report"
+
+  - type: report
+    parameters:
+      template: "sarif-json"
+      reportDir: "/zap/reports"
+      reportFile: "zap-report"
+      reportTitle: "Restaurant Platform — ZAP SARIF Report"
+    name: "sarif-report"
+
+  # -------------------------------------------------------------------------
+  # 6. Fail-on-findings gate
+  #    risk levels: 0=Informational, 1=Low, 2=Medium, 3=High
+  #    Setting threshold to 2 means the job fails on MEDIUM, HIGH, or CRITICAL.
+  #    Adjust to 3 to fail only on HIGH/CRITICAL as required by task 19.3.
+  # -------------------------------------------------------------------------
+  - type: exitStatus
+    parameters:
+      # Fail pipeline on HIGH (3) or CRITICAL findings only.
+      # ZAP maps CRITICAL as risk=3 with confidence=Confirmed.
+      # Set to 2 to also catch MEDIUM findings in stricter environments.
+      exitStatusLevel: 3
+    name: "fail-on-high-critical"

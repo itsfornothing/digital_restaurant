@@ -1,0 +1,159 @@
+{% extends "staff/base.html" %}
+{% load i18n %}
+{% block title %}{% trans "Branch Comparison" %}{% endblock %}
+{% block page_title %}{% trans "Branch Comparison" %}{% endblock %}
+{% block extra_head %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js" crossorigin="anonymous"></script>
+<style>
+  .comparison-card { border-left: 4px solid var(--primary); }
+  .stat-value { font-size: 1.5rem; font-weight: 700; }
+  .stat-label { font-size: .8rem; color: var(--neutral-color, #817471); }
+</style>
+{% endblock %}
+{% block nav_branch_report %}active{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h5 class="mb-0">{% trans "Multi-Branch Performance" %}</h5>
+  <div class="btn-group" role="group" id="periodGroup">
+    <button type="button" class="btn btn-outline-primary btn-sm period-btn" data-period="daily">{% trans "Today" %}</button>
+    <button type="button" class="btn btn-outline-primary btn-sm period-btn" data-period="weekly">{% trans "This Week" %}</button>
+    <button type="button" class="btn btn-outline-primary btn-sm period-btn active" data-period="monthly">{% trans "This Month" %}</button>
+  </div>
+</div>
+
+<div id="comparisonCards" class="row g-3 mb-4"></div>
+<div class="row g-3 mb-4">
+  <div class="col-12">
+    <div class="card p-3">
+      <canvas id="branchChart" height="100"></canvas>
+    </div>
+  </div>
+</div>
+<div class="card">
+  <div class="card-body p-0">
+    <div class="table-responsive">
+      <table class="table table-hover mb-0" id="branchTable">
+        <thead class="table-light">
+          <tr>
+            <th>{% trans "Branch" %}</th>
+            <th class="text-end">{% trans "Income" %}</th>
+            <th class="text-end">{% trans "Expenses" %}</th>
+            <th class="text-end">{% trans "Profit" %}</th>
+            <th class="text-end">{% trans "Orders" %}</th>
+            <th class="text-end">{% trans "Avg Order" %}</th>
+            <th>{% trans "Top Item" %}</th>
+          </tr>
+        </thead>
+        <tbody id="branchTableBody">
+          <tr><td colspan="7" class="text-center py-4 text-secondary">{% trans "Loading…" %}</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block extra_scripts %}
+<script>
+let chartInstance = null;
+
+async function loadBranchData(period) {
+  try {
+    const resp = await fetch(`/api/v1/tenant/financials/?period=${period}`);
+    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+    const data = await resp.json();
+
+    // Comparison cards
+    const cardsHtml = data.comparison && data.comparison.highest_income_branch ? `
+      <div class="col-md-4">
+        <div class="card comparison-card p-3">
+          <div class="stat-label">Highest Income</div>
+          <div class="stat-value text-success">${data.comparison.highest_income_branch}</div>
+          <small>${data.comparison.highest_income} {{ currency }}</small>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card comparison-card p-3" style="border-left-color:var(--secondary-color, #5D7061);">
+          <div class="stat-label">Lowest Expenses</div>
+          <div class="stat-value text-success">${data.comparison.lowest_expenses_branch}</div>
+          <small>${data.comparison.lowest_expenses} {{ currency }}</small>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card comparison-card p-3" style="border-left-color:var(--tertiary-color, #D4A373);">
+          <div class="stat-label">Highest Margin</div>
+          <div class="stat-value text-warning">${data.comparison.highest_margin_branch}</div>
+          <small>${data.comparison.highest_margin_profit} {{ currency }}</small>
+        </div>
+      </div>
+    ` : '<div class="col-12"><div class="card p-3 text-center text-secondary">No branch data available yet.</div></div>';
+
+    document.getElementById('comparisonCards').innerHTML = cardsHtml;
+
+    // Table rows
+    const tbody = document.getElementById('branchTableBody');
+    if (data.branches && data.branches.length) {
+      tbody.innerHTML = data.branches.map(b => `
+        <tr>
+          <td><strong>${b.branch_name}</strong></td>
+          <td class="text-end" data-label="{% trans 'Income' %}">${b.income}</td>
+          <td class="text-end" data-label="{% trans 'Expenses' %}">${b.expenses}</td>
+          <td class="text-end fw-semibold ${parseFloat(b.net_profit) >= 0 ? 'text-success' : 'text-danger'}" data-label="{% trans 'Profit' %}">${b.net_profit}</td>
+          <td class="text-end" data-label="{% trans 'Orders' %}">${b.order_count}</td>
+          <td class="text-end" data-label="{% trans 'Avg Order' %}">${b.avg_order_value}</td>
+          <td data-label="{% trans 'Top Item' %}">${b.top_item_name_translated || b.top_item_name || '—'}</td>
+        </tr>
+      `).join('');
+    } else {
+      tbody.innerHTML = '<tr><td colspan="7" class="text-center py-4 text-secondary">No data.</td></tr>';
+    }
+
+    // Chart
+    const ctx = document.getElementById('branchChart').getContext('2d');
+    if (chartInstance) chartInstance.destroy();
+    chartInstance = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: data.branches.map(b => b.branch_name),
+        datasets: [
+          {
+            label: 'Income',
+            data: data.branches.map(b => parseFloat(b.income)),
+            backgroundColor: '#22c55e',
+            borderRadius: 4,
+          },
+          {
+            label: 'Expenses',
+            data: data.branches.map(b => parseFloat(b.expenses)),
+            backgroundColor: '#ef4444',
+            borderRadius: 4,
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        plugins: { legend: { position: 'top' } },
+        scales: {
+          y: { beginAtZero: true, grid: { color: '#e2e8f0' } },
+          x: { grid: { display: false } },
+        },
+      },
+    });
+  } catch (err) {
+    console.error('Failed to load branch data:', err);
+    document.getElementById('branchTableBody').innerHTML =
+      '<tr><td colspan="7" class="text-center py-4 text-danger">Failed to load data.</td></tr>';
+  }
+}
+
+// Period selector
+document.querySelectorAll('.period-btn').forEach(btn => {
+  btn.addEventListener('click', function() {
+    document.querySelectorAll('.period-btn').forEach(b => b.classList.remove('active'));
+    this.classList.add('active');
+    loadBranchData(this.dataset.period);
+  });
+});
+
+loadBranchData('monthly');
+</script>
+{% endblock %}

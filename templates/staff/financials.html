@@ -1,0 +1,273 @@
+{% extends "staff/base.html" %}
+{% load i18n %}
+{% block title %}{% trans "Financials" %}{% endblock %}
+{% block brand %}{{ restaurant_name|default:"Restaurant" }}{% endblock %}
+{% block page_title %}{% trans "Financial Dashboard" %}{% endblock %}
+
+{% block nav_financials %}active{% endblock %}
+
+{% block extra_head %}
+<style>
+  .period-btn.active { background:#8B3A2A!important; color:#fff!important; border-color:#8B3A2A!important; }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Period selector -->
+<div class="d-flex gap-2 mb-4" id="period-btns">
+  <button class="btn btn-sm btn-outline-secondary period-btn active" data-period="daily" onclick="switchPeriod(this,'daily')">{% trans "Today" %}</button>
+  <button class="btn btn-sm btn-outline-secondary period-btn" data-period="weekly" onclick="switchPeriod(this,'weekly')">{% trans "This Week" %}</button>
+  <button class="btn btn-sm btn-outline-secondary period-btn" data-period="monthly" onclick="switchPeriod(this,'monthly')">{% trans "This Month" %}</button>
+  <div class="ms-auto">
+    <a class="btn btn-sm btn-outline-secondary" href="/api/v1/branches/{{ branch_id }}/income/export-csv/"><i class="bi bi-download me-1"></i>{% trans "Income CSV" %}</a>
+  </div>
+</div>
+
+<!-- Summary cards -->
+<div class="row g-3 mb-4">
+  <div class="col-sm-4">
+    <div class="card p-3 text-center">
+      <p class="text-muted small mb-1">{% trans "Total Income" %}</p>
+      <h3 class="fw-bold text-success mb-0" id="fin-income">—</h3>
+    </div>
+  </div>
+  <div class="col-sm-4">
+    <div class="card p-3 text-center">
+      <p class="text-muted small mb-1">{% trans "Total Expenses" %}</p>
+      <h3 class="fw-bold text-danger mb-0" id="fin-expenses">—</h3>
+    </div>
+  </div>
+  <div class="col-sm-4">
+    <div class="card p-3 text-center">
+      <p class="text-muted small mb-1">{% trans "Net Profit / Loss" %}</p>
+      <h3 class="fw-bold mb-0" id="fin-profit">—</h3>
+    </div>
+  </div>
+</div>
+
+<!-- Period detail row -->
+<div class="row g-3 mb-4" id="period-detail" style="display:none!important;">
+  <div class="col-12">
+    <div class="card p-3">
+      <small class="text-muted" id="period-label"></small>
+    </div>
+  </div>
+</div>
+
+<!-- Charts -->
+<div class="row g-3">
+  <div class="col-md-8">
+    <div class="card p-3">
+      <h2 class="fw-semibold mb-3 fs-6">{% trans "Revenue vs Expenses" %}</h2>
+      <canvas id="revenueChart" height="120"></canvas>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="card p-3">
+      <h2 class="fw-semibold mb-3 fs-6">{% trans "Expense Breakdown by Category" %}</h2>
+      <div id="expenseChartWrapper">
+        <canvas id="expenseChart" height="200"></canvas>
+        <p class="text-muted text-center small mt-2 d-none" id="no-expense-msg">{% trans "No expense data available." %}</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Top selling items -->
+<div class="row g-3 mt-1">
+  <div class="col-12">
+    <div class="card p-3">
+      <h6 class="fw-semibold mb-3">{% trans "Top Selling Items" %}</h6>
+      <div id="top-items">
+        <p class="text-muted small">{% trans "Loading…" %}</p>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js" defer></script>
+<script>
+const BRANCH_ID = '{{ branch_id }}';
+const CURRENCY  = '{{ currency|default:"ETB" }}';
+const FINANCIALS_I18N = {
+  period: '{% trans "Period:" %}',
+  income: '{% trans "Income" %}',
+  expenses: '{% trans "Expenses" %}',
+  today: '{% trans "Today" %}',
+  thisWeek: '{% trans "This Week" %}',
+  thisMonth: '{% trans "This Month" %}',
+  noOrders: '{% trans "No orders placed this month yet." %}',
+  item: '{% trans "Item" %}',
+  qtySold: '{% trans "Qty Sold" %}',
+  revenue: '{% trans "Revenue" %}',
+  orders: '{% trans "Orders" %}',
+  categoryLabels: {
+    food_purchases: '{% trans "Food Purchases" %}',
+    staff_salaries: '{% trans "Staff Salaries" %}',
+    utilities: '{% trans "Utilities" %}',
+    rent: '{% trans "Rent" %}',
+    maintenance: '{% trans "Maintenance" %}',
+    marketing: '{% trans "Marketing" %}',
+    transportation: '{% trans "Transportation" %}',
+    miscellaneous: '{% trans "Miscellaneous" %}',
+  },
+};
+let revenueChart, expenseChart;
+let currentPeriodKey = 'daily';
+
+function switchPeriod(btn, periodKey) {
+  document.querySelectorAll('.period-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  currentPeriodKey = periodKey;
+  loadFinancials(periodKey);
+}
+
+async function loadFinancials(periodKey = 'daily') {
+  try {
+    const resp = await fetch(
+      `/api/v1/branches/${BRANCH_ID}/financials/?period=${periodKey}`,
+      { credentials: 'same-origin' }
+    );
+    if (!resp.ok) { showPlaceholder(); return; }
+    const data = await resp.json();
+
+    // The API returns: { daily: {income, expenses, profit}, weekly: {...}, monthly: {...} }
+    const periodData = data[periodKey] || {};
+    const income   = parseFloat(periodData.income   || 0);
+    const expenses = parseFloat(periodData.expenses || 0);
+    const profit   = parseFloat(periodData.profit   || (income - expenses));
+
+    document.getElementById('fin-income').textContent   = CURRENCY + ' ' + income.toFixed(2);
+    document.getElementById('fin-expenses').textContent = CURRENCY + ' ' + expenses.toFixed(2);
+
+    const profitEl = document.getElementById('fin-profit');
+    profitEl.textContent = CURRENCY + ' ' + profit.toFixed(2);
+    profitEl.className   = 'fw-bold mb-0 ' + (profit >= 0 ? 'text-success' : 'text-danger');
+
+    // Period label
+    if (periodData.period_start && periodData.period_end) {
+      const labelEl = document.getElementById('period-label');
+      labelEl.textContent = `${FINANCIALS_I18N.period} ${periodData.period_start} → ${periodData.period_end}`;
+      document.getElementById('period-detail').style.display = '';
+    }
+
+    // Revenue vs Expenses bar chart (all three periods side-by-side)
+    const periods    = [FINANCIALS_I18N.today, FINANCIALS_I18N.thisWeek, FINANCIALS_I18N.thisMonth];
+    const incomeVals = [
+      parseFloat(data.daily?.income   || 0),
+      parseFloat(data.weekly?.income  || 0),
+      parseFloat(data.monthly?.income || 0),
+    ];
+    const expenseVals = [
+      parseFloat(data.daily?.expenses   || 0),
+      parseFloat(data.weekly?.expenses  || 0),
+      parseFloat(data.monthly?.expenses || 0),
+    ];
+
+    if (revenueChart) revenueChart.destroy();
+    revenueChart = new Chart(document.getElementById('revenueChart'), {
+      type: 'bar',
+      data: {
+        labels: periods,
+        datasets: [
+          { label: FINANCIALS_I18N.income,   data: incomeVals,   backgroundColor: '#5D7061' },
+          { label: FINANCIALS_I18N.expenses, data: expenseVals,  backgroundColor: '#8B3A2A' },
+        ],
+      },
+      options: {
+        plugins: { legend: { position: 'top' } },
+        scales: { y: { beginAtZero: true } },
+      },
+    });
+
+    // Expense breakdown doughnut (fetch from expenses API)
+    loadExpenseBreakdown();
+
+    // Top selling items — uses real backend data (total_quantity, total_revenue, order_count)
+    const topItems = data.top_selling_items || [];
+    const topEl = document.getElementById('top-items');
+    if (!topItems.length) {
+      topEl.innerHTML = '<p class="text-muted small">' + FINANCIALS_I18N.noOrders + '</p>';
+    } else {
+      topEl.innerHTML = `<div class="table-responsive"><table class="table table-sm mb-0">
+        <thead class="table-light"><tr>
+          <th>${FINANCIALS_I18N.item}</th>
+          <th class="text-end">${FINANCIALS_I18N.qtySold}</th>
+          <th class="text-end">${FINANCIALS_I18N.revenue}</th>
+          <th class="text-end">${FINANCIALS_I18N.orders}</th>
+        </tr></thead>
+        <tbody>${topItems.map(i => `<tr>
+          <td class="fw-medium">${i.name_translated || i.name || '—'}</td>
+          <td class="text-end" data-label="${FINANCIALS_I18N.qtySold}">${i.total_quantity || 0}</td>
+          <td class="text-end" data-label="${FINANCIALS_I18N.revenue}">${CURRENCY} ${parseFloat(i.total_revenue || 0).toFixed(2)}</td>
+          <td class="text-end" data-label="${FINANCIALS_I18N.orders}">${i.order_count || 0}</td>
+        </tr>`).join('')}</tbody>
+      </table></div>`;
+    }
+
+  } catch (e) {
+    console.error('loadFinancials error:', e);
+    showPlaceholder();
+  }
+}
+
+async function loadExpenseBreakdown() {
+  try {
+    const resp = await fetch(
+      `/api/v1/branches/${BRANCH_ID}/expenses/`,
+      { credentials: 'same-origin' }
+    );
+    if (!resp.ok) return;
+    const data = await resp.json();
+    const items = data.results || data;
+
+    // Aggregate by category
+    const breakdown = {};
+    items.forEach(e => {
+      const slug = e.category || 'other';
+      const cat = FINANCIALS_I18N.categoryLabels[slug] || slug.replace(/_/g, ' ');
+      breakdown[cat] = (breakdown[cat] || 0) + parseFloat(e.amount || 0);
+    });
+
+    const expLabels = Object.keys(breakdown);
+    const expValues = Object.values(breakdown);
+    const noMsg     = document.getElementById('no-expense-msg');
+
+    if (!expLabels.length) {
+      if (noMsg) noMsg.classList.remove('d-none');
+      return;
+    }
+    if (noMsg) noMsg.classList.add('d-none');
+
+    if (expenseChart) expenseChart.destroy();
+    expenseChart = new Chart(document.getElementById('expenseChart'), {
+      type: 'doughnut',
+      data: {
+        labels: expLabels,
+        datasets: [{
+          data: expValues,
+          backgroundColor: ['#8B3A2A','#5D7061','#D4A373','#817471','#77574e','#857370','#6E2E21','#a6958e'],
+        }],
+      },
+      options: {
+        plugins: {
+          legend: { position: 'bottom', labels: { font: { size: 11 } } },
+        },
+      },
+    });
+  } catch (e) {
+    console.error('loadExpenseBreakdown error:', e);
+  }
+}
+
+function showPlaceholder() {
+  ['fin-income', 'fin-expenses', 'fin-profit'].forEach(id => {
+    document.getElementById(id).textContent = CURRENCY + ' 0.00';
+  });
+}
+
+document.addEventListener('DOMContentLoaded', function() { loadFinancials('daily'); });
+</script>
+{% endblock %}

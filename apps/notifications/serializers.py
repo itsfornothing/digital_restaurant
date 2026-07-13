@@ -1,0 +1,3 @@
+"""
+notifications/serializers.py — stub.
+"""

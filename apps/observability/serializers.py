@@ -1,0 +1,3 @@
+"""
+observability/serializers.py — stub.
+"""

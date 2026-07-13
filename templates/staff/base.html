@@ -1,0 +1,279 @@
+{% load i18n static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Staff portal for {{ restaurant_name|default:'the restaurant' }} — manage orders, menu, inventory, financials, and more." />
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <title>{% block title %}{% trans "Staff Portal" %}{% endblock %} — {{ restaurant_name|default:"Restaurant Platform" }}</title>
+  <link rel="icon" href="{% static 'eating.svg' %}" type="image/svg+xml" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" crossorigin="anonymous"/>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"/>
+  <style>
+    :root { --primary: #8B3A2A; --primary-hover: #6E2E21; --secondary-accent: #5D7061; --on-surface: #201A19; --body: #534341; --body-secondary: #857370; --label-secondary: #77574e; --surface: #fff8f6; --surface-container: #fff0ee; }
+    body { background: var(--surface); font-family: system-ui, sans-serif; color: var(--body); }
+    h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 { color: var(--on-surface); }
+    .sidebar { width: 220px; height: 100vh; position: fixed; top: 0; left: 0; display: flex; flex-direction: column; background: #2C1810; color: #D4A373; z-index: 100; }
+    .sidebar .brand { color: #D4A373; font-weight: 700; font-size: 1.1rem; padding: 1.25rem 1rem; border-bottom: 1px solid #5D7061; flex-shrink: 0; }
+    .sidebar .nav-links { flex: 1; overflow-y: auto; padding-bottom: 0.5rem; }
+    .sidebar .nav-link { color: #D4A373; padding: .6rem 1rem; border-radius: .4rem; margin: .1rem .5rem; display: flex; align-items: center; gap: .6rem; }
+    .sidebar .nav-link:hover, .sidebar .nav-link.active { background: var(--primary); color: #fff; }
+    .sidebar .nav-link i { width: 18px; text-align: center; }
+    .sidebar-footer { flex-shrink: 0; border-top: 1px solid #5D7061; padding: 1rem; }
+    .sidebar-footer a { color: #D4A373; font-size: .85rem; }
+    .sidebar-footer a:hover { color: #fff; }
+    .page-wrapper { margin-left: 220px; display: flex; flex-direction: column; min-height: 100vh; }
+    .topbar { background: var(--surface-container); border-bottom: 1px solid #D4A373; height: 56px; flex-shrink: 0; }
+    .main-content { flex: 1; padding: 1.5rem; }
+    .card { border: none; box-shadow: 0 1px 4px rgba(0,0,0,.08); border-radius: .75rem; background: var(--surface-container); }
+    .table { --bs-table-bg: var(--surface-container); }
+    .table-light { --bs-table-bg: #f0ece9 !important; }
+    .badge-status { font-size: .7rem; padding: .25em .6em; border-radius: 999px; }
+    .badge-status-confirmed { background: #857370; color: #fff; }
+    .badge-status-received { background: #5D7061; color: #fff; }
+    .badge-status-preparing { background: #D4A373; color: #201A19; }
+    .badge-status-ready { background: #77574e; color: #fff; }
+    .badge-status-served { background: #817471; color: #fff; }
+    .badge-status-cancelled { background: #6E2E21; color: #fff; }
+    .btn-primary { background-color: var(--primary) !important; border-color: var(--primary) !important; }
+    .btn-primary:hover { background-color: var(--primary-hover) !important; border-color: var(--primary-hover) !important; }
+    .text-primary { color: var(--primary) !important; }
+    .text-secondary { color: var(--body-secondary) !important; }
+    .text-success { color: var(--primary) !important; }
+    .text-danger { color: var(--primary) !important; }
+    .text-warning { color: #D4A373 !important; }
+    .bg-success { background-color: var(--secondary-accent) !important; }
+    .bg-danger { background-color: var(--primary) !important; }
+    .bg-warning { background-color: #D4A373 !important; color: #fff !important; }
+    .text-bg-success { background-color: var(--secondary-accent) !important; color: #fff !important; }
+    .text-bg-danger { background-color: var(--primary) !important; color: #fff !important; }
+    .text-bg-warning { background-color: #D4A373 !important; color: #fff !important; }
+    .bg-secondary { background-color: #5D7061 !important; }
+    .btn-secondary { background-color: var(--label-secondary) !important; border-color: var(--label-secondary) !important; color: #fff !important; }
+    .btn-secondary:hover { background-color: #5f463e !important; border-color: #5f463e !important; }
+    .btn-outline-primary { color: var(--primary) !important; border-color: var(--primary) !important; }
+    .btn-outline-primary:hover { background-color: var(--primary) !important; border-color: var(--primary) !important; color: #fff !important; }
+    .btn-outline-warning { color: #D4A373 !important; border-color: #D4A373 !important; }
+    .btn-outline-warning:hover { background-color: #D4A373 !important; border-color: #D4A373 !important; color: #fff !important; }
+    .btn-outline-secondary { color: var(--label-secondary) !important; border-color: var(--label-secondary) !important; }
+    .btn-outline-secondary:hover { background-color: var(--label-secondary) !important; border-color: var(--label-secondary) !important; color: #fff !important; }
+    @media (max-width: 767px) {
+      .sidebar { transform: translateX(-100%); transition: transform .25s ease; }
+      .sidebar.open { transform: translateX(0); }
+      .sidebar-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,.4); z-index:99; }
+      .sidebar-overlay.show { display:block; }
+      .page-wrapper { margin-left: 0; }
+      .sidebar-toggle { display:inline-flex !important; }
+      .main-content { padding: .75rem; }
+    }
+    @media (min-width: 768px) {
+      .sidebar-toggle { display:none !important; }
+    }
+    @media (max-width: 767px) {
+      .card-header .form-select,
+      .card-header input[type="date"] {
+        width: 100% !important;
+        min-width: 0 !important;
+      }
+      .card-header .btn { flex: 1; }
+    }
+    .order-action-btn { white-space: nowrap; }
+    .action-buttons { display: inline-flex; flex-wrap: wrap; gap: .35rem; }
+    @media (max-width: 991px) {
+      .action-buttons { display: flex; flex-direction: column; width: 100%; }
+      .action-buttons .btn { width: 100%; padding: .5rem .75rem; font-size: .875rem; }
+    }
+    .menu-name-cell { min-width: 220px; }
+    .menu-description { max-width: 350px; line-height: 1.4; word-break: break-word; }
+    @media (max-width: 767px) {
+      .menu-name-cell { min-width: 180px; }
+      .menu-description { max-width: none; white-space: normal; }
+      .table-responsive table,
+      .table-responsive thead,
+      .table-responsive tbody,
+      .table-responsive tr,
+      .table-responsive td { display: block; }
+      .table-responsive thead { display: none; }
+      .table-responsive tr {
+        background: #fff;
+        margin-bottom: 1rem;
+        border-radius: .75rem;
+        padding: .75rem;
+        box-shadow: 0 1px 4px rgba(0,0,0,.08);
+      }
+      .table-responsive td {
+        border: none;
+        padding: .3rem 0;
+      }
+      .table-responsive td[data-label]::before {
+        content: attr(data-label) ": ";
+        font-weight: 600;
+        color: var(--body-secondary);
+        display: inline-block;
+        width: 90px;
+        flex-shrink: 0;
+      }
+      .table-responsive td[data-label] {
+        display: flex;
+        align-items: baseline;
+        gap: .25rem;
+      }
+      .reception-wrapper { padding: .75rem !important; }
+      .reception-wrapper table,
+      .reception-wrapper thead,
+      .reception-wrapper tbody,
+      .reception-wrapper tr,
+      .reception-wrapper td { display: block; }
+      .reception-wrapper thead { display: none; }
+      .reception-wrapper tr {
+        background: #fff;
+        margin-bottom: 1rem;
+        border-radius: .75rem;
+        padding: .75rem;
+        box-shadow: 0 1px 4px rgba(0,0,0,.08);
+      }
+      .reception-wrapper td {
+        border: none;
+        padding: .3rem 0;
+        border-bottom: 0 !important;
+        vertical-align: baseline !important;
+        text-align: left !important;
+        max-width: none !important;
+        white-space: normal !important;
+      }
+      .reception-wrapper td[style*="textAlign"] { text-align: left !important; }
+      .reception-wrapper td strong { display: inline; }
+      .reception-wrapper ul { margin-bottom: 0 !important; }
+      .reception-wrapper td[data-label]::before {
+        content: attr(data-label) ": ";
+        font-weight: 600;
+        color: var(--body-secondary);
+        display: inline-block;
+        width: 90px;
+        flex-shrink: 0;
+      }
+      .reception-wrapper td[data-label] {
+        display: flex;
+        align-items: baseline;
+        gap: .25rem;
+      }
+    }
+  </style>
+  {% block extra_head %}{% endblock %}
+</head>
+<body>
+
+  <!-- Fixed sidebar -->
+  <nav class="sidebar" aria-label="Staff navigation">
+    <div class="brand">
+      <i class="bi bi-shop me-2"></i>{% block brand %}{% trans "Staff Portal" %}{% endblock %}
+    </div>
+    <div class="nav-links">
+      {% block nav_items %}
+      <a href="/staff/" class="nav-link {% block nav_dashboard %}{% endblock %}"><i class="bi bi-speedometer2"></i> {% trans "Dashboard" %}</a>
+      {% if can_view_kds %}<a href="/staff/kds/" class="nav-link {% block nav_kds %}{% endblock %}"><i class="bi bi-display"></i> {% trans "Kitchen Display" %}</a>{% endif %}
+      {% if can_view_reception %}<a href="/staff/reception/" class="nav-link {% block nav_reception %}{% endblock %}"><i class="bi bi-table"></i> {% trans "Reception" %}</a>{% endif %}
+      {% if can_view_orders %}<a href="/staff/orders/" class="nav-link {% block nav_orders %}{% endblock %}"><i class="bi bi-receipt"></i> {% trans "Orders" %}</a>{% endif %}
+      {% if can_manage_menu %}<a href="/staff/menu/" class="nav-link {% block nav_menu %}{% endblock %}"><i class="bi bi-book"></i> {% trans "Menu" %}</a>{% endif %}
+      {% if can_manage_qr %}<a href="/staff/qr-codes/" class="nav-link {% block nav_qr %}{% endblock %}"><i class="bi bi-qr-code"></i> {% trans "QR Codes" %}</a>{% endif %}
+      {% if can_manage_tables %}<a href="/staff/tables/" class="nav-link {% block nav_tables %}{% endblock %}"><i class="bi bi-grid-3x3-gap"></i> {% trans "Tables &amp; Rooms" %}</a>{% endif %}
+      {% if can_manage_inventory %}<a href="/staff/inventory/" class="nav-link {% block nav_inventory %}{% endblock %}"><i class="bi bi-box-seam"></i> {% trans "Inventory" %}</a>{% endif %}
+      {% if can_manage_expenses %}<a href="/staff/expenses/" class="nav-link {% block nav_expenses %}{% endblock %}"><i class="bi bi-credit-card"></i> {% trans "Expenses" %}</a>{% endif %}
+      {% if can_view_financials %}<a href="/staff/financials/" class="nav-link {% block nav_financials %}{% endblock %}"><i class="bi bi-graph-up"></i> {% trans "Financials" %}</a>{% endif %}
+      {% if user_role == "Tenant_Owner" or user_role == "Super_Admin" %}<a href="/staff/branch-comparison/" class="nav-link {% block nav_branch_report %}{% endblock %}"><i class="bi bi-bar-chart"></i> {% trans "Branch Report" %}</a>{% endif %}
+      {% endblock %}
+    </div>
+    <div class="sidebar-footer">
+      <small class="d-block mb-1" style="color:#D4A373;">{{ request.user.email|default:"" }}</small>
+      <a href="/staff/profile/" class="d-block mb-1"><i class="bi bi-person me-1"></i>{% trans "Profile" %}</a>
+      <a href="/staff/logout/" class="d-block" style="color:#D4A373;"><i class="bi bi-box-arrow-right me-1"></i>{% trans "Logout" %}</a>
+    </div>
+  </nav>
+
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+  <!-- Page content offset by sidebar width -->
+  <div class="page-wrapper">
+    <div class="topbar d-flex align-items-center px-4 gap-3">
+      <button class="sidebar-toggle btn btn-sm" style="background:transparent;border:none;color:var(--primary);font-size:1.3rem;padding:0;line-height:1;" onclick="toggleSidebar()" aria-label="{% trans 'Toggle navigation' %}">
+        <i class="bi bi-list"></i>
+      </button>
+      <span class="fw-semibold" style="color:#817471;">{% block page_title %}{% trans "Dashboard" %}{% endblock %}</span>
+      <span class="ms-auto d-flex align-items-center gap-2">
+        <form action="/i18n/setlang/" method="post" style="display:inline;">
+          {% csrf_token %}
+          <select name="language" class="form-select form-select-sm" style="width:auto;font-size:.75rem;padding:.15rem 1.5rem .15rem .4rem;background:var(--surface-container);border:1px solid #D4A373;color:#534341;" onchange="this.form.submit()">
+            {% get_current_language as LANG %}
+            {% get_available_languages as LANGUAGES %}
+            {% get_language_info_list for LANGUAGES as langs %}
+            {% for lang in langs %}
+            <option value="{{ lang.code }}" {% if lang.code == LANG %}selected{% endif %}>{{ lang.name_local }}</option>
+            {% endfor %}
+          </select>
+        </form>
+        <span class="badge" style="background:#fff0ee;color:#534341;border:1px solid #D4A373;">{{ branch_name|default:"" }}</span>
+      </span>
+    </div>
+    <main class="main-content" id="main-content">
+      {% block content %}{% endblock %}
+    </main>
+  </div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous" defer></script>
+<script src="{% static 'js/staff-notifications.js' %}" defer></script>
+<script>
+function toggleSidebar() {
+  document.querySelector('.sidebar').classList.toggle('open');
+  document.getElementById('sidebarOverlay').classList.toggle('show');
+}
+document.getElementById('sidebarOverlay')?.addEventListener('click', function() {
+  document.querySelector('.sidebar').classList.remove('open');
+  this.classList.remove('show');
+});
+document.addEventListener('DOMContentLoaded', function() {
+requestNotificationPermission();
+initAudioOnGesture();
+
+// Prevent aria-hidden warning when modals hide with focused descendants
+document.addEventListener('hide.bs.modal', function() {
+  if (document.activeElement && document.activeElement.closest('.modal')) {
+    document.activeElement.blur();
+  }
+});
+
+// Global notification WebSocket — listens for order events on every staff page
+(function initNotifWS() {
+  var role = '{{ user_role }}';
+  var wsPath = role === 'Kitchen_Staff' ? '/ws/kitchen/'
+    : role === 'Receptionist' ? '/ws/reception/'
+    : '/ws/manager/';
+  var sid = '{{ session_key }}';
+  if (sid) wsPath += '?sessionid=' + sid;
+  var protocol = location.protocol === 'https:' ? 'wss:' : 'ws:';
+  var url = protocol + '//' + location.host + wsPath;
+  console.log('[WS] Connecting to', url);
+  var ws = null;
+  function connect() {
+    ws = new WebSocket(protocol + '//' + location.host + wsPath);
+    ws.onopen = function () { console.log('[WS] Connected'); };
+    ws.onmessage = function (e) {
+      try {
+        var msg = JSON.parse(e.data);
+        console.log('[WS] Message received:', msg.type, msg.payload);
+        if (msg.type === 'order.new') showOrderNotification(msg.payload);
+        else if (msg.type === 'order_status_changed') showStatusNotification(msg.payload);
+        // Forward to page-specific handlers via custom event
+        document.dispatchEvent(new CustomEvent('staff:wsmsg', { detail: msg }));
+      } catch (_) {}
+    };
+    ws.onclose = function (e) { console.warn('[WS] Closed (code=' + e.code + '), reconnecting in 3s'); setTimeout(connect, 3000); };
+    ws.onerror = function (e) { console.error('[WS] Error', e); };
+  }
+  connect();
+})();
+});
+</script>
+{% block extra_scripts %}{% endblock %}
+</body>
+</html>

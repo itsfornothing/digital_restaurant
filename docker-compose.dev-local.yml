@@ -1,0 +1,28 @@
+version: "3.9"
+
+# ---------------------------------------------------------------------------
+# Local dev override — uses only images already cached on this machine.
+# Uses postgres:16-alpine (cached locally).
+# Exposes Daphne directly on port 8000 (no nginx needed to browse the app).
+# Maps postgres to port 5433 to avoid conflict with a local postgres on 5432.
+#
+# Single-process architecture: Daphne serves both HTTP and WebSocket on :8000.
+#
+# Usage:
+#   docker compose -f docker-compose.yml -f docker-compose.dev-local.yml up --build
+# ---------------------------------------------------------------------------
+
+services:
+
+  db:
+    image: postgres:16-alpine   # use locally cached image
+    ports:
+      - "5433:5432"             # avoid conflict with local postgres on 5432
+
+  nginx:
+    profiles:
+      - nginx-disabled          # access app directly on http://localhost:8000
+
+  asgi:
+    ports:
+      - "8000:8000"             # expose Daphne directly (HTTP + WebSocket)

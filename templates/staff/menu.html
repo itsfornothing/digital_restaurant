@@ -1,0 +1,847 @@
+{% extends "staff/base.html" %}
+{% load i18n %}
+{% block title %}{% trans "Menu Management" %}{% endblock %}
+{% block brand %}{{ restaurant_name|default:"Restaurant" }}{% endblock %}
+{% block page_title %}{% trans "Menu Management" %}{% endblock %}
+
+{% block nav_menu %}active{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h6 class="fw-semibold mb-0">{% trans "Menu Items" %}</h6>
+  <div class="d-flex gap-2 align-items-center">
+    <div class="form-check form-switch mb-0">
+      <input class="form-check-input" type="checkbox" id="show-archived" onchange="loadMenu()">
+      <label class="form-check-label small" for="show-archived">{% trans "Show archived" %}</label>
+    </div>
+    <a class="btn btn-sm btn-outline-secondary" href="/api/v1/branches/{{ branch_id }}/menu-items/export-csv/"><i class="bi bi-download me-1"></i>{% trans "CSV" %}</a>
+    <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#addItemModal">
+      <i class="bi bi-plus me-1"></i>{% trans "Add Item" %}
+    </button>
+  </div>
+</div>
+
+<div class="card">
+  <div class="table-responsive">
+    <table class="table table-hover mb-0">
+      <thead class="table-light"><tr><th>{% trans "Name" %}</th><th>{% trans "Price" %}</th><th>{% trans "Category" %}</th><th>{% trans "Status" %}</th><th>{% trans "Actions" %}</th></tr></thead>
+      <tbody id="menu-tbody"><tr><td colspan="6" class="text-center text-muted py-4">{% trans "Loading…" %}</td></tr></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Add Item Modal -->
+<div class="modal fade" id="addItemModal" tabindex="-1">
+  <div class="modal-dialog"><div class="modal-content">
+    <div class="modal-header"><h5 class="modal-title">{% trans "Add Menu Item" %}</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+    <div class="modal-body">
+      <div class="mb-3"><label class="form-label">{% trans "Name" %} *</label><input type="text" id="mi-name" class="form-control" required/></div>
+      <div class="mb-3"><label class="form-label">{% trans "Name (Amharic)" %}</label><input type="text" id="mi-name-am" class="form-control"/></div>
+      <div class="mb-3"><label class="form-label">{% trans "Description" %}</label><textarea id="mi-desc" class="form-control" rows="2"></textarea></div>
+      <div class="mb-3"><label class="form-label">{% trans "Description (Amharic)" %}</label><textarea id="mi-desc-am" class="form-control" rows="2"></textarea></div>
+      <div class="row g-2 mb-3">
+        <div class="col"><label class="form-label">{% trans "Price" %} ({{ currency|default:"ETB" }}) *</label><input type="number" id="mi-price" class="form-control" step="0.01" min="0" required/></div>
+        <div class="col"><label class="form-label">{% trans "Prep time (min)" %}</label><input type="number" id="mi-prep" class="form-control" value="15" min="1"/></div>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">{% trans "Status" %}</label>
+        <select id="mi-status" class="form-select"><option value="available">{% trans "Available" %}</option><option value="unavailable">{% trans "Unavailable" %}</option></select>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">{% trans "Dietary Tags" %}</label>
+        <div style="max-height: 160px; overflow-y: auto;">
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" name="dietary_tags" value="vegetarian" id="tag-vegetarian">
+            <label class="form-check-label" for="tag-vegetarian">{% trans "Vegetarian" %}</label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" name="dietary_tags" value="vegan" id="tag-vegan">
+            <label class="form-check-label" for="tag-vegan">{% trans "Vegan" %}</label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" name="dietary_tags" value="gluten_free" id="tag-gluten_free">
+            <label class="form-check-label" for="tag-gluten_free">{% trans "Gluten-Free" %}</label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" name="dietary_tags" value="dairy_free" id="tag-dairy_free">
+            <label class="form-check-label" for="tag-dairy_free">{% trans "Dairy-Free" %}</label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" name="dietary_tags" value="halal" id="tag-halal">
+            <label class="form-check-label" for="tag-halal">{% trans "Halal" %}</label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" name="dietary_tags" value="low_carb" id="tag-low_carb">
+            <label class="form-check-label" for="tag-low_carb">{% trans "Low-Carb" %}</label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" name="dietary_tags" value="keto" id="tag-keto">
+            <label class="form-check-label" for="tag-keto">{% trans "Keto" %}</label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" name="dietary_tags" value="high_protein" id="tag-high_protein">
+            <label class="form-check-label" for="tag-high_protein">{% trans "High-Protein" %}</label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" name="dietary_tags" value="spicy" id="tag-spicy">
+            <label class="form-check-label" for="tag-spicy">{% trans "Spicy" %}</label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" name="dietary_tags" value="seafood" id="tag-seafood">
+            <label class="form-check-label" for="tag-seafood">{% trans "Seafood" %}</label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" name="dietary_tags" value="desserts" id="tag-desserts">
+            <label class="form-check-label" for="tag-desserts">{% trans "Desserts" %}</label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" name="dietary_tags" value="beverages" id="tag-beverages">
+            <label class="form-check-label" for="tag-beverages">{% trans "Beverages" %}</label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" name="dietary_tags" value="childrens_meals" id="tag-childrens_meals">
+            <label class="form-check-label" for="tag-childrens_meals">{% trans "Children's Meals" %}</label>
+          </div>
+        </div>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">{% trans "Categories" %}</label>
+        <div id="mi-categories-container"><p class="text-muted">{% trans "Loading categories…" %}</p></div>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">{% trans "Item Image" %}</label>
+        <input type="file" id="mi-image" class="form-control" accept="image/*" onchange="handleImageChange(this)"/>
+        <div class="form-text">{% trans "Optional. JPEG, PNG or WebP. Max 5 MB. Uploaded to Cloudinary CDN." %}</div>
+        <!-- Upload progress -->
+        <div id="mi-image-progress" class="mt-2 d-none">
+          <div class="progress" style="height:6px;">
+            <div class="progress-bar progress-bar-striped progress-bar-animated" id="mi-upload-bar" style="width:0%"></div>
+          </div>
+          <small class="text-muted" id="mi-upload-status">{% trans "Uploading…" %}</small>
+        </div>
+        <!-- Preview -->
+        <img id="mi-image-preview" src="" alt="Preview" class="mt-2 rounded d-none"
+          style="max-height:120px;object-fit:cover;max-width:100%;"/>
+        <!-- Hidden: stores the Cloudinary URL after upload -->
+        <input type="hidden" id="mi-image-url" value=""/>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" data-bs-dismiss="modal">{% trans "Cancel" %}</button>
+      <button class="btn btn-primary" onclick="saveMenuItem()">{% trans "Save" %}</button>
+    </div>
+  </div></div>
+</div>
+
+<!-- Edit Item Modal -->
+<div class="modal fade" id="editItemModal" tabindex="-1">
+  <div class="modal-dialog"><div class="modal-content">
+    <div class="modal-header"><h5 class="modal-title">{% trans "Edit Menu Item" %}</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+    <div class="modal-body">
+      <input type="hidden" id="edit-mi-id">
+      <div class="mb-3"><label class="form-label">{% trans "Name" %} *</label><input type="text" id="edit-mi-name" class="form-control" required/></div>
+      <div class="mb-3"><label class="form-label">{% trans "Name (Amharic)" %}</label><input type="text" id="edit-mi-name-am" class="form-control"/></div>
+      <div class="mb-3"><label class="form-label">{% trans "Description" %}</label><textarea id="edit-mi-desc" class="form-control" rows="2"></textarea></div>
+      <div class="mb-3"><label class="form-label">{% trans "Description (Amharic)" %}</label><textarea id="edit-mi-desc-am" class="form-control" rows="2"></textarea></div>
+      <div class="row g-2 mb-3">
+        <div class="col"><label class="form-label">{% trans "Price" %} ({{ currency|default:"ETB" }}) *</label><input type="number" id="edit-mi-price" class="form-control" step="0.01" min="0" required/></div>
+        <div class="col"><label class="form-label">{% trans "Prep time (min)" %}</label><input type="number" id="edit-mi-prep" class="form-control" min="1"/></div>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">{% trans "Status" %}</label>
+        <select id="edit-mi-status" class="form-select"><option value="available">{% trans "Available" %}</option><option value="unavailable">{% trans "Unavailable" %}</option></select>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">{% trans "Dietary Tags" %}</label>
+        <div style="max-height: 160px; overflow-y: auto;">
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" name="dietary_tags" value="vegetarian" id="edit-tag-vegetarian">
+            <label class="form-check-label" for="edit-tag-vegetarian">{% trans "Vegetarian" %}</label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" name="dietary_tags" value="vegan" id="edit-tag-vegan">
+            <label class="form-check-label" for="edit-tag-vegan">{% trans "Vegan" %}</label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" name="dietary_tags" value="gluten_free" id="edit-tag-gluten_free">
+            <label class="form-check-label" for="edit-tag-gluten_free">{% trans "Gluten-Free" %}</label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" name="dietary_tags" value="dairy_free" id="edit-tag-dairy_free">
+            <label class="form-check-label" for="edit-tag-dairy_free">{% trans "Dairy-Free" %}</label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" name="dietary_tags" value="halal" id="edit-tag-halal">
+            <label class="form-check-label" for="edit-tag-halal">{% trans "Halal" %}</label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" name="dietary_tags" value="low_carb" id="edit-tag-low_carb">
+            <label class="form-check-label" for="edit-tag-low_carb">{% trans "Low-Carb" %}</label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" name="dietary_tags" value="keto" id="edit-tag-keto">
+            <label class="form-check-label" for="edit-tag-keto">{% trans "Keto" %}</label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" name="dietary_tags" value="high_protein" id="edit-tag-high_protein">
+            <label class="form-check-label" for="edit-tag-high_protein">{% trans "High-Protein" %}</label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" name="dietary_tags" value="spicy" id="edit-tag-spicy">
+            <label class="form-check-label" for="edit-tag-spicy">{% trans "Spicy" %}</label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" name="dietary_tags" value="seafood" id="edit-tag-seafood">
+            <label class="form-check-label" for="edit-tag-seafood">{% trans "Seafood" %}</label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" name="dietary_tags" value="desserts" id="edit-tag-desserts">
+            <label class="form-check-label" for="edit-tag-desserts">{% trans "Desserts" %}</label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" name="dietary_tags" value="beverages" id="edit-tag-beverages">
+            <label class="form-check-label" for="edit-tag-beverages">{% trans "Beverages" %}</label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" name="dietary_tags" value="childrens_meals" id="edit-tag-childrens_meals">
+            <label class="form-check-label" for="edit-tag-childrens_meals">{% trans "Children's Meals" %}</label>
+          </div>
+        </div>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">{% trans "Categories" %}</label>
+        <div id="edit-mi-categories-container"><p class="text-muted">{% trans "Loading categories…" %}</p></div>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">{% trans "Current Image" %}</label>
+        <img id="edit-mi-image-preview" src="" class="img-thumbnail mt-2" style="max-height:120px;" />
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" data-bs-dismiss="modal">{% trans "Cancel" %}</button>
+      <button class="btn btn-primary" onclick="updateMenuItem()">{% trans "Update Item" %}</button>
+    </div>
+  </div></div>
+</div>
+
+<!-- Recipe Modal -->
+<div class="modal fade" id="recipeModal" tabindex="-1">
+  <div class="modal-dialog modal-lg"><div class="modal-content">
+    <div class="modal-header">
+      <h5 class="modal-title" id="recipeModalTitle">{% trans "Recipe" %}</h5>
+      <button class="btn-close" data-bs-dismiss="modal"></button>
+    </div>
+    <div class="modal-body">
+      <div class="mb-3">
+        <label class="form-label">{% trans "Method / Instructions" %}</label>
+        <textarea id="recipe-method" class="form-control" rows="3"></textarea>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">{% trans "Cook Time (minutes)" %}</label>
+        <input type="number" id="recipe-cook-time" class="form-control" min="0"/>
+      </div>
+      <button class="btn btn-sm btn-primary mb-3" onclick="saveRecipeDetails()"><i class="bi bi-save me-1"></i>{% trans "Save Recipe" %}</button>
+      <hr/>
+      <h6 class="fw-semibold mb-2">{% trans "Ingredients" %}</h6>
+      <table class="table table-sm mb-2" id="ingredient-table">
+        <thead class="table-light"><tr><th>{% trans "Item" %}</th><th>{% trans "Qty" %}</th><th>{% trans "Unit" %}</th><th style="width:80px"></th></tr></thead>
+        <tbody id="ingredient-tbody"><tr><td colspan="4" class="text-muted text-center">{% trans "No ingredients yet." %}</td></tr></tbody>
+      </table>
+      <div class="row g-2 align-items-end">
+        <div class="col-4">
+          <label class="form-label">{% trans "Inventory Item" %}</label>
+          <select id="add-ingredient-item" class="form-select form-select-sm"><option value="">{% trans "— Select —" %}</option></select>
+        </div>
+        <div class="col-2">
+          <label class="form-label">{% trans "Qty" %}</label>
+          <input type="number" id="add-ingredient-qty" class="form-control form-control-sm" step="0.0001" min="0"/>
+        </div>
+        <div class="col-2">
+          <label class="form-label">{% trans "Unit" %}</label>
+          <input type="text" id="add-ingredient-unit" class="form-control form-control-sm"/>
+        </div>
+        <div class="col-2">
+          <button class="btn btn-sm btn-primary" onclick="addIngredient()"><i class="bi bi-plus me-1"></i>{% trans "Add" %}</button>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" data-bs-dismiss="modal">{% trans "Close" %}</button>
+    </div>
+  </div></div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+const BRANCH_ID = '{{ branch_id }}';
+const CURRENCY = '{{ currency|default:"ETB" }}';
+const MENU_I18N = {
+  noItems: '{% trans "No menu items." %}',
+  available: '{% trans "Available" %}',
+  unavailable: '{% trans "Unavailable" %}',
+  archived: '{% trans "Archived" %}',
+  edit: '{% trans "Edit" %}',
+  archive: '{% trans "Archive" %}',
+  restore: '{% trans "Restore" %}',
+  recipe: '{% trans "Recipe" %}',
+  loading: '{% trans "Loading\u2026" %}',
+  noIngredients: '{% trans "No ingredients defined yet." %}',
+  failedRecipe: '{% trans "Failed to load recipe." %}',
+  failedLoad: '{% trans "Failed to load." %}',
+  remove: '{% trans "Remove" %}',
+  selectDash: '{% trans "\u2014 Select \u2014" %}',
+  recipeDash: '{% trans "Recipe \u2014 " %}',
+};
+
+async function loadMenu() {
+  const showArchived = document.getElementById('show-archived').checked ? '1' : '0';
+  const resp = await fetch(`/api/v1/branches/${BRANCH_ID}/menu-items/?show_archived=${showArchived}`, {credentials:'same-origin'});
+  const data = await resp.json();
+  const items = data.results || data;
+  const tbody = document.getElementById('menu-tbody');
+  tbody.innerHTML = items.length === 0
+    ? '<tr><td colspan="5" class="text-center text-muted py-4">' + MENU_I18N.noItems + '</td></tr>'
+    : items.map(i => `<tr>
+        <td class="menu-name-cell" data-label="{% trans 'Item' %}">
+          <div class="d-flex align-items-start gap-2">
+            ${i.image_url ? `<img src="${i.image_url}" alt="${i.name_translated || i.name}" style="width:40px;height:34px;object-fit:cover;border-radius:4px;flex-shrink:0;" loading="lazy"/>` : ''}
+            <div class="flex-grow-1">
+              <strong>${i.name_translated || i.name}</strong>
+              ${(i.description_translated || i.description) ? `<div class="text-muted small menu-description">${i.description_translated || i.description}</div>` : ''}
+            </div>
+          </div>
+        </td>
+        <td data-label="{% trans 'Price' %}">${CURRENCY} ${parseFloat(i.price).toFixed(2)}</td>
+        <td data-label="{% trans 'Categories' %}">${(i.categories||[]).map(c=>c.name).join(', ')||'—'}</td>
+        <td data-label="{% trans 'Status' %}"><span class="badge ${i.is_archived?'badge-status-served':i.status==='available'?'badge-status-ready':'badge-status-preparing'}">${i.is_archived?MENU_I18N.archived:i.status==='available'?MENU_I18N.available:MENU_I18N.unavailable}</span></td>
+        <td data-label="{% trans 'Actions' %}">
+          <div class="action-buttons">
+            <button class="btn btn-sm btn-outline-secondary manage-recipe-btn" data-item-id="${i.id}" data-item-name="${i.name}" title="${MENU_I18N.recipe}"><i class="bi bi-book"></i><span class="ms-1">${MENU_I18N.recipe}</span></button>
+            ${i.is_archived
+              ? `<button class="btn btn-sm btn-outline-secondary" onclick="restoreItem('${i.id}')" title="${MENU_I18N.restore}"><i class="bi bi-arrow-counterclockwise"></i><span class="ms-1">${MENU_I18N.restore}</span></button>`
+              : `<button class="btn btn-sm btn-outline-primary" onclick="editMenuItem('${i.id}')" title="${MENU_I18N.edit}"><i class="bi bi-pencil"></i><span class="ms-1">${MENU_I18N.edit}</span></button>
+                 <button class="btn btn-sm btn-outline-danger" onclick="archiveItem('${i.id}')" title="${MENU_I18N.archive}"><i class="bi bi-archive"></i><span class="ms-1">${MENU_I18N.archive}</span></button>`}
+          </div>
+        </td>
+      </tr>`).join('');
+}
+
+async function saveMenuItem() {
+  const name = document.getElementById('mi-name').value.trim();
+  const price = document.getElementById('mi-price').value;
+  if (!name || !price) { alert('Name and price are required'); return; }
+
+  // Block save if image is still uploading
+  const imageUrlInput = document.getElementById('mi-image-url');
+  const imageFile = document.getElementById('mi-image').files[0];
+  if (imageFile && !imageUrlInput.value) {
+    alert('Please wait for the image to finish uploading, or remove it before saving.');
+    return;
+  }
+
+  const csrf = document.cookie.split('; ').find(r=>r.startsWith('csrftoken='))?.split('=')[1]||'';
+
+  // Collect checked dietary tags
+  const checkedTags = Array.from(document.querySelectorAll('input[name="dietary_tags"]:checked'))
+    .map(el => el.value);
+
+  // Collect checked category IDs
+  const checkedCategoryIds = Array.from(document.querySelectorAll('input[name="category_ids"]:checked'))
+    .map(el => el.value);
+
+  // Send as JSON — image is a URL string (from Cloudinary), not a file
+  const payload = {
+    name,
+    name_am: document.getElementById('mi-name-am').value,
+    price,
+    description: document.getElementById('mi-desc').value,
+    description_am: document.getElementById('mi-desc-am').value,
+    prep_time_minutes: parseInt(document.getElementById('mi-prep').value)||15,
+    status: document.getElementById('mi-status').value,
+  };
+  if (imageUrlInput.value) {
+    payload.external_image_url = imageUrlInput.value;  // Cloudinary CDN URL
+  }
+
+  // Add dietary tags and category IDs to payload
+  payload.dietary_tags = checkedTags;
+  payload.category_ids = checkedCategoryIds;
+
+  const resp = await fetch(`/api/v1/branches/${BRANCH_ID}/menu-items/`, {
+    method: 'POST',
+    credentials: 'same-origin',
+    headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrf },
+    body: JSON.stringify(payload),
+  });
+
+  if (resp.ok) {
+    try { bootstrap.Modal.getInstance(document.getElementById('addItemModal'))?.hide(); } catch(e) {}
+    // Reset form
+    document.getElementById('mi-image').value = '';
+    document.getElementById('mi-image-url').value = '';
+    document.getElementById('mi-image-preview').classList.add('d-none');
+    document.getElementById('mi-image-progress').classList.add('d-none');
+    // Reset checkbox groups
+    document.querySelectorAll('input[name="dietary_tags"]').forEach(el => el.checked = false);
+    document.querySelectorAll('input[name="category_ids"]').forEach(el => el.checked = false);
+    loadMenu();
+  } else {
+    const err = await resp.json();
+    alert(JSON.stringify(err.message || err));
+  }
+}
+
+async function archiveItem(id) {
+  if (!confirm('Archive this menu item?')) return;
+  const csrf = document.cookie.split('; ').find(r=>r.startsWith('csrftoken='))?.split('=')[1]||'';
+  await fetch(`/api/v1/menu-items/${id}/archive/`, {method:'POST',credentials:'same-origin',headers:{'X-CSRFToken':csrf}});
+  loadMenu();
+}
+
+async function restoreItem(id) {
+  if (!confirm('Restore this menu item?')) return;
+  const csrf = document.cookie.split('; ').find(r=>r.startsWith('csrftoken='))?.split('=')[1]||'';
+  await fetch(`/api/v1/menu-items/${id}/`, {
+    method:'PATCH', credentials:'same-origin',
+    headers:{'Content-Type':'application/json','X-CSRFToken':csrf},
+    body: JSON.stringify({is_archived: false, status: 'available'})
+  });
+  loadMenu();
+}
+
+// ── Cloudinary config ──────────────────────────────────────────────────────
+const CLOUDINARY_CLOUD = 'h4a1opn2';
+const CLOUDINARY_PRESET = 'restaurant_menu';
+
+async function handleImageChange(inputEl) {
+  const file = inputEl.files[0];
+  console.log('[Image] file selected:', file ? file.name : 'none');
+  const preview = document.getElementById('mi-image-preview');
+  const progressDiv = document.getElementById('mi-image-progress');
+  const bar = document.getElementById('mi-upload-bar');
+  const statusText = document.getElementById('mi-upload-status');
+  const urlInput = document.getElementById('mi-image-url');
+
+  // Reset
+  urlInput.value = '';
+  preview.src = '';
+  preview.classList.add('d-none');
+
+  if (!file) return;
+
+  if (file.size > 5 * 1024 * 1024) {
+    alert('Image must be under 5 MB');
+    this.value = '';
+    return;
+  }
+
+  // Show local preview immediately
+  const reader = new FileReader();
+  reader.onload = e => { preview.src = e.target.result; preview.classList.remove('d-none'); };
+  reader.readAsDataURL(file);
+
+  // Upload to Cloudinary via XHR (so we can show progress)
+  progressDiv.classList.remove('d-none');
+  bar.style.width = '0%';
+  statusText.textContent = 'Uploading to CDN…';
+
+  try {
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('upload_preset', CLOUDINARY_PRESET);
+    formData.append('folder', 'restaurant_menu_items');
+
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST', `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/image/upload`);
+
+    xhr.upload.onprogress = e => {
+      if (e.lengthComputable) {
+        const pct = Math.round((e.loaded / e.total) * 100);
+        bar.style.width = pct + '%';
+      }
+    };
+
+    await new Promise((resolve, reject) => {
+      xhr.onload = () => {
+        console.log('[Cloudinary] status:', xhr.status, 'response:', xhr.responseText.substring(0, 300));
+        if (xhr.status === 200) {
+          let data;
+          try { data = JSON.parse(xhr.responseText); } catch(e) { reject(new Error('Bad JSON from Cloudinary')); return; }
+          if (!data.secure_url) {
+            reject(new Error('Cloudinary returned no secure_url: ' + JSON.stringify(data.error || data)));
+            return;
+          }
+          urlInput.value = data.secure_url;
+          preview.src = data.secure_url;
+          bar.style.width = '100%';
+          bar.classList.remove('progress-bar-animated');
+          statusText.textContent = '✓ Uploaded to CDN';
+          console.log('[Cloudinary] upload OK:', data.secure_url);
+          resolve(data);
+        } else {
+          let msg = `Cloudinary error ${xhr.status}`;
+          try { msg += ': ' + JSON.parse(xhr.responseText).error.message; } catch(e) {}
+          reject(new Error(msg));
+        }
+      };
+      xhr.onerror = () => reject(new Error('Network error during upload'));
+      xhr.send(formData);
+    });
+  } catch (err) {
+    console.error('[Cloudinary] upload failed:', err.message);
+    statusText.textContent = '✗ ' + err.message;
+    bar.classList.add('bg-danger');
+    urlInput.value = '';
+  }
+}
+
+async function loadCategoriesForEdit() {
+  const container = document.getElementById('edit-mi-categories-container');
+  try {
+    const response = await fetch(`/api/v1/branches/${BRANCH_ID}/categories/`, {credentials: 'same-origin'});
+    const data = await response.json();
+    const categories = Array.isArray(data) ? data : (data.results || []);
+    if (categories.length === 0) {
+      container.innerHTML = '<p class="text-muted">No categories defined for this branch.</p>';
+      return;
+    }
+    let html = '';
+    for (const cat of categories) {
+      html += `
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" name="category_ids" value="${cat.id}" id="edit-cat-${cat.id}">
+          <label class="form-check-label" for="edit-cat-${cat.id}">${cat.name}</label>
+        </div>
+      `;
+    }
+    container.innerHTML = html;
+  } catch (err) {
+    console.error('Failed to load categories for edit:', err);
+    container.innerHTML = '<p class="text-danger">Failed to load categories.</p>';
+  }
+}
+
+async function editMenuItem(id) {
+  try {
+    const response = await fetch(`/api/v1/menu-items/${id}/`, {credentials: 'same-origin'});
+    const item = await response.json();
+
+    document.getElementById('edit-mi-id').value = item.id;
+    document.getElementById('edit-mi-name').value = item.name;
+    document.getElementById('edit-mi-name-am').value = item.name_am || '';
+    document.getElementById('edit-mi-desc').value = item.description || '';
+    document.getElementById('edit-mi-desc-am').value = item.description_am || '';
+    document.getElementById('edit-mi-price').value = item.price;
+    document.getElementById('edit-mi-prep').value = item.prep_time_minutes || '';
+    document.getElementById('edit-mi-status').value = item.status;
+    const imgPreview = document.getElementById('edit-mi-image-preview');
+    if (item.image_url) {
+      imgPreview.src = item.image_url;
+      imgPreview.classList.remove('d-none');
+    } else {
+      imgPreview.src = '';
+      imgPreview.classList.add('d-none');
+    }
+
+    // Pre-check dietary tags
+    document.querySelectorAll('#editItemModal input[name="dietary_tags"]').forEach(el => {
+      el.checked = (item.dietary_tags || []).includes(el.value);
+    });
+
+    // Load categories and pre-check
+    await loadCategoriesForEdit();
+    const itemCategoryIds = (item.categories || []).map(cat => cat.id);
+    document.querySelectorAll('#editItemModal input[name="category_ids"]').forEach(el => {
+      el.checked = itemCategoryIds.includes(el.value);
+    });
+
+    new bootstrap.Modal(document.getElementById('editItemModal')).show();
+  } catch (err) {
+    console.error('Failed to load item for edit:', err);
+    alert('Failed to load item details.');
+  }
+}
+
+async function updateMenuItem() {
+  const id = document.getElementById('edit-mi-id').value;
+  const name = document.getElementById('edit-mi-name').value.trim();
+  const price = document.getElementById('edit-mi-price').value;
+  if (!name || !price) { alert('Name and price are required'); return; }
+
+  const csrf = document.cookie.split('; ').find(r=>r.startsWith('csrftoken='))?.split('=')[1]||'';
+
+  const checkedTags = Array.from(document.querySelectorAll('#editItemModal input[name="dietary_tags"]:checked'))
+    .map(el => el.value);
+  const checkedCategoryIds = Array.from(document.querySelectorAll('#editItemModal input[name="category_ids"]:checked'))
+    .map(el => el.value);
+
+  const payload = {
+    name,
+    name_am: document.getElementById('edit-mi-name-am').value,
+    price,
+    description: document.getElementById('edit-mi-desc').value,
+    description_am: document.getElementById('edit-mi-desc-am').value,
+    prep_time_minutes: parseInt(document.getElementById('edit-mi-prep').value)||15,
+    status: document.getElementById('edit-mi-status').value,
+    dietary_tags: checkedTags,
+    category_ids: checkedCategoryIds,
+  };
+
+  const resp = await fetch(`/api/v1/menu-items/${id}/`, {
+    method: 'PATCH',
+    credentials: 'same-origin',
+    headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrf },
+    body: JSON.stringify(payload),
+  });
+
+  if (resp.ok) {
+    try { bootstrap.Modal.getInstance(document.getElementById('editItemModal'))?.hide(); } catch(e) {}
+    loadMenu();
+  } else {
+    const err = await resp.json();
+    alert(JSON.stringify(err.message || err));
+  }
+}
+
+async function loadCategories() {
+  const container = document.getElementById('mi-categories-container');
+  try {
+    const response = await fetch(`/api/v1/branches/${BRANCH_ID}/categories/`, {credentials: 'same-origin'});
+    const data = await response.json();
+    const categories = Array.isArray(data) ? data : (data.results || []);
+    if (categories.length === 0) {
+      container.innerHTML = '<p class="text-muted">No categories defined for this branch.</p>';
+      return;
+    }
+    let html = '';
+    for (const cat of categories) {
+      html += `
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" name="category_ids" value="${cat.id}" id="cat-${cat.id}">
+          <label class="form-check-label" for="cat-${cat.id}">${cat.name}</label>
+        </div>
+      `;
+    }
+    container.innerHTML = html;
+  } catch (err) {
+    console.error('Failed to load categories:', err);
+    container.innerHTML = '<p class="text-danger">Failed to load categories.</p>';
+  }
+}
+
+document.getElementById('addItemModal').addEventListener('show.bs.modal', loadCategories);
+
+// ── Recipe management ──────────────────────────────────────────────────────
+
+let currentRecipeItemId = null;
+
+document.addEventListener('click', function(e) {
+  const btn = e.target.closest('.manage-recipe-btn');
+  if (btn) {
+    currentRecipeItemId = btn.dataset.itemId;
+    const itemName = btn.dataset.itemName;
+    if (!currentRecipeItemId) {
+      console.error('[Recipe] Button has no itemId', btn.outerHTML);
+      return;
+    }
+    loadRecipeModal(currentRecipeItemId, itemName);
+  }
+});
+
+async function loadRecipeModal(itemId, itemName) {
+  document.getElementById('recipeModalTitle').textContent = MENU_I18N.recipeDash + itemName;
+  document.getElementById('recipe-method').value = '';
+  document.getElementById('recipe-cook-time').value = '';
+  document.getElementById('ingredient-tbody').innerHTML = '<tr><td colspan="4" class="text-muted text-center">' + MENU_I18N.loading + '</td></tr>';
+  document.getElementById('recipe-empty-banner')?.remove();
+
+  await loadInventoryDropdown();
+
+  try {
+    const url = '/api/v1/menu-items/' + itemId + '/recipe/';
+    const resp = await fetch(url, {credentials:'same-origin'});
+    if (resp.ok) {
+      const recipe = await resp.json();
+      document.getElementById('recipe-method').value = recipe.method || '';
+      document.getElementById('recipe-cook-time').value = recipe.cook_time_minutes || '';
+      renderIngredients(recipe.ingredients || []);
+    } else if (resp.status === 404) {
+      document.getElementById('recipe-method').insertAdjacentHTML('beforebegin',
+        '<div id="recipe-empty-banner" class="alert alert-info py-2 small mb-2" style="background:#edf2ee;color:#5D7061;border:1px solid #5D7061;">No recipe yet. Fill in the fields below and click <strong>Save</strong> to create one.</div>');
+      document.getElementById('ingredient-tbody').innerHTML = '<tr><td colspan="4" class="text-muted text-center">' + MENU_I18N.noIngredients + '</td></tr>';
+    } else {
+      console.error('[Recipe] HTTP', resp.status);
+    }
+  } catch (err) {
+    document.getElementById('ingredient-tbody').innerHTML = '<tr><td colspan="4" class="text-danger text-center">' + MENU_I18N.failedRecipe + '</td></tr>';
+  }
+
+  new bootstrap.Modal(document.getElementById('recipeModal')).show();
+}
+
+function renderIngredients(ingredients) {
+  const tbody = document.getElementById('ingredient-tbody');
+  if (!ingredients.length) {
+    tbody.innerHTML = '<tr><td colspan="4" class="text-muted text-center">' + MENU_I18N.noIngredients + '</td></tr>';
+    return;
+  }
+  tbody.innerHTML = ingredients.map(function(ing) {
+    return '<tr>' +
+      '<td>' + (ing.inventory_item_name || ing.inventory_item_id) + '</td>' +
+      '<td>' + ing.quantity + '</td>' +
+      '<td>' + ing.unit + '</td>' +
+      '<td><button class="btn btn-xs btn-sm btn-outline-danger" onclick="removeIngredient(\'' + ing.id + '\')">' + MENU_I18N.remove + '</button></td>' +
+      '</tr>';
+  }).join('');
+}
+
+async function saveRecipeDetails() {
+  const method = document.getElementById('recipe-method').value.trim();
+  const cookTime = parseInt(document.getElementById('recipe-cook-time').value) || 0;
+  const csrf = document.cookie.split('; ').find(function(r) { return r.startsWith('csrftoken='); })?.split('=')[1] || '';
+  const url = '/api/v1/menu-items/' + currentRecipeItemId + '/recipe/';
+
+  // Try PATCH first (existing recipe), fall back to POST (new recipe)
+  let resp = await fetch(url, {
+    method: 'PATCH',
+    credentials: 'same-origin',
+    headers: {'Content-Type': 'application/json', 'X-CSRFToken': csrf},
+    body: JSON.stringify({method: method, cook_time_minutes: cookTime}),
+  });
+
+  if (resp.status === 404) {
+    resp = await fetch(url, {
+      method: 'POST',
+      credentials: 'same-origin',
+      headers: {'Content-Type': 'application/json', 'X-CSRFToken': csrf},
+      body: JSON.stringify({method: method, cook_time_minutes: cookTime}),
+    });
+  }
+
+  if (resp.ok) {
+    // Refresh the modal with the saved recipe
+    const recipe = await resp.json();
+    document.getElementById('recipe-method').value = recipe.method || '';
+    document.getElementById('recipe-cook-time').value = recipe.cook_time_minutes || '';
+    renderIngredients(recipe.ingredients || []);
+  } else {
+    const err = await resp.json().catch(function(){ return {detail: resp.statusText}; });
+    alert(err.detail || JSON.stringify(err));
+  }
+}
+
+async function addIngredient() {
+  const itemSelect = document.getElementById('add-ingredient-item');
+  const inventoryItemId = itemSelect.value;
+  const qty = document.getElementById('add-ingredient-qty').value;
+  const unit = document.getElementById('add-ingredient-unit').value.trim();
+
+  if (!inventoryItemId || !qty || !unit) {
+    alert('Please select an inventory item, quantity, and unit.');
+    return;
+  }
+
+  const csrf = document.cookie.split('; ').find(function(r) { return r.startsWith('csrftoken='); })?.split('=')[1] || '';
+
+  const resp = await fetch('/api/v1/menu-items/' + currentRecipeItemId + '/recipe/ingredients/', {
+    method: 'POST',
+    credentials: 'same-origin',
+    headers: {'Content-Type': 'application/json', 'X-CSRFToken': csrf},
+    body: JSON.stringify({
+      inventory_item_id: inventoryItemId,
+      quantity: parseFloat(qty),
+      unit: unit,
+    }),
+  });
+
+  if (resp.ok) {
+    const recipeResp = await fetch('/api/v1/menu-items/' + currentRecipeItemId + '/recipe/', {credentials:'same-origin'});
+    if (recipeResp.ok) {
+      const recipe = await recipeResp.json();
+      renderIngredients(recipe.ingredients || []);
+    }
+    itemSelect.value = '';
+    document.getElementById('add-ingredient-qty').value = '';
+    document.getElementById('add-ingredient-unit').value = '';
+  } else {
+    const err = await resp.json();
+    alert(JSON.stringify(err.message || err));
+  }
+}
+
+async function removeIngredient(ingredientId) {
+  if (!confirm('Remove this ingredient?')) return;
+  const csrf = document.cookie.split('; ').find(function(r) { return r.startsWith('csrftoken='); })?.split('=')[1] || '';
+
+  const resp = await fetch('/api/v1/menu-items/' + currentRecipeItemId + '/recipe/ingredients/' + ingredientId + '/', {
+    method: 'DELETE',
+    credentials: 'same-origin',
+    headers: {'X-CSRFToken': csrf},
+  });
+
+  if (resp.ok) {
+    const recipeResp = await fetch('/api/v1/menu-items/' + currentRecipeItemId + '/recipe/', {credentials:'same-origin'});
+    if (recipeResp.ok) {
+      const recipe = await recipeResp.json();
+      renderIngredients(recipe.ingredients || []);
+    }
+  } else {
+    alert('Failed to remove ingredient.');
+  }
+}
+
+async function loadInventoryDropdown() {
+  const select = document.getElementById('add-ingredient-item');
+  select.innerHTML = '<option value="">' + MENU_I18N.loading + '</option>';
+
+  try {
+    const url = '/api/v1/branches/' + BRANCH_ID + '/inventory/';
+    console.log('[Inventory] Fetching', url);
+    const resp = await fetch(url, {credentials:'same-origin'});
+    if (!resp.ok) {
+      console.error('[Inventory] HTTP', resp.status, await resp.text().catch(function(){return '';}));
+      throw new Error('HTTP ' + resp.status);
+    }
+    const data = await resp.json();
+    const items = data.results || data;
+    select.innerHTML = '<option value="">' + MENU_I18N.selectDash + '</option>' +
+      items.map(function(i) {
+        return '<option value="' + i.id + '">' + i.name + ' (' + i.unit + ')</option>';
+      }).join('');
+  } catch (err) {
+    console.error('[Inventory] Failed to load:', err);
+    select.innerHTML = '<option value="">' + MENU_I18N.failedLoad + '</option>';
+  }
+}
+
+loadMenu();
+
+// WebSocket — auto-refresh on menu item updates from other staff
+(function initStaffMenuWebSocket() {
+  var ROLE = '{{ user_role }}';
+  var wsPath = ROLE === 'Kitchen_Staff' ? '/ws/kitchen/'
+    : ROLE === 'Receptionist' ? '/ws/reception/'
+    : '/ws/manager/';
+  var sid = '{{ session_key }}';
+  if (sid) wsPath += '?sessionid=' + sid;
+  var protocol = location.protocol === 'https:' ? 'wss:' : 'ws:';
+  var ws = null;
+
+  function connect() {
+    ws = new WebSocket(protocol + '//' + location.host + wsPath);
+    ws.onmessage = function (e) {
+      try {
+        const msg = JSON.parse(e.data);
+        if (msg.type === 'menu.item_updated') {
+          loadMenu();
+        }
+      } catch (_) {}
+    };
+    ws.onclose = function () { setTimeout(connect, 3000); };
+    ws.onerror = function () {};
+  }
+  connect();
+})();
+</script>
+{% endblock %}

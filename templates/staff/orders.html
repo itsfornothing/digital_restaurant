@@ -1,0 +1,161 @@
+{% extends "staff/base.html" %}
+{% load i18n %}
+{% block title %}{% trans "Orders" %}{% endblock %}
+{% block brand %}{{ restaurant_name|default:"Restaurant" }}{% endblock %}
+{% block page_title %}{% trans "Orders" %}{% endblock %}
+
+{% block nav_orders %}active{% endblock %}
+
+{% block content %}
+<div class="card">
+  <div class="card-header py-3" style="background:var(--surface-container);">
+    <div class="d-flex flex-column flex-md-row align-items-start align-items-md-center gap-2">
+      <h6 class="mb-0 fw-semibold">{% trans "All Orders" %}</h6>
+      <div class="ms-md-auto d-flex flex-wrap gap-2 w-100 w-md-auto">
+        <input type="date" id="date-filter" class="form-select form-select-sm flex-grow-1">
+        <select id="status-filter" class="form-select form-select-sm flex-grow-1">
+          <option value="">{% trans "Active orders" %}</option>
+          <option value="all">{% trans "All orders" %}</option>
+          <option value="confirmed">{% trans "Confirmed" %}</option>
+          <option value="received">{% trans "Received" %}</option>
+          <option value="preparing">{% trans "Preparing" %}</option>
+          <option value="ready">{% trans "Ready" %}</option>
+          <option value="served">{% trans "Served" %}</option>
+          <option value="cancelled">{% trans "Cancelled" %}</option>
+          <option value="served,cancelled">{% trans "Historical (Served / Cancelled)" %}</option>
+        </select>
+        <a class="btn btn-sm btn-outline-secondary" href="/api/v1/branches/{{ branch_id }}/orders/export-csv/"><i class="bi bi-download me-1"></i>{% trans "CSV" %}</a>
+        <button class="btn btn-sm btn-outline-secondary" onclick="loadOrders()"><i class="bi bi-arrow-clockwise"></i></button>
+      </div>
+    </div>
+  </div>
+  <div class="table-responsive">
+    <table class="table table-hover mb-0">
+      <thead class="table-light">
+        <tr>
+          <th>{% trans "Order #" %}</th><th>{% trans "Table" %}</th><th>{% trans "Items" %}</th><th>{% trans "Total" %}</th><th>{% trans "Status" %}</th><th>{% trans "Placed At" %}</th><th>{% trans "Actions" %}</th>
+        </tr>
+      </thead>
+      <tbody id="orders-tbody">
+        <tr><td colspan="7" class="text-center text-muted py-4">{% trans "Loading…" %}</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+const BRANCH_ID = '{{ branch_id }}';
+const CURRENCY = '{{ currency|default:"ETB" }}';
+const ORDERS_I18N = {
+  noOrders: '{% trans "No orders found." %}',
+  cancelConfirm: '{% trans "Cancel this order?" %}',
+  _statusLabels: {
+    confirmed: '{% trans "Confirmed" %}',
+    received: '{% trans "Received" %}',
+    preparing: '{% trans "Preparing" %}',
+    ready: '{% trans "Ready" %}',
+    served: '{% trans "Served" %}',
+    cancelled: '{% trans "Cancelled" %}',
+  },
+};
+function _orderStatus(s) { return ORDERS_I18N._statusLabels[s] || s; }
+const STATUS_COLORS = {confirmed:'confirmed',received:'received',preparing:'preparing',ready:'ready',served:'served',cancelled:'cancelled'};
+const NEXT = {confirmed:'received',received:'preparing',preparing:'ready',ready:'served'};
+
+async function loadOrders() {
+  let status = document.getElementById('status-filter').value;
+  const dateVal = document.getElementById('date-filter').value || 'today';
+  if (status === 'all') status = 'confirmed,received,preparing,ready,served,cancelled';
+  let url = `/api/v1/branches/${BRANCH_ID}/orders/?placed_date=${dateVal}`;
+  if (status) url += `&status=${status}`;
+  try {
+    const resp = await fetch(url, {credentials:'same-origin'});
+    const data = await resp.json();
+    let items = data.results || data;
+    if (!Array.isArray(items)) items = [];
+    // Client-side date safety net (local date)
+    const now = new Date();
+    const filterDate = dateVal === 'today'
+      ? now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0') + '-' + String(now.getDate()).padStart(2, '0')
+      : dateVal;
+    items = items.filter(function(o) {
+      if (!o.placed_at) return false;
+      var d = new Date(o.placed_at);
+      var yyyy = d.getFullYear();
+      var mm = String(d.getMonth() + 1).padStart(2, '0');
+      var dd = String(d.getDate()).padStart(2, '0');
+      return (yyyy + '-' + mm + '-' + dd) === filterDate;
+    });
+    const tbody = document.getElementById('orders-tbody');
+    if (items.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="7" class="text-center text-muted py-4">' + ORDERS_I18N.noOrders + '</td></tr>';
+      return;
+    }
+    tbody.innerHTML = items.map(o => {
+      const nextStatus = NEXT[o.status];
+      var cancelBtn = o.status !== 'ready' && o.status !== 'served' && o.status !== 'cancelled'
+        ? `<button class="btn btn-sm btn-outline-danger order-action-btn" onclick="cancelOrder('${o.id}')" title="Cancel"><i class="bi bi-x-lg"></i><span class="ms-1">Cancel</span></button>`
+        : '';
+      const actionBtn = nextStatus
+        ? `<button class="btn btn-sm btn-outline-primary order-action-btn" onclick="updateStatus('${o.id}','${nextStatus}')" title="${_orderStatus(nextStatus)}"><i class="bi bi-arrow-right"></i><span class="ms-1">${_orderStatus(nextStatus)}</span></button>`
+        : '';
+      const items_str = (o.items||[]).map(i=>`${i.quantity}× ${i.menu_item_name}`).join(', ');
+      const placed = new Date(o.placed_at).toLocaleString();
+      return `<tr>
+        <td data-label="{% trans 'Order #' %}"><strong>${o.order_number}</strong></td>
+        <td data-label="{% trans 'Table' %}">${o.table_number||'?'}</td>
+        <td data-label="{% trans 'Items' %}"><small>${items_str}</small></td>
+        <td data-label="{% trans 'Total' %}">${CURRENCY} ${parseFloat(o.total_amount||0).toFixed(2)}</td>
+        <td data-label="{% trans 'Status' %}"><span class="badge badge-status-${STATUS_COLORS[o.status]||'secondary'} badge-status">${_orderStatus(o.status)}</span></td>
+        <td data-label="{% trans 'Placed At' %}"><small>${placed}</small></td>
+        <td data-label="{% trans 'Actions' %}"><div class="action-buttons">${actionBtn}${cancelBtn}</div></td>
+      </tr>`;
+    }).join('');
+  } catch(e) { console.error(e); }
+}
+
+async function updateStatus(orderId, newStatus) {
+  try {
+    const csrfToken = document.cookie.split('; ').find(r=>r.startsWith('csrftoken='))?.split('=')[1]||'';
+    await fetch(`/api/v1/orders/${orderId}/status/`, {
+      method:'PATCH', credentials:'same-origin',
+      headers:{'Content-Type':'application/json','X-CSRFToken':csrfToken},
+      body: JSON.stringify({status:newStatus})
+    });
+    loadOrders();
+  } catch(e) { console.error(e); }
+}
+
+async function cancelOrder(orderId) {
+  if (!confirm(ORDERS_I18N.cancelConfirm)) return;
+  try {
+    const csrfToken = document.cookie.split('; ').find(r=>r.startsWith('csrftoken='))?.split('=')[1]||'';
+    await fetch(`/api/v1/orders/${orderId}/status/`, {
+      method:'PATCH', credentials:'same-origin',
+      headers:{'Content-Type':'application/json','X-CSRFToken':csrfToken},
+      body: JSON.stringify({status:'cancelled'})
+    });
+    loadOrders();
+  } catch(e) { console.error(e); }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  // Default date filter to today (local time)
+  const now = new Date();
+  const today = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0') + '-' + String(now.getDate()).padStart(2, '0');
+  document.getElementById('date-filter').value = today;
+  document.getElementById('date-filter').addEventListener('change', loadOrders);
+  document.getElementById('status-filter').addEventListener('change', loadOrders);
+  loadOrders();
+  // Listen for WS messages forwarded from base.html
+  document.addEventListener('staff:wsmsg', function (e) {
+    var msg = e.detail;
+    if (['order.new', 'order_status_changed', 'order_cancelled'].includes(msg.type)) {
+      loadOrders();
+    }
+  });
+});
+</script>
+{% endblock %}

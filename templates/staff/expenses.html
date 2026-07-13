@@ -1,0 +1,142 @@
+{% extends "staff/base.html" %}
+{% load i18n %}
+{% block title %}{% trans "Expenses" %}{% endblock %}
+{% block brand %}{{ restaurant_name|default:"Restaurant" }}{% endblock %}
+{% block page_title %}{% trans "Expenses" %}{% endblock %}
+
+{% block nav_expenses %}active{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h6 class="fw-semibold mb-0">{% trans "Expenses" %}</h6>
+  <div class="d-flex gap-2">
+    <a class="btn btn-sm btn-outline-secondary" href="/api/v1/branches/{{ branch_id }}/expenses/export-csv/"><i class="bi bi-download me-1"></i>{% trans "CSV" %}</a>
+    <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#addExpModal">
+      <i class="bi bi-plus me-1"></i>{% trans "Record Expense" %}
+    </button>
+  </div>
+</div>
+
+<div class="card">
+  <div class="table-responsive">
+    <table class="table table-hover mb-0">
+      <thead class="table-light">
+        <tr><th>{% trans "Date" %}</th><th>{% trans "Description" %}</th><th>{% trans "Category" %}</th><th>{% trans "Amount" %}</th><th>{% trans "Actions" %}</th></tr>
+      </thead>
+      <tbody id="exp-tbody"><tr><td colspan="5" class="text-center text-muted py-4">{% trans "Loading…" %}</td></tr></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Add Expense Modal -->
+<div class="modal fade" id="addExpModal" tabindex="-1">
+  <div class="modal-dialog"><div class="modal-content">
+    <div class="modal-header"><h5 class="modal-title">{% trans "Record Expense" %}</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+    <div class="modal-body">
+      <div class="mb-3"><label class="form-label">{% trans "Description" %} *</label><input type="text" id="exp-desc" class="form-control" required/></div>
+      <div class="row g-2 mb-3">
+        <div class="col">
+          <label class="form-label">{% trans "Category" %} *</label>
+          <select id="exp-cat" class="form-select">
+            <option value="food_purchases">{% trans "Food Purchases" %}</option>
+            <option value="staff_salaries">{% trans "Staff Salaries" %}</option>
+            <option value="utilities">{% trans "Utilities" %}</option>
+            <option value="rent">{% trans "Rent" %}</option>
+            <option value="maintenance">{% trans "Maintenance" %}</option>
+            <option value="marketing">{% trans "Marketing" %}</option>
+            <option value="transportation">{% trans "Transportation" %}</option>
+            <option value="miscellaneous">{% trans "Miscellaneous" %}</option>
+          </select>
+        </div>
+        <div class="col"><label class="form-label">{% trans "Amount" %} *</label><input type="number" id="exp-amount" class="form-control" step="0.01" min="0" required/></div>
+      </div>
+      <div class="mb-3"><label class="form-label">{% trans "Date" %} *</label><input type="date" id="exp-date" class="form-control" required/></div>
+      <div class="mb-3"><label class="form-label">{% trans "Notes" %}</label><textarea id="exp-notes" class="form-control" rows="2"></textarea></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" data-bs-dismiss="modal">{% trans "Cancel" %}</button>
+      <button class="btn btn-primary" onclick="saveExpense()">{% trans "Save" %}</button>
+    </div>
+  </div></div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+const BRANCH_ID = '{{ branch_id }}';
+const CURRENCY = '{{ currency|default:"ETB" }}';
+const EXPENSES_I18N = {
+  noExpenses: '{% trans "No expenses recorded yet." %}',
+  requiredFields: '{% trans "Description, amount and date are required" %}',
+  deleteConfirm: '{% trans "Delete this expense?" %}',
+  categoryLabels: {
+    food_purchases: '{% trans "Food Purchases" %}',
+    staff_salaries: '{% trans "Staff Salaries" %}',
+    utilities: '{% trans "Utilities" %}',
+    rent: '{% trans "Rent" %}',
+    maintenance: '{% trans "Maintenance" %}',
+    marketing: '{% trans "Marketing" %}',
+    transportation: '{% trans "Transportation" %}',
+    miscellaneous: '{% trans "Miscellaneous" %}',
+  },
+};
+
+// Set today as default date
+document.getElementById('exp-date').value = new Date().toISOString().slice(0,10);
+
+function categoryLabel(slug) {
+  return EXPENSES_I18N.categoryLabels[slug] || slug.replace(/_/g, ' ');
+}
+
+async function loadExpenses() {
+  const resp = await fetch(`/api/v1/branches/${BRANCH_ID}/expenses/`, {credentials:'same-origin'});
+  const data = await resp.json();
+  const items = data.results || data;
+  const tbody = document.getElementById('exp-tbody');
+  tbody.innerHTML = items.length === 0
+    ? '<tr><td colspan="5" class="text-center text-muted py-4">' + EXPENSES_I18N.noExpenses + '</td></tr>'
+    : items.map(e => `<tr>
+        <td data-label="{% trans 'Date' %}">${e.date_incurred}</td>
+        <td data-label="{% trans 'Description' %}">${e.description}</td>
+        <td data-label="{% trans 'Category' %}"><span class="badge bg-secondary">${categoryLabel(e.category)}</span></td>
+        <td class="fw-semibold" data-label="{% trans 'Amount' %}">${CURRENCY} ${parseFloat(e.amount).toFixed(2)}</td>
+        <td>
+          <button class="btn btn-xs btn-sm btn-outline-danger" onclick="deleteExpense('${e.id}')">
+            <i class="bi bi-trash3"></i>
+          </button>
+        </td>
+      </tr>`).join('');
+}
+
+async function saveExpense() {
+  const desc = document.getElementById('exp-desc').value.trim();
+  const amount = document.getElementById('exp-amount').value;
+  const date = document.getElementById('exp-date').value;
+  if (!desc || !amount || !date) { alert(EXPENSES_I18N.requiredFields); return; }
+  const csrf = document.cookie.split('; ').find(r=>r.startsWith('csrftoken='))?.split('=')[1]||'';
+  const resp = await fetch(`/api/v1/branches/${BRANCH_ID}/expenses/`, {
+    method:'POST', credentials:'same-origin',
+    headers:{'Content-Type':'application/json','X-CSRFToken':csrf},
+    body: JSON.stringify({
+      description: desc, amount: parseFloat(amount),
+      category: document.getElementById('exp-cat').value,
+      date_incurred: date,
+      notes: document.getElementById('exp-notes').value,
+    })
+  });
+  if (resp.ok) {
+    try { bootstrap.Modal.getInstance(document.getElementById('addExpModal'))?.hide(); } catch(e) {}
+    loadExpenses();
+  } else { const err = await resp.json(); alert(JSON.stringify(err)); }
+}
+
+async function deleteExpense(id) {
+  if (!confirm(EXPENSES_I18N.deleteConfirm)) return;
+  const csrf = document.cookie.split('; ').find(r=>r.startsWith('csrftoken='))?.split('=')[1]||'';
+  await fetch(`/api/v1/expenses/${id}/`, {method:'DELETE',credentials:'same-origin',headers:{'X-CSRFToken':csrf}});
+  loadExpenses();
+}
+
+loadExpenses();
+</script>
+{% endblock %}

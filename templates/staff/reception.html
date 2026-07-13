@@ -1,0 +1,39 @@
+{% extends "staff/base.html" %}
+{% load i18n %}
+{% block title %}{% trans "Reception" %}{% endblock %}
+{% block brand %}{{ restaurant_name|default:"Restaurant" }}{% endblock %}
+{% block page_title %}{% trans "Reception Dashboard" %}{% endblock %}
+
+{% block nav_reception %}active{% endblock %}
+
+{% block content %}
+<div id="reception-root" data-branch-id="{{ branch_id }}" data-session-key="{{ session_key }}"></div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+window.RECEPTION_I18N = {
+  receptionDashboard: '{% trans "Reception Dashboard" %}',
+  connected: '{% trans "Connected" %}',
+  live: '{% trans "Live" %}',
+  reconnecting: '{% trans "Reconnecting\u2026" %}',
+  order: '{% trans "order" %}',
+  orders: '{% trans "orders" %}',
+  noOrders: '{% trans "No orders yet. Waiting for incoming orders\u2026" %}',
+  incomingOrders: '{% trans "Incoming orders" %}',
+  orderHash: '{% trans "Order #" %}',
+  table: '{% trans "Table" %}',
+  items: '{% trans "Items" %}',
+  specialInstructions: '{% trans "Special Instructions" %}',
+  status: '{% trans "Status" %}',
+  time: '{% trans "Time" %}',
+  statusConfirmed: '{% trans "Confirmed" %}',
+  statusReceived: '{% trans "Received" %}',
+  statusPreparing: '{% trans "Preparing" %}',
+  statusReady: '{% trans "Ready" %}',
+  statusServed: '{% trans "Served" %}',
+  statusCancelled: '{% trans "Cancelled" %}',
+};
+</script>
+<script type="module" src="/static/staff/reception.js"></script>
+{% endblock %}

@@ -1,0 +1,3 @@
+"""
+notifications/models.py — stub.
+"""

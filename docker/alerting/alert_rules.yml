@@ -1,0 +1,78 @@
+---
+# Prometheus alerting rules for the Restaurant Platform
+# Placed in docker/alerting/ for docker-compose based deployments.
+# Mirrors the rules in monitoring/alertmanager/alerts.yml.
+#
+# Requirements: FR-P5.1, FR-P5.2, FR-P5.3, FR-P5.4 (SRS Sprint 9)
+
+groups:
+  - name: restaurant_platform_alerts
+    rules:
+
+      # -----------------------------------------------------------------------
+      # High error rate — fires when 5xx error rate exceeds 1% of traffic
+      # within a 5-minute window. (FR-P5.2)
+      # -----------------------------------------------------------------------
+      - alert: HighErrorRate
+        expr: >
+          rate(django_http_responses_total_by_status_view_method_total{status=~"5.."}[5m]) > 0.01
+        for: 1m
+        labels:
+          severity: critical
+          team: platform
+        annotations:
+          summary: "High HTTP 5xx error rate on Restaurant Platform"
+          description: >
+            5xx response rate is {{ printf "%.4f" $value }} req/s (threshold: 0.01 req/s).
+            A significant portion of requests are failing with server errors.
+
+      # -----------------------------------------------------------------------
+      # Slow API response — fires when p95 latency exceeds 500 ms. (FR-P5.2)
+      # -----------------------------------------------------------------------
+      - alert: SlowAPIResponse
+        expr: >
+          histogram_quantile(
+            0.95,
+            rate(django_http_requests_latency_seconds_bucket[5m])
+          ) > 0.5
+        for: 5m
+        labels:
+          severity: warning
+          team: platform
+        annotations:
+          summary: "High p95 API latency on Restaurant Platform"
+          description: >
+            p95 response time is {{ printf "%.3f" $value }}s (threshold: 0.5s).
+            API requests are taking too long at the 95th percentile.
+
+      # -----------------------------------------------------------------------
+      # High Celery queue depth — fires when the queue exceeds 1000 tasks.
+      # (FR-P5.3)
+      # -----------------------------------------------------------------------
+      - alert: CeleryQueueDepth
+        expr: celery_queue_length > 1000
+        for: 5m
+        labels:
+          severity: warning
+          team: platform
+        annotations:
+          summary: "Celery task queue depth is high"
+          description: >
+            Celery queue depth is {{ $value }} tasks (threshold: 1000).
+            Background task processing may be falling behind.
+
+      # -----------------------------------------------------------------------
+      # Health check failing — fires when /health/ returns non-200 for > 60s.
+      # (FR-P5.4)
+      # -----------------------------------------------------------------------
+      - alert: HealthCheckFailing
+        expr: up{job="django-health"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          team: platform
+        annotations:
+          summary: "Restaurant Platform health check is failing"
+          description: >
+            The /health/ endpoint has been reporting down for more than 60 seconds.
+            One or more critical dependencies (PostgreSQL, Redis) may be unavailable.

@@ -1,0 +1,13 @@
+---
+# Grafana dashboard provisioning — Restaurant Platform dashboard
+apiVersion: 1
+
+providers:
+  - name: Restaurant Platform
+    orgId: 1
+    type: file
+    disableDeletion: false
+    editable: true
+    updateIntervalSeconds: 30
+    options:
+      path: /var/lib/grafana/dashboards

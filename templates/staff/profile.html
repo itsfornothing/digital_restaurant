@@ -1,0 +1,204 @@
+{% extends "staff/base.html" %}
+{% load i18n %}
+{% block title %}{% trans "My Profile" %}{% endblock %}
+{% block brand %}{{ restaurant_name|default:"Restaurant" }}{% endblock %}
+{% block page_title %}{% trans "My Profile" %}{% endblock %}
+
+
+
+{% block content %}
+<div class="row">
+  <div class="col-lg-6">
+    <div class="card mb-4">
+      <div class="card-body">
+        <h6 class="fw-semibold mb-3">{% trans "Account Information" %}</h6>
+        <table class="table table-sm mb-0">
+          <tr><th class="text-secondary" style="width:140px;">{% trans "Email" %}</th><td>{{ user.email }}</td></tr>
+          <tr><th class="text-secondary">{% trans "Role" %}</th><td>{{ user_role }}</td></tr>
+          <tr><th class="text-secondary">{% trans "Branch" %}</th><td>{{ branch_name|default:"—" }}</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-6">
+    <div class="card mb-4">
+      <div class="card-body">
+        <h6 class="fw-semibold mb-3">{% trans "Two-Factor Authentication" %}</h6>
+        {% if totp_enabled %}
+          <p><span class="badge bg-success fs-6"><i class="bi bi-shield-check me-1"></i>{% trans "2FA is enabled" %}</span></p>
+          <p class="text-muted small">{% trans "Your account is protected with time-based one-time passwords." %}</p>
+          <button class="btn btn-outline-danger btn-sm" onclick="showDisable2faModal()"><i class="bi bi-shield-slash me-1"></i>{% trans "Disable 2FA" %}</button>
+        {% else %}
+          <p><span class="badge bg-secondary fs-6"><i class="bi bi-shield me-1"></i>{% trans "2FA is not enabled" %}</span></p>
+          <p class="text-muted small">{% trans "Add an extra layer of security to your account." %}</p>
+          <button class="btn btn-primary btn-sm" onclick="showEnable2faFlow()"><i class="bi bi-shield-plus me-1"></i>{% trans "Enable 2FA" %}</button>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Enable 2FA Modal -->
+<div class="modal fade" id="enable2faModal" tabindex="-1" data-bs-backdrop="static">
+  <div class="modal-dialog"><div class="modal-content">
+    <div class="modal-header">
+      <h5 class="modal-title">{% trans "Enable Two-Factor Authentication" %}</h5>
+      <button class="btn-close" data-bs-dismiss="modal"></button>
+    </div>
+    <div class="modal-body" id="enable2fa-body">
+      <div id="enable2fa-step1">
+        <p class="mb-2">{% trans "Scan the QR code below with your authenticator app (Google Authenticator, Authy, etc.):" %}</p>
+        <div class="text-center mb-3">
+          <div id="2fa-qr-container" class="d-inline-block border rounded p-2 bg-white">
+            <img id="2fa-qr-image" src="" alt="QR Code" style="width:200px;height:200px;"/>
+          </div>
+        </div>
+        <p class="text-muted small mb-0">{% trans "Or enter this secret manually:" %} <code id="2fa-secret-text" class="user-select-all"></code></p>
+        <button class="btn btn-outline-primary mt-3" onclick="show2faStep2()">{% trans "I have scanned the QR code" %} <i class="bi bi-arrow-right ms-1"></i></button>
+      </div>
+      <div id="enable2fa-step2" class="d-none">
+        <p>{% trans "Enter the 6-digit verification code from your authenticator app:" %}</p>
+        <div class="mb-3">
+          <input type="text" id="2fa-verify-code" class="form-control" maxlength="6" inputmode="numeric" pattern="[0-9]*" placeholder="000000"/>
+        </div>
+        <button class="btn btn-primary" id="2fa-verify-btn" onclick="verify2faCode()"><i class="bi bi-check-lg me-1"></i>{% trans "Verify" %}</button>
+      </div>
+      <div id="enable2fa-error" class="alert alert-danger d-none mt-3 mb-0"></div>
+    </div>
+  </div></div>
+</div>
+
+<!-- Disable 2FA Modal -->
+<div class="modal fade" id="disable2faModal" tabindex="-1">
+  <div class="modal-dialog modal-sm"><div class="modal-content">
+    <div class="modal-header">
+      <h5 class="modal-title">{% trans "Disable 2FA" %}</h5>
+      <button class="btn-close" data-bs-dismiss="modal"></button>
+    </div>
+    <div class="modal-body">
+      <p class="text-muted small">{% trans "Enter your current password to disable two-factor authentication:" %}</p>
+      <div class="mb-3">
+        <input type="password" id="disable2fa-password" class="form-control" placeholder="{% trans "Current password" %}"/>
+      </div>
+      <div id="disable2fa-error" class="alert alert-danger d-none mb-2"></div>
+      <button class="btn btn-danger" onclick="disable2fa()"><i class="bi bi-shield-slash me-1"></i>{% trans "Confirm Disable" %}</button>
+    </div>
+  </div></div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+let currentSecret = '';
+let currentOtpAuthUri = '';
+
+function showEnable2faFlow() {
+  document.getElementById('enable2fa-step1').classList.remove('d-none');
+  document.getElementById('enable2fa-step2').classList.add('d-none');
+  document.getElementById('enable2fa-error').classList.add('d-none');
+  document.getElementById('2fa-verify-code').value = '';
+
+  const modal = new bootstrap.Modal(document.getElementById('enable2faModal'));
+  modal.show();
+
+  fetch('/api/v1/auth/2fa/setup/', {
+    method: 'POST',
+    credentials: 'same-origin',
+    headers: {'X-CSRFToken': getCsrf()},
+  })
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      currentSecret = data.secret;
+      currentOtpAuthUri = data.otpauth_uri;
+      document.getElementById('2fa-secret-text').textContent = currentSecret;
+      document.getElementById('2fa-qr-image').src = data.qr_data_url;
+    })
+    .catch(function(err) {
+      console.error('2FA setup failed:', err);
+      showEnableError('Failed to generate QR code. Please try again.');
+    });
+
+  document.getElementById('enable2fa-step1').scrollIntoView({behavior:'smooth'});
+}
+
+function show2faStep2() {
+  document.getElementById('enable2fa-step1').classList.add('d-none');
+  document.getElementById('enable2fa-step2').classList.remove('d-none');
+  document.getElementById('2fa-verify-code').focus();
+}
+
+function getCsrf() {
+  var match = document.cookie.match(/csrftoken=([^;]+)/);
+  return match ? match[1] : '';
+}
+
+function showEnableError(msg) {
+  var el = document.getElementById('enable2fa-error');
+  el.textContent = msg;
+  el.classList.remove('d-none');
+}
+
+function verify2faCode() {
+  var code = document.getElementById('2fa-verify-code').value.trim();
+  if (!code || code.length !== 6) {
+    showEnableError('Please enter a valid 6-digit code.');
+    return;
+  }
+
+  document.getElementById('2fa-verify-btn').disabled = true;
+
+  fetch('/api/v1/auth/2fa/verify/', {
+    method: 'POST',
+    credentials: 'same-origin',
+    headers: {'Content-Type': 'application/json', 'X-CSRFToken': getCsrf()},
+    body: JSON.stringify({code: code}),
+  })
+    .then(function(r) {
+      if (r.ok) return r.json();
+      return r.json().then(function(err) { throw new Error(err.error ? err.error.message : 'Verification failed'); });
+    })
+    .then(function() {
+      bootstrap.Modal.getInstance(document.getElementById('enable2faModal')).hide();
+      location.reload();
+    })
+    .catch(function(err) {
+      document.getElementById('2fa-verify-btn').disabled = false;
+      showEnableError(err.message || 'Invalid code. Please try again.');
+    });
+}
+
+function showDisable2faModal() {
+  document.getElementById('disable2fa-password').value = '';
+  document.getElementById('disable2fa-error').classList.add('d-none');
+  new bootstrap.Modal(document.getElementById('disable2faModal')).show();
+}
+
+function disable2fa() {
+  var password = document.getElementById('disable2fa-password').value;
+  if (!password) {
+    document.getElementById('disable2fa-error').textContent = 'Please enter your password.';
+    document.getElementById('disable2fa-error').classList.remove('d-none');
+    return;
+  }
+
+  fetch('/api/v1/auth/2fa/disable/', {
+    method: 'POST',
+    credentials: 'same-origin',
+    headers: {'Content-Type': 'application/json', 'X-CSRFToken': getCsrf()},
+    body: JSON.stringify({password: password}),
+  })
+    .then(function(r) {
+      if (r.ok) return r.json();
+      return r.json().then(function(err) { throw new Error(err.error ? err.error.message : 'Failed to disable 2FA'); });
+    })
+    .then(function() {
+      bootstrap.Modal.getInstance(document.getElementById('disable2faModal')).hide();
+      location.reload();
+    })
+    .catch(function(err) {
+      document.getElementById('disable2fa-error').textContent = err.message;
+      document.getElementById('disable2fa-error').classList.remove('d-none');
+    });
+}
+</script>
+{% endblock %}

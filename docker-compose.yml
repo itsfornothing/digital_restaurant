@@ -1,0 +1,84 @@
+version: "3.9"
+
+# ---------------------------------------------------------------------------
+# Shared environment variables inherited by all Django-based services
+# ---------------------------------------------------------------------------
+x-django-env: &django-env
+  DJANGO_SETTINGS_MODULE: config.settings.development
+  DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY:-dev-secret-key-change-in-production}
+  DB_NAME: ${DB_NAME:-restaurant_platform}
+  DB_USER: ${DB_USER:-postgres}
+  DB_PASSWORD: ${DB_PASSWORD:-postgres}
+  DB_HOST: db
+  DB_PORT: "5432"
+  R2_ENDPOINT_URL: ${R2_ENDPOINT_URL:-}
+  R2_ACCESS_KEY_ID: ${R2_ACCESS_KEY_ID:-}
+  R2_SECRET_ACCESS_KEY: ${R2_SECRET_ACCESS_KEY:-}
+  R2_BUCKET_NAME: ${R2_BUCKET_NAME:-restaurant-platform}
+  R2_CUSTOM_DOMAIN: ${R2_CUSTOM_DOMAIN:-}
+
+# ---------------------------------------------------------------------------
+# Build context shared by web and asgi
+# ---------------------------------------------------------------------------
+x-app-build: &app-build
+  build:
+    context: .
+    dockerfile: Dockerfile
+  volumes:
+    - .:/app
+  depends_on:
+    db:
+      condition: service_healthy
+
+services:
+
+  # -------------------------------------------------------------------------
+  # PostgreSQL 15
+  # -------------------------------------------------------------------------
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: ${DB_NAME:-restaurant_platform}
+      POSTGRES_USER: ${DB_USER:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "${DB_HOST_PORT:-5432}:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-postgres} -d ${DB_NAME:-restaurant_platform}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  # -------------------------------------------------------------------------
+  # Daphne — ASGI server (HTTP + WebSocket in one process)
+  # -------------------------------------------------------------------------
+  asgi:
+    <<: *app-build
+    environment:
+      <<: *django-env
+      DJANGO_SETTINGS_MODULE: config.settings.development
+    command: daphne -b 0.0.0.0 -p 8000 config.asgi:application
+    ports:
+      - "8000:8000"
+
+  # -------------------------------------------------------------------------
+  # Nginx — reverse proxy (HTTP → Gunicorn, WebSocket → Daphne)
+  # -------------------------------------------------------------------------
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./staticfiles:/app/staticfiles:ro
+    depends_on:
+      - asgi
+
+# ---------------------------------------------------------------------------
+# Named volumes
+# ---------------------------------------------------------------------------
+volumes:
+  postgres_data:

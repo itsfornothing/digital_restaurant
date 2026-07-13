@@ -1,0 +1,127 @@
+{% extends "staff/base.html" %}
+{% load i18n %}
+{% block title %}{% trans "Inventory" %}{% endblock %}
+{% block brand %}{{ restaurant_name|default:"Restaurant" }}{% endblock %}
+{% block page_title %}{% trans "Inventory" %}{% endblock %}
+
+{% block nav_inventory %}active{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h6 class="fw-semibold mb-0">{% trans "Inventory Items" %}</h6>
+  <div class="d-flex gap-2">
+    <a class="btn btn-sm btn-outline-secondary" href="/api/v1/branches/{{ branch_id }}/inventory/export-csv/"><i class="bi bi-download me-1"></i>{% trans "CSV" %}</a>
+    <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#addInvModal">
+      <i class="bi bi-plus me-1"></i>{% trans "Add Item" %}
+    </button>
+  </div>
+</div>
+
+<!-- Alert row -->
+<div id="inv-alerts" class="mb-3"></div>
+
+<div class="card">
+  <div class="table-responsive">
+    <table class="table table-hover mb-0">
+      <thead class="table-light">
+        <tr><th>{% trans "Name" %}</th><th>{% trans "Category" %}</th><th>{% trans "Quantity" %}</th><th>{% trans "Unit" %}</th><th>{% trans "Reorder At" %}</th><th>{% trans "Expires" %}</th><th>{% trans "Status" %}</th></tr>
+      </thead>
+      <tbody id="inv-tbody"><tr><td colspan="7" class="text-center text-muted py-4">{% trans "Loading…" %}</td></tr></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Add Inventory Modal -->
+<div class="modal fade" id="addInvModal" tabindex="-1">
+  <div class="modal-dialog"><div class="modal-content">
+    <div class="modal-header"><h5 class="modal-title">{% trans "Add Inventory Item" %}</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+    <div class="modal-body">
+      <div class="row g-2">
+        <div class="col-12 mb-2"><label class="form-label">{% trans "Name" %} *</label><input type="text" id="inv-name" class="form-control" required/></div>
+        <div class="col-6 mb-2"><label class="form-label">{% trans "Category" %}</label><input type="text" id="inv-cat" class="form-control" value="{% trans 'General' %}"/></div>
+        <div class="col-6 mb-2"><label class="form-label">{% trans "Unit" %} *</label><input type="text" id="inv-unit" class="form-control" placeholder="kg, L, pcs"/></div>
+        <div class="col-6 mb-2"><label class="form-label">{% trans "Quantity" %} *</label><input type="number" id="inv-qty" class="form-control" step="0.001" min="0"/></div>
+        <div class="col-6 mb-2"><label class="form-label">{% trans "Reorder At" %}</label><input type="number" id="inv-reorder" class="form-control" step="0.001" min="0" value="5"/></div>
+        <div class="col-6 mb-2"><label class="form-label">{% trans "Purchase Price" %}</label><input type="number" id="inv-price" class="form-control" step="0.01" min="0" value="0"/></div>
+        <div class="col-6 mb-2"><label class="form-label">{% trans "Expiry Date" %}</label><input type="date" id="inv-expiry" class="form-control"/></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" data-bs-dismiss="modal">{% trans "Cancel" %}</button>
+      <button class="btn btn-primary" onclick="saveInvItem()">{% trans "Save" %}</button>
+    </div>
+  </div></div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+const BRANCH_ID = '{{ branch_id }}';
+const CURRENCY = '{{ currency|default:"ETB" }}';
+
+async function loadInventory() {
+  const resp = await fetch(`/api/v1/branches/${BRANCH_ID}/inventory/`, {credentials:'same-origin'});
+  const data = await resp.json();
+  const items = data.results || data;
+  const tbody = document.getElementById('inv-tbody');
+  const alerts = [];
+
+  tbody.innerHTML = items.length === 0
+    ? '<tr><td colspan="7" class="text-center text-muted py-4">No inventory items yet.</td></tr>'
+    : items.map(i => {
+        const qty = parseFloat(i.quantity);
+        const reorder = parseFloat(i.reorder_threshold);
+        let statusBadge = '<span class="badge bg-success">OK</span>';
+        if (qty <= 0) { statusBadge = '<span class="badge bg-danger">Out of Stock</span>'; alerts.push(`${i.name}: out of stock`); }
+        else if (qty <= reorder) { statusBadge = '<span class="badge bg-warning text-dark">Low Stock</span>'; alerts.push(`${i.name}: low stock (${qty} ${i.unit})`); }
+        const expiry = i.expiration_date ? `<span class="${daysUntil(i.expiration_date)<=3?'text-danger fw-bold':''}">${i.expiration_date}</span>` : '—';
+        return `<tr>
+          <td><strong>${i.name}</strong></td>
+          <td data-label="{% trans 'Category' %}"><small>${i.category||'—'}</small></td>
+          <td data-label="{% trans 'Qty' %}">${qty}</td>
+          <td data-label="{% trans 'Unit' %}">${i.unit}</td>
+          <td data-label="{% trans 'Reorder' %}">${reorder}</td>
+          <td data-label="{% trans 'Expires' %}">${expiry}</td>
+          <td>${statusBadge}</td>
+        </tr>`;
+      }).join('');
+
+  const alertDiv = document.getElementById('inv-alerts');
+  alertDiv.innerHTML = alerts.length
+    ? `<div class="alert alert-warning py-2"><i class="bi bi-exclamation-triangle me-2"></i>${alerts.join(' · ')}</div>`
+    : '';
+}
+
+function daysUntil(dateStr) {
+  return Math.ceil((new Date(dateStr)-new Date())/(1000*60*60*24));
+}
+
+async function saveInvItem() {
+  const name = document.getElementById('inv-name').value.trim();
+  const qty = document.getElementById('inv-qty').value;
+  const unit = document.getElementById('inv-unit').value.trim();
+  if (!name || !qty || !unit) { alert('Name, quantity and unit are required'); return; }
+  const csrf = document.cookie.split('; ').find(r=>r.startsWith('csrftoken='))?.split('=')[1]||'';
+  const body = {
+    name, unit,
+    quantity: parseFloat(qty),
+    category: document.getElementById('inv-cat').value||'General',
+    reorder_threshold: parseFloat(document.getElementById('inv-reorder').value)||5,
+    purchase_price: parseFloat(document.getElementById('inv-price').value)||0,
+  };
+  const expiry = document.getElementById('inv-expiry').value;
+  if (expiry) body.expiration_date = expiry;
+  const resp = await fetch(`/api/v1/branches/${BRANCH_ID}/inventory/`, {
+    method:'POST', credentials:'same-origin',
+    headers:{'Content-Type':'application/json','X-CSRFToken':csrf},
+    body: JSON.stringify(body)
+  });
+  if (resp.ok) {
+    try { bootstrap.Modal.getInstance(document.getElementById('addInvModal'))?.hide(); } catch(e) {}
+    loadInventory();
+  } else { const err = await resp.json(); alert(JSON.stringify(err)); }
+}
+
+loadInventory();
+</script>
+{% endblock %}

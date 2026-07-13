@@ -1,0 +1,3 @@
+"""
+kitchen/serializers.py — stub.
+"""

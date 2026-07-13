@@ -1,0 +1,735 @@
+{% extends "customer/base.html" %}
+{% load i18n %}
+
+{% block title %}
+  {% if config %}{{ config.restaurant_name }} — {% endif %}{% trans "Order Tracker" %}
+{% endblock %}
+
+{% block extra_head %}
+<style>
+  /* ----------------------------------------------------------------
+     Order tracker progress pipeline
+     States: confirmed → received → preparing → ready → served
+  ---------------------------------------------------------------- */
+  .tracker-pipeline {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    position: relative;
+    margin: 1.5rem 0;
+  }
+
+  /* Connecting line behind the steps */
+  .tracker-pipeline::before {
+    content: '';
+    position: absolute;
+    top: 20px;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: var(--neutral-color, #817471);
+    z-index: 0;
+  }
+
+  .tracker-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    z-index: 1;
+    flex: 1;
+  }
+
+  .tracker-step .step-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: var(--neutral-color, #817471);
+    border: 3px solid var(--neutral-color, #817471);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.15rem;
+    transition: background-color 0.35s, border-color 0.35s, transform 0.35s;
+    color: #fff;
+  }
+
+  .tracker-step.active .step-icon,
+  .tracker-step.done .step-icon {
+    background: var(--primary-color);
+    border-color: var(--primary-color);
+    color: #fff;
+  }
+
+  /* Pulse animation for the currently active step */
+  .tracker-step.active .step-icon {
+    animation: step-pulse 1.4s ease-in-out infinite;
+  }
+
+  @keyframes step-pulse {
+    0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(59, 130, 246, .5); }
+    50%       { transform: scale(1.12); box-shadow: 0 0 0 8px rgba(59, 130, 246, 0); }
+  }
+
+  .tracker-step .step-label {
+    margin-top: 0.45rem;
+    font-size: 0.72rem;
+    font-weight: 600;
+    text-align: center;
+    color: var(--neutral-color, #817471);  /* ≥ 4.5:1 contrast on white — WCAG AA */
+    max-width: 64px;
+    line-height: 1.25;
+  }
+
+  .tracker-step.active .step-label,
+  .tracker-step.done .step-label {
+    color: var(--primary-color);
+  }
+
+  /* Filled progress line overlay */
+  .tracker-fill {
+    position: absolute;
+    top: 20px;
+    left: 0;
+    height: 4px;
+    background: var(--primary-color);
+    z-index: 0;
+    transition: width 0.6s ease;
+    border-radius: 2px;
+  }
+
+  /* ----------------------------------------------------------------
+     Order summary card
+  ---------------------------------------------------------------- */
+  .tracker-card {
+    border: none;
+    border-radius: 0.75rem;
+    box-shadow: 0 1px 4px rgba(0,0,0,.10);
+  }
+
+  .order-status-badge {
+    font-size: 0.9rem;
+    padding: 0.45em 0.9em;
+    border-radius: 999px;
+    font-weight: 600;
+  }
+
+  /* ----------------------------------------------------------------
+     Item list inside summary card
+  ---------------------------------------------------------------- */
+  .order-items-list .order-item-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 0.5rem;
+    padding: 0.45rem 0;
+    font-size: 0.9rem;
+    border-bottom: 1px solid #f0f0f0;
+  }
+
+  .order-items-list .order-item-row:last-child {
+    border-bottom: none;
+  }
+
+  .order-item-instructions {
+    font-size: 0.75rem;
+    color: var(--neutral-color, #817471);  /* ≥ 4.5:1 contrast — WCAG AA */
+    font-style: italic;
+  }
+
+  /* ----------------------------------------------------------------
+     Connection status badge
+  ---------------------------------------------------------------- */
+  .conn-badge {
+    font-size: 0.72rem;
+    padding: 0.25em 0.65em;
+    border-radius: 999px;
+  }
+
+  /* Visible focus ring for the back button */
+  .btn:focus-visible {
+    outline: 3px solid var(--primary-color) !important;
+    outline-offset: 3px !important;
+  }
+
+  /* ----------------------------------------------------------------
+     Served / celebration state
+  ---------------------------------------------------------------- */
+  .tracker-served-banner {
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color, #5D7061));
+    color: #fff;
+    border-radius: 0.75rem;
+    padding: 1.25rem 1.5rem;
+    text-align: center;
+  }
+
+  /* ----------------------------------------------------------------
+     Cancelled state
+  ---------------------------------------------------------------- */
+  .tracker-cancelled-banner {
+    background: #f8d7da;
+    border-radius: 0.75rem;
+    padding: 1.25rem 1.5rem;
+    text-align: center;
+    color: #842029;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div
+  class="container-fluid px-2 px-md-3 py-3"
+  style="max-width: 640px; margin: 0 auto;"
+>
+
+  <!-- ================================================================
+       Page header
+  ================================================================ -->
+  <div class="d-flex align-items-center gap-2 mb-3">
+    <a
+      href="/customer/menu/"
+      class="btn btn-outline-secondary btn-sm"
+      aria-label="{% trans 'Back to menu' %}"
+    >
+      <i class="bi bi-arrow-left me-1" aria-hidden="true"></i>
+      {% trans "Back to Menu" %}
+    </a>
+    <h1 class="h5 mb-0 fw-semibold">
+      <i class="bi bi-receipt-cutoff me-1" aria-hidden="true"></i>
+      {% trans "Order Tracker" %}
+    </h1>
+
+    <!-- WebSocket / polling connection indicator -->
+    <span
+      id="conn-badge"
+      class="conn-badge ms-auto badge bg-secondary"
+      role="status"
+      aria-live="polite"
+      aria-label="{% trans 'Connection status' %}: {% trans 'Connecting…' %}"
+    >
+      <span class="spinner-border spinner-border-sm me-1" aria-hidden="true" style="width:.6rem;height:.6rem;"></span>
+      {% trans "Connecting…" %}
+    </span>
+  </div>
+
+  <!-- ================================================================
+       Order meta  (order number + table)
+  ================================================================ -->
+  <div class="d-flex flex-wrap gap-2 mb-3">
+    {% if order_number %}
+    <span
+      class="badge bg-dark py-2 px-3 fs-6"
+      aria-label="{% trans 'Order number' %}: {{ order_number }}"
+    >
+      <i class="bi bi-hash me-1" aria-hidden="true"></i>
+      {{ order_number }}
+    </span>
+    {% endif %}
+    {% if table_number %}
+    <span
+      class="badge bg-secondary py-2 px-3"
+      aria-label="{% trans 'Table number' %}: {{ table_number }}"
+    >
+      <i class="bi bi-geo-alt-fill me-1" aria-hidden="true"></i>
+      {% trans "Table" %} {{ table_number }}
+    </span>
+    {% endif %}
+  </div>
+
+  <!-- ================================================================
+       Status progress pipeline (Requirement 14.10)
+       Steps: Confirmed → Received → Preparing → Ready → Served
+  ================================================================ -->
+  <section
+    aria-label="{% trans 'Order status progress' %}"
+    class="mb-4 px-1"
+  >
+    <div class="tracker-pipeline" role="list" aria-label="{% trans 'Order status steps' %}">
+      <!-- The progress fill bar is positioned by JS -->
+      <div id="tracker-fill" class="tracker-fill" style="width:0%;" aria-hidden="true"></div>
+
+      <div
+        id="step-confirmed"
+        class="tracker-step"
+        role="listitem"
+        aria-label="{% trans 'Status: Confirmed' %}"
+      >
+        <div class="step-icon" aria-hidden="true">
+          <i class="bi bi-check2"></i>
+        </div>
+        <span class="step-label">{% trans "Confirmed" %}</span>
+      </div>
+
+      <div
+        id="step-received"
+        class="tracker-step"
+        role="listitem"
+        aria-label="{% trans 'Status: Received' %}"
+      >
+        <div class="step-icon" aria-hidden="true">
+          <i class="bi bi-inbox-fill"></i>
+        </div>
+        <span class="step-label">{% trans "Received" %}</span>
+      </div>
+
+      <div
+        id="step-preparing"
+        class="tracker-step"
+        role="listitem"
+        aria-label="{% trans 'Status: Preparing' %}"
+      >
+        <div class="step-icon" aria-hidden="true">
+          <i class="bi bi-fire"></i>
+        </div>
+        <span class="step-label">{% trans "Preparing" %}</span>
+      </div>
+
+      <div
+        id="step-ready"
+        class="tracker-step"
+        role="listitem"
+        aria-label="{% trans 'Status: Ready' %}"
+      >
+        <div class="step-icon" aria-hidden="true">
+          <i class="bi bi-bag-check-fill"></i>
+        </div>
+        <span class="step-label">{% trans "Ready" %}</span>
+      </div>
+
+      <div
+        id="step-served"
+        class="tracker-step"
+        role="listitem"
+        aria-label="{% trans 'Status: Served' %}"
+      >
+        <div class="step-icon" aria-hidden="true">
+          <i class="bi bi-stars"></i>
+        </div>
+        <span class="step-label">{% trans "Served" %}</span>
+      </div>
+    </div>
+
+    <!-- Accessible live status announcement -->
+    <p
+      id="status-announce"
+      class="visually-hidden"
+      role="status"
+      aria-live="polite"
+      aria-atomic="true"
+    ></p>
+  </section>
+
+  <!-- ================================================================
+       Served celebration banner (hidden until served)
+  ================================================================ -->
+  <div id="served-banner" class="tracker-served-banner mb-4 d-none" role="alert" aria-live="assertive">
+    <i class="bi bi-stars display-5 d-block mb-2" aria-hidden="true"></i>
+    <p class="mb-0 fw-semibold fs-5">{% trans "Enjoy your meal!" %}</p>
+    <p class="mb-0 small mt-1 opacity-90">{% trans "Your order has been served. Thank you!" %}</p>
+  </div>
+
+  <!-- ================================================================
+       Cancelled banner (hidden unless cancelled)
+  ================================================================ -->
+  <div id="cancelled-banner" class="tracker-cancelled-banner mb-4 d-none" role="alert" aria-live="assertive">
+    <i class="bi bi-x-circle-fill display-5 d-block mb-2" aria-hidden="true"></i>
+    <p class="mb-0 fw-semibold">{% trans "Order Cancelled" %}</p>
+    <p class="mb-0 small mt-1">{% trans "Your order was cancelled. Please ask staff for assistance." %}</p>
+  </div>
+
+  <!-- ================================================================
+       Order summary card (items + total)
+  ================================================================ -->
+  <section class="card tracker-card p-3 mb-3" aria-label="{% trans 'Order summary' %}">
+    <h2 class="h6 fw-semibold mb-3">
+      <i class="bi bi-list-check me-1" aria-hidden="true"></i>
+      {% trans "Your Order" %}
+    </h2>
+
+    <div
+      id="order-items-list"
+      class="order-items-list"
+      role="list"
+      aria-label="{% trans 'Items ordered' %}"
+    >
+      {% for item in order_items %}
+      <div class="order-item-row" role="listitem">
+        <div class="flex-grow-1">
+          <span class="fw-medium">{{ item.menu_item_name }}</span>
+          {% if item.special_instructions %}
+          <div class="order-item-instructions">
+            <i class="bi bi-chat-square-text me-1" aria-hidden="true"></i>
+            {{ item.special_instructions }}
+          </div>
+          {% endif %}
+        </div>
+        <div class="text-end flex-shrink-0 ms-2">
+          <span class="fw-medium" aria-label="{{ item.quantity }} {% trans 'servings' %}">× {{ item.quantity }}</span>
+          <div class="text-muted small">
+            {% if config %}{{ config.currency }}{% else %}ETB{% endif %} {{ item.unit_price }}
+          </div>
+        </div>
+      </div>
+      {% empty %}
+      <!-- Items shown here if JS doesn't populate them -->
+      <p id="no-items-msg" class="text-muted small mb-0">{% trans "Loading order items…" %}</p>
+      {% endfor %}
+    </div>
+
+    {% if order_total %}
+    <div class="d-flex justify-content-between fw-bold mt-3 pt-2 border-top">
+      <span>{% trans "Total" %}</span>
+      <span aria-label="{% trans 'Order total' %}">
+        {% if config %}{{ config.currency }}{% else %}ETB{% endif %} {{ order_total }}
+      </span>
+    </div>
+    {% endif %}
+  </section>
+
+  <!-- ================================================================
+       Estimated wait helper text
+  ================================================================ -->
+  <p class="text-muted text-center small mb-4" id="tracker-hint">
+    <i class="bi bi-clock me-1" aria-hidden="true"></i>
+    {% trans "We'll update your order status in real time." %}
+  </p>
+
+  <!-- Cancel order button (only shown when status is confirmed) -->
+  <div class="text-center mb-3" id="cancel-order-wrap" style="display:none;">
+    <button class="btn btn-outline-danger btn-sm" id="btn-cancel-order" onclick="cancelOrder()">
+      <i class="bi bi-x-circle me-1" aria-hidden="true"></i>{% trans "Cancel Order" %}
+    </button>
+  </div>
+
+</div><!-- /container -->
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+/* ====================================================================
+   Order Tracker — WebSocket + HTTP polling fallback
+   Requirements: 14.10, 17.2, 17.4
+==================================================================== */
+
+const ORDER_ID      = '{{ order_id|escapejs }}';
+const ORDER_NUMBER  = '{{ order_number|escapejs }}';
+const STATUS_API    = '/api/v1/customer/orders/' + ORDER_ID + '/status/';
+const WS_URL        = (location.protocol === 'https:' ? 'wss://' : 'ws://') +
+                      location.host + '/ws/order/' + ORDER_ID + '/';
+
+/* Initial server-rendered status (prevents flash of wrong state) */
+let currentStatus   = '{{ order_status|escapejs }}';
+
+/* Step order for the pipeline */
+const STEPS = ['confirmed', 'received', 'preparing', 'ready', 'served'];
+
+/* Human-readable status labels for screen readers */
+const STATUS_LABELS = {
+  confirmed: '{% trans "Order confirmed" %}',
+  received:  '{% trans "Order received by kitchen" %}',
+  preparing: '{% trans "Kitchen is preparing your order" %}',
+  ready:     '{% trans "Your order is ready for collection" %}',
+  served:    '{% trans "Your order has been served. Enjoy!" %}',
+  cancelled: '{% trans "Order has been cancelled" %}',
+};
+
+/* ====================================================================
+   Pipeline rendering
+==================================================================== */
+function renderPipeline(statusValue) {
+  const stepIndex = STEPS.indexOf(statusValue);
+
+  STEPS.forEach((step, idx) => {
+    const el = document.getElementById('step-' + step);
+    if (!el) return;
+    el.classList.remove('active', 'done');
+    if (idx < stepIndex)       el.classList.add('done');
+    else if (idx === stepIndex) el.classList.add('active');
+  });
+
+  /* Progress fill bar width: proportional to completed steps */
+  const fill = document.getElementById('tracker-fill');
+  if (fill) {
+    const pct = stepIndex <= 0 ? 0 : (stepIndex / (STEPS.length - 1)) * 100;
+    fill.style.width = pct + '%';
+  }
+
+  /* Served / cancelled banners */
+  const servedBanner    = document.getElementById('served-banner');
+  const cancelledBanner = document.getElementById('cancelled-banner');
+  if (servedBanner)    servedBanner.classList.toggle('d-none', statusValue !== 'served');
+  if (cancelledBanner) cancelledBanner.classList.toggle('d-none', statusValue !== 'cancelled');
+
+  /* Cancel button — only shown while order is still confirmed */
+  const cancelWrap = document.getElementById('cancel-order-wrap');
+  if (cancelWrap) cancelWrap.style.display = statusValue === 'confirmed' ? '' : 'none';
+
+  /* Accessible live announcement */
+  const announce = document.getElementById('status-announce');
+  if (announce) {
+    announce.textContent = STATUS_LABELS[statusValue] || statusValue;
+  }
+}
+
+/* Cancel order — POST to customer cancel endpoint */
+async function cancelOrder() {
+  if (!confirm('{% trans "Are you sure you want to cancel this order?" %}')) return;
+  try {
+    const resp = await fetch('/api/v1/customer/orders/' + ORDER_ID + '/cancel/', {
+      method: 'POST',
+      credentials: 'same-origin',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': _getCookie('csrftoken') || '',
+        'X-Requested-With': 'XMLHttpRequest',
+      },
+    });
+    if (resp.ok) {
+      currentStatus = 'cancelled';
+      renderPipeline('cancelled');
+      return;
+    }
+    var errMsg = '{% trans "Could not cancel order." %}';
+    try {
+      var data = await resp.json();
+      if (data.detail) errMsg = data.detail;
+      else if (data.error) errMsg = data.error;
+    } catch (_) {
+      errMsg = 'HTTP ' + resp.status + ': ' + resp.statusText;
+    }
+    alert(errMsg);
+  } catch (e) {
+    alert('{% trans "Network error. Please check your connection and try again." %}');
+  }
+}
+
+function _getCookie(name) {
+  var value = '; ' + document.cookie;
+  var parts = value.split('; ' + name + '=');
+  if (parts.length === 2) return parts.pop().split(';').shift();
+  return null;
+}
+
+/* ====================================================================
+   Connection status badge helper
+==================================================================== */
+function setConnBadge(state) {
+  const badge = document.getElementById('conn-badge');
+  if (!badge) return;
+
+  badge.className = 'conn-badge ms-auto badge';
+  badge.innerHTML = '';
+
+  if (state === 'live') {
+    badge.classList.add('bg-success');
+    badge.innerHTML = '<i class="bi bi-broadcast me-1" aria-hidden="true"></i>{% trans "Live" %}';
+    badge.setAttribute('aria-label', '{% trans "Connection status" %}: {% trans "Live" %}');
+  } else if (state === 'polling') {
+    badge.classList.add('bg-warning', 'text-dark');
+    badge.innerHTML = '<i class="bi bi-arrow-repeat me-1" aria-hidden="true"></i>{% trans "Polling" %}';
+    badge.setAttribute('aria-label', '{% trans "Connection status" %}: {% trans "Polling" %}');
+  } else {
+    badge.classList.add('bg-secondary');
+    badge.innerHTML =
+      '<span class="spinner-border spinner-border-sm me-1" aria-hidden="true" style="width:.6rem;height:.6rem;"></span>' +
+      '{% trans "Connecting…" %}';
+    badge.setAttribute('aria-label', '{% trans "Connection status" %}: {% trans "Connecting" %}');
+  }
+}
+
+/* ====================================================================
+   HTTP Polling fallback
+   Called when WebSocket is unavailable or fails to connect.
+   Polls GET /api/v1/customer/orders/{id}/status/ every 5 seconds.
+==================================================================== */
+let pollingTimer = null;
+
+async function pollStatus() {
+  try {
+    const resp = await fetch(STATUS_API, {
+      credentials: 'same-origin',
+      headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
+    });
+
+    if (resp.ok) {
+      const data = await resp.json();
+      const newStatus = data.status || data.order_status || null;
+      if (newStatus && newStatus !== currentStatus) {
+        currentStatus = newStatus;
+        renderPipeline(currentStatus);
+      }
+      setConnBadge('polling');
+
+      /* Stop polling once a terminal state is reached */
+      if (currentStatus === 'served' || currentStatus === 'cancelled') {
+        clearInterval(pollingTimer);
+        pollingTimer = null;
+      }
+    }
+  } catch (err) {
+    /* Silently continue polling — network may recover */
+    console.warn('Order status poll failed:', err);
+  }
+}
+
+function startPolling() {
+  if (pollingTimer) return;           /* already polling */
+  setConnBadge('polling');
+  pollStatus();                       /* immediate first check */
+  pollingTimer = setInterval(pollStatus, 5000);
+}
+
+/* ====================================================================
+   Customer notification helpers (browser push + sound)
+   Used when order status changes to keep the customer informed.
+==================================================================== */
+let _notifAudioCtx = null;
+function _getNotifAudio() {
+  if (!_notifAudioCtx) _notifAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  return _notifAudioCtx;
+}
+function _playNotifSound() {
+  try {
+    const ctx = _getNotifAudio();
+    if (ctx.state === "suspended") ctx.resume();
+    const osc = ctx.createOscillator(), gain = ctx.createGain();
+    osc.connect(gain); gain.connect(ctx.destination);
+    osc.type = "sine";
+    osc.frequency.setValueAtTime(660, ctx.currentTime);
+    osc.frequency.setValueAtTime(880, ctx.currentTime + 0.12);
+    gain.gain.setValueAtTime(0.25, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.25);
+    osc.start(ctx.currentTime); osc.stop(ctx.currentTime + 0.25);
+  } catch (_) {}
+}
+function _notifyCustomer(title, body) {
+  if (!("Notification" in window) || Notification.permission !== "granted") return;
+  try {
+    const n = new Notification(title, { body, icon: "/static/eating.svg", tag: "customer-order" });
+    n.onclick = function () { window.focus(); this.close(); };
+    setTimeout(() => n.close(), 8000);
+  } catch (_) {}
+}
+
+/* ====================================================================
+   WebSocket connection
+   Connects to ws/order/{order_id}/ (CustomerOrderConsumer).
+   Falls back to HTTP polling if the connection fails or is unavailable.
+==================================================================== */
+let ws = null;
+let wsReconnectTimer = null;
+let wsAttempts = 0;
+const WS_MAX_ATTEMPTS = 3;
+
+function connectWebSocket() {
+  if (!('WebSocket' in window)) {
+    /* Browser does not support WebSocket — fall back immediately */
+    startPolling();
+    return;
+  }
+
+  try {
+    ws = new WebSocket(WS_URL);
+  } catch (err) {
+    /* Malformed URL or other construction error */
+    startPolling();
+    return;
+  }
+
+  ws.onopen = function () {
+    wsAttempts = 0;
+    setConnBadge('live');
+    /* Cancel polling if it was running as a fallback */
+    if (pollingTimer) {
+      clearInterval(pollingTimer);
+      pollingTimer = null;
+    }
+  };
+
+  ws.onmessage = function (event) {
+    let data;
+    try {
+      data = JSON.parse(event.data);
+    } catch (e) {
+      return;
+    }
+
+    /*
+     * Expected message shape from CustomerOrderConsumer:
+     * {
+     *   "type": "order_status_changed",
+     *   "payload": { "order_id": "...", "new_status": "...", ... }
+     * }
+     */
+    const payload = data.payload || data;
+    const newStatus = payload.new_status || payload.status || null;
+
+    if (newStatus && newStatus !== currentStatus) {
+      currentStatus = newStatus;
+      renderPipeline(currentStatus);
+
+      /* Notify customer via browser notification + sound */
+      _playNotifSound();
+      const labels = {
+        received:  "Order Received",
+        preparing: "Preparing Your Order",
+        ready:     "Your Order is Ready!",
+        served:    "Order Served — Enjoy!",
+        cancelled: "Order Cancelled",
+      };
+      _notifyCustomer(
+        labels[newStatus] || "Order Status Changed",
+        `Order #${ORDER_NUMBER}: ${newStatus}`
+      );
+
+      /* Stop WebSocket on terminal states */
+      if (currentStatus === 'served' || currentStatus === 'cancelled') {
+        if (ws) ws.close(1000);
+      }
+    }
+  };
+
+  ws.onerror = function () {
+    /* WebSocket error — fall back to polling */
+    setConnBadge('polling');
+    if (!pollingTimer) startPolling();
+  };
+
+  ws.onclose = function (evt) {
+    /* Abnormal close — attempt to reconnect up to WS_MAX_ATTEMPTS */
+    if (evt.code !== 1000 && wsAttempts < WS_MAX_ATTEMPTS) {
+      wsAttempts++;
+      const delay = Math.min(2000 * wsAttempts, 10000);
+      wsReconnectTimer = setTimeout(connectWebSocket, delay);
+    } else if (evt.code !== 1000) {
+      /* Exhausted retries — fall back to polling permanently */
+      setConnBadge('polling');
+      startPolling();
+    }
+  };
+}
+
+/* ====================================================================
+   Initialise
+==================================================================== */
+document.addEventListener('DOMContentLoaded', function () {
+  /* Render the initial pipeline state from server-rendered status */
+  renderPipeline(currentStatus);
+
+  /* Attempt WebSocket connection; falls back to polling if it fails */
+  connectWebSocket();
+
+  /* Request notification permission for status updates */
+  if ("Notification" in window && Notification.permission === "default") {
+    Notification.requestPermission();
+  }
+});
+
+/* Clean up on page unload */
+window.addEventListener('beforeunload', function () {
+  if (ws) ws.close(1000);
+  if (pollingTimer)      clearInterval(pollingTimer);
+  if (wsReconnectTimer)  clearTimeout(wsReconnectTimer);
+});
+</script>
+{% endblock %}

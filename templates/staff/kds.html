@@ -1,0 +1,57 @@
+{% extends "staff/base.html" %}
+{% load i18n %}
+{% block title %}{% trans "Kitchen Display" %}{% endblock %}
+{% block brand %}{{ restaurant_name|default:"Restaurant" }}{% endblock %}
+{% block page_title %}{% trans "Kitchen Display System" %}{% endblock %}
+
+{% block nav_kds %}active{% endblock %}
+
+{% block extra_head %}
+<style>
+  /* Give the KDS full remaining height */
+  #kds-root { min-height: calc(100vh - 56px); }
+</style>
+{% endblock %}
+
+{% block content %}
+<div id="kds-root" data-branch-id="{{ branch_id }}" data-session-key="{{ session_key }}"></div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+window.KDS_I18N = {
+  kitchenDisplaySystem: '{% trans "Kitchen Display System" %}',
+  activeOrder: '{% trans "active order" %}',
+  activeOrders: '{% trans "active orders" %}',
+  noActiveOrders: '{% trans "No active orders." %}',
+  table: '{% trans "Table" %}',
+  viewRecipe: '{% trans "View recipe" %}',
+  loadingRecipe: '{% trans "Loading recipe…" %}',
+  noRecipe: '{% trans "No recipe configured for" %}',
+  failedLoadRecipe: '{% trans "Failed to load recipe. Please try again." %}',
+  networkErrorRecipe: '{% trans "Network error loading recipe." %}',
+  recipeViewer: '{% trans "Recipe viewer" %}',
+  closeRecipeModal: '{% trans "Close recipe modal" %}',
+  cookTime: '{% trans "Cook time:" %}',
+  min: '{% trans "min" %}',
+  ingredients: '{% trans "Ingredients" %}',
+  noIngredients: '{% trans "No ingredients listed." %}',
+  ingredient: '{% trans "Ingredient" %}',
+  qty: '{% trans "Qty" %}',
+  unit: '{% trans "Unit" %}',
+  method: '{% trans "Method" %}',
+  markReceived: '{% trans "Mark Received" %}',
+  startPreparing: '{% trans "Start Preparing" %}',
+  markReady: '{% trans "Mark Ready" %}',
+  markServed: '{% trans "Mark Served" %}',
+  statusConfirmed: '{% trans "Confirmed" %}',
+  statusReceived: '{% trans "Received" %}',
+  statusPreparing: '{% trans "Preparing" %}',
+  statusReady: '{% trans "Ready" %}',
+  statusServed: '{% trans "Served" %}',
+  statusCancelled: '{% trans "Cancelled" %}',
+  selected: '{% trans "selected" %}',
+};
+</script>
+<script type="module" src="/static/staff/kds.js"></script>
+{% endblock %}

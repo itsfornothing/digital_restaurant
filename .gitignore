@@ -1,0 +1,53 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+.venv*/
+env/
+venv/
+*.egg
+*.whl
+
+# Django
+*.mo
+*.po~
+*.pot
+media/
+staticfiles/
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Testing
+.pytest_cache/
+.hypothesis/
+.coverage
+coverage/
+htmlcov/
+.locust/
+__pypackages__/
+
+# Docker
+docker/nginx/ssl/
+
+# OS
+Thumbs.db
+Desktop.ini
+
+# Logs
+*.log

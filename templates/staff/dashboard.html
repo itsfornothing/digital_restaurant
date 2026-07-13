@@ -1,0 +1,229 @@
+{% extends "staff/base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Dashboard" %}{% endblock %}
+{% block brand %}{{ restaurant_name|default:"Restaurant" }}{% endblock %}
+{% block page_title %}{% trans "Dashboard" %}{% endblock %}
+
+{% block nav_dashboard %}active{% endblock %}
+
+{% block extra_head %}
+{% if can_view_financials %}
+<style>
+  .period-btn.active { background:#8B3A2A!important; color:#fff!important; border-color:#8B3A2A!important; }
+</style>
+{% endif %}
+{% endblock %}
+
+{% block content %}
+{% if can_view_financials %}
+<!-- Period selector -->
+<div class="d-flex align-items-center gap-3 mb-4">
+  <div class="d-flex gap-2">
+    <button class="btn btn-sm btn-outline-secondary period-btn active" data-period="daily" onclick="switchPeriod(this,'daily')">{% trans "Today" %}</button>
+    <button class="btn btn-sm btn-outline-secondary period-btn" data-period="weekly" onclick="switchPeriod(this,'weekly')">{% trans "This Week" %}</button>
+    <button class="btn btn-sm btn-outline-secondary period-btn" data-period="monthly" onclick="switchPeriod(this,'monthly')">{% trans "This Month" %}</button>
+  </div>
+</div>
+{% endif %}
+<!-- Stats row -->
+<div class="row g-3 mb-4">
+  <div class="col-6{% if can_view_financials %} col-xl-3{% endif %}">
+    <div class="card p-3">
+      <div class="d-flex justify-content-between align-items-start">
+        <div>
+          <p class="text-muted small mb-1">{% trans "Active Orders" %}</p>
+          <h3 class="fw-bold mb-0" id="stat-active-orders">—</h3>
+        </div>
+        <div class="rounded p-2" style="background:rgba(139,58,42,0.12);"><i class="bi bi-receipt fs-4" style="color:#8B3A2A;"></i></div>
+      </div>
+    </div>
+  </div>
+  {% if can_view_financials %}
+  <div class="col-6 col-xl-3">
+    <div class="card p-3">
+      <div class="d-flex justify-content-between align-items-start">
+        <div>
+          <p class="text-muted small mb-1">{% trans "Income" %}</p>
+          <h3 class="fw-bold mb-0" id="stat-income">—</h3>
+        </div>
+        <div class="rounded p-2" style="background:rgba(93,112,97,0.12);"><i class="bi bi-cash-coin fs-4" style="color:#5D7061;"></i></div>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+  <div class="col-6{% if can_view_financials %} col-xl-3{% endif %}">
+    <div class="card p-3">
+      <div class="d-flex justify-content-between align-items-start">
+        <div>
+          <p class="text-muted small mb-1">{% trans "Menu Items" %}</p>
+          <h3 class="fw-bold mb-0" id="stat-menu">—</h3>
+        </div>
+        <div class="rounded p-2" style="background:rgba(212,163,115,0.2);"><i class="bi bi-menu-button-wide fs-4" style="color:#D4A373;"></i></div>
+      </div>
+    </div>
+  </div>
+  {% if can_manage_inventory %}
+  <div class="col-6 col-xl-3">
+    <div class="card p-3">
+      <div class="d-flex justify-content-between align-items-start">
+        <div>
+          <p class="text-muted small mb-1">{% trans "Low Stock Alerts" %}</p>
+          <h3 class="fw-bold mb-0" id="stat-low-stock">—</h3>
+        </div>
+        <div class="rounded p-2" style="background:rgba(139,58,42,0.12);"><i class="bi bi-exclamation-triangle fs-4" style="color:#8B3A2A;"></i></div>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+</div>
+
+<!-- Content cards row -->
+<div class="row g-3">
+  <div class="col-md-6">
+    <div class="card p-3">
+      <h6 class="fw-semibold mb-3"><i class="bi bi-receipt me-2 text-primary"></i>{% trans "Recent Orders" %}</h6>
+      <div id="recent-orders">
+        <p class="text-muted small">{% trans "Loading…" %}</p>
+      </div>
+      <a href="/staff/orders/" class="btn btn-sm btn-outline-primary mt-2">{% trans "View All Orders" %}</a>
+    </div>
+  </div>
+  {% if can_manage_inventory %}
+  <div class="col-md-6">
+    <div class="card p-3">
+      <h6 class="fw-semibold mb-3"><i class="bi bi-box-seam me-2" style="color:#D4A373;"></i>{% trans "Inventory Alerts" %}</h6>
+      <div id="inventory-alerts">
+        <p class="text-muted small">{% trans "Loading…" %}</p>
+      </div>
+      <a href="/staff/inventory/" class="btn btn-sm btn-outline-secondary mt-2">{% trans "View Inventory" %}</a>
+    </div>
+  </div>
+  {% endif %}
+</div>
+
+{% if can_view_financials %}
+<!-- Top Selling Items -->
+<div class="row g-3 mt-3">
+  <div class="col-12">
+    <div class="card p-3">
+      <h6 class="fw-semibold mb-3"><i class="bi bi-bar-chart-line me-2" style="color:#D4A373;"></i>{% trans "Top Selling Items" %}</h6>
+      <div id="dash-top-items">
+        <p class="text-muted small">{% trans "Loading…" %}</p>
+      </div>
+    </div>
+  </div>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+const BRANCH_ID = '{{ branch_id }}';
+const CURRENCY = '{{ currency|default:"ETB" }}';
+const CAN_VIEW_FINANCIALS = {{ can_view_financials|yesno:"true,false" }};
+const CAN_MANAGE_INVENTORY = {{ can_manage_inventory|yesno:"true,false" }};
+let currentPeriodKey = 'daily';
+const DASH_I18N = {
+  table: '{% trans "Table" %}',
+  noActiveOrders: '{% trans "No active orders" %}',
+  allStockOk: '{% trans "All stock levels OK" %}',
+  noOrders: '{% trans "No orders yet for this period." %}',
+  statusLabels: {
+    confirmed: '{% trans "Confirmed" %}',
+    received: '{% trans "Received" %}',
+    preparing: '{% trans "Preparing" %}',
+    ready: '{% trans "Ready" %}',
+    served: '{% trans "Served" %}',
+    cancelled: '{% trans "Cancelled" %}',
+  },
+};
+
+function switchPeriod(btn, periodKey) {
+  document.querySelectorAll('.period-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  currentPeriodKey = periodKey;
+  loadDashboard();
+}
+
+async function loadDashboard() {
+  try {
+    const ordersResp = await fetch(`/api/v1/branches/${BRANCH_ID}/orders/?status=confirmed,received,preparing,ready&placed_date=today`, {credentials:'same-origin'});
+    if (ordersResp.ok) {
+      const data = await ordersResp.json();
+      const results = data.results || data;
+      document.getElementById('stat-active-orders').textContent = Array.isArray(results) ? results.length : '—';
+
+      const tbody = Array.isArray(results) ? results.slice(0,5).map(o => `
+        <div class="d-flex justify-content-between align-items-center py-1 border-bottom">
+          <div>
+            <span class="fw-medium small">${o.order_number}</span>
+            <span class="text-muted small ms-2">${DASH_I18N.table} ${o.table_number||'?'}</span>
+          </div>
+          <span class="badge rounded-pill ${statusBadgeClass(o.status)} badge-status">${DASH_I18N.statusLabels[o.status]||o.status}</span>
+        </div>`).join('') : `<p class="text-muted small">${DASH_I18N.noActiveOrders}</p>`;
+      document.getElementById('recent-orders').innerHTML = tbody || `<p class="text-muted small">${DASH_I18N.noActiveOrders}</p>`;
+    }
+
+    const menuResp = await fetch(`/api/v1/branches/${BRANCH_ID}/menu-items/`, {credentials:'same-origin'});
+    if (menuResp.ok) {
+      const data = await menuResp.json();
+      document.getElementById('stat-menu').textContent = data.count || (data.results||data).length || '—';
+    }
+
+    if (CAN_MANAGE_INVENTORY) {
+      const invResp = await fetch(`/api/v1/branches/${BRANCH_ID}/inventory/report/`, {credentials:'same-origin'});
+      if (invResp.ok) {
+        const data = await invResp.json();
+        const lowStock = data.below_threshold || [];
+        document.getElementById('stat-low-stock').textContent = lowStock.length;
+        document.getElementById('inventory-alerts').innerHTML = lowStock.length === 0
+          ? `<p class="text-success small"><i class="bi bi-check-circle me-1"></i>${DASH_I18N.allStockOk}</p>`
+          : lowStock.slice(0,5).map(i => `
+              <div class="d-flex justify-content-between align-items-center py-1 border-bottom">
+                <span class="small">${i.name}</span>
+                <span class="badge bg-danger">${i.quantity} ${i.unit}</span>
+              </div>`).join('');
+      }
+    }
+
+    if (CAN_VIEW_FINANCIALS) {
+      const period = currentPeriodKey;
+      const finResp = await fetch(`/api/v1/branches/${BRANCH_ID}/financials/?period=${period}`, {credentials:'same-origin'});
+      if (finResp.ok) {
+        const data = await finResp.json();
+        const periodData = data[period] || {};
+        const periodIncome = parseFloat(periodData.income || 0);
+        document.getElementById('stat-income').textContent = CURRENCY + ' ' + periodIncome.toFixed(2);
+
+        const topItems = data.top_selling_items || [];
+        const topEl = document.getElementById('dash-top-items');
+        if (!topItems.length) {
+          topEl.innerHTML = '<p class="text-muted small">' + DASH_I18N.noOrders + '</p>';
+        } else {
+          const top = topItems[0];
+          topEl.innerHTML = '<div class="d-flex align-items-center gap-3">'
+            + '<div class="rounded p-3" style="background:rgba(93,112,97,0.12);">'
+            + '<i class="bi bi-trophy fs-2" style="color:#D4A373;"></i></div>'
+            + '<div><p class="fw-bold mb-0 fs-5">' + (top.name_translated || top.name || '—') + '</p>'
+            + '<small class="text-muted">' + (top.total_quantity || 0) + ' ' + '{% trans "sold" %}' + ' · '
+            + CURRENCY + ' ' + parseFloat(top.total_revenue || 0).toFixed(2) + '</small></div></div>';
+          if (topItems.length > 1) {
+            topEl.innerHTML += '<hr class="my-2"><ul class="list-unstyled mb-0 small">'
+              + topItems.slice(1, 5).map(i => '<li class="py-1 d-flex justify-content-between"><span>' + (i.name_translated || i.name || '—') + '</span><span class="text-muted">' + (i.total_quantity || 0) + ' ' + '{% trans "sold" %}' + '</span></li>').join('')
+              + '</ul>';
+          }
+        }
+      }
+    }
+  } catch(e) { console.error('Dashboard load error:', e); }
+}
+
+function statusBadgeClass(s) {
+  const m = {confirmed:'badge-status-confirmed',received:'badge-status-received',preparing:'badge-status-preparing',ready:'badge-status-ready',served:'badge-status-served',cancelled:'badge-status-cancelled'};
+  return m[s]||'badge-status-confirmed';
+}
+
+document.addEventListener('DOMContentLoaded', function() { loadDashboard(); });
+</script>
+{% endblock %}

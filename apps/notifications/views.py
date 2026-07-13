@@ -1,0 +1,3 @@
+"""
+notifications/views.py — stub.
+"""

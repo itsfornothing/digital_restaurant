@@ -1,0 +1,511 @@
+# English base translations for the Restaurant Management & Smart Ordering Platform.
+# Copyright (C) 2024 Restaurant Platform
+# This file is distributed under the same license as the Restaurant Platform package.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: restaurant-platform 1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-01-01 00:00+0000\n"
+"PO-Revision-Date: 2024-01-01 00:00+0000\n"
+"Last-Translator: Restaurant Platform Team\n"
+"Language-Team: English\n"
+"Language: en\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+# ---------------------------------------------------------------------------
+# Navigation
+# ---------------------------------------------------------------------------
+
+msgid "Home"
+msgstr "Home"
+
+msgid "Menu"
+msgstr "Menu"
+
+msgid "Orders"
+msgstr "Orders"
+
+msgid "Dashboard"
+msgstr "Dashboard"
+
+msgid "Settings"
+msgstr "Settings"
+
+msgid "Logout"
+msgstr "Logout"
+
+msgid "Login"
+msgstr "Login"
+
+msgid "Profile"
+msgstr "Profile"
+
+msgid "Back"
+msgstr "Back"
+
+# ---------------------------------------------------------------------------
+# Order status labels
+# ---------------------------------------------------------------------------
+
+msgid "Confirmed"
+msgstr "Confirmed"
+
+msgid "Received"
+msgstr "Received"
+
+msgid "Preparing"
+msgstr "Preparing"
+
+msgid "Ready"
+msgstr "Ready"
+
+msgid "Served"
+msgstr "Served"
+
+msgid "Cancelled"
+msgstr "Cancelled"
+
+msgid "Pending"
+msgstr "Pending"
+
+# ---------------------------------------------------------------------------
+# Common actions
+# ---------------------------------------------------------------------------
+
+msgid "Save"
+msgstr "Save"
+
+msgid "Cancel"
+msgstr "Cancel"
+
+msgid "Edit"
+msgstr "Edit"
+
+msgid "Delete"
+msgstr "Delete"
+
+msgid "Add"
+msgstr "Add"
+
+msgid "Search"
+msgstr "Search"
+
+msgid "Filter"
+msgstr "Filter"
+
+msgid "Export"
+msgstr "Export"
+
+msgid "Import"
+msgstr "Import"
+
+msgid "Submit"
+msgstr "Submit"
+
+msgid "Confirm"
+msgstr "Confirm"
+
+msgid "Close"
+msgstr "Close"
+
+msgid "View"
+msgstr "View"
+
+msgid "Download"
+msgstr "Download"
+
+msgid "Print"
+msgstr "Print"
+
+msgid "Refresh"
+msgstr "Refresh"
+
+msgid "Update"
+msgstr "Update"
+
+msgid "Create"
+msgstr "Create"
+
+msgid "Remove"
+msgstr "Remove"
+
+# ---------------------------------------------------------------------------
+# Error messages
+# ---------------------------------------------------------------------------
+
+msgid "Not Found"
+msgstr "Not Found"
+
+msgid "Access Denied"
+msgstr "Access Denied"
+
+msgid "Invalid Input"
+msgstr "Invalid Input"
+
+msgid "Server Error"
+msgstr "Server Error"
+
+msgid "Page not found"
+msgstr "Page not found"
+
+msgid "An error occurred. Please try again."
+msgstr "An error occurred. Please try again."
+
+msgid "Required field"
+msgstr "Required field"
+
+msgid "This field is required."
+msgstr "This field is required."
+
+msgid "This field may not be blank."
+msgstr "This field may not be blank."
+
+msgid "Permission denied."
+msgstr "Permission denied."
+
+msgid "Authentication required."
+msgstr "Authentication required."
+
+# ---------------------------------------------------------------------------
+# Menu-related strings
+# ---------------------------------------------------------------------------
+
+msgid "Menu Items"
+msgstr "Menu Items"
+
+msgid "Categories"
+msgstr "Categories"
+
+msgid "Price"
+msgstr "Price"
+
+msgid "Description"
+msgstr "Description"
+
+msgid "Dietary Tags"
+msgstr "Dietary Tags"
+
+msgid "Nutrition"
+msgstr "Nutrition"
+
+msgid "Calories"
+msgstr "Calories"
+
+msgid "Protein"
+msgstr "Protein"
+
+msgid "Carbohydrates"
+msgstr "Carbohydrates"
+
+msgid "Fat"
+msgstr "Fat"
+
+msgid "Allergens"
+msgstr "Allergens"
+
+msgid "Preparation Time"
+msgstr "Preparation Time"
+
+msgid "Available"
+msgstr "Available"
+
+msgid "Unavailable"
+msgstr "Unavailable"
+
+msgid "Seasonal"
+msgstr "Seasonal"
+
+msgid "Archived"
+msgstr "Archived"
+
+msgid "Vegetarian"
+msgstr "Vegetarian"
+
+msgid "Vegan"
+msgstr "Vegan"
+
+msgid "Gluten-Free"
+msgstr "Gluten-Free"
+
+msgid "Dairy-Free"
+msgstr "Dairy-Free"
+
+msgid "Halal"
+msgstr "Halal"
+
+msgid "Spicy"
+msgstr "Spicy"
+
+msgid "Seafood"
+msgstr "Seafood"
+
+msgid "Desserts"
+msgstr "Desserts"
+
+msgid "Beverages"
+msgstr "Beverages"
+
+msgid "Add to Cart"
+msgstr "Add to Cart"
+
+msgid "View Menu"
+msgstr "View Menu"
+
+# ---------------------------------------------------------------------------
+# Authentication strings
+# ---------------------------------------------------------------------------
+
+msgid "Email"
+msgstr "Email"
+
+msgid "Password"
+msgstr "Password"
+
+msgid "Sign In"
+msgstr "Sign In"
+
+msgid "Sign Out"
+msgstr "Sign Out"
+
+msgid "Forgot Password"
+msgstr "Forgot Password"
+
+msgid "Reset Password"
+msgstr "Reset Password"
+
+msgid "New Password"
+msgstr "New Password"
+
+msgid "Confirm Password"
+msgstr "Confirm Password"
+
+msgid "Remember me"
+msgstr "Remember me"
+
+msgid "Two-Factor Authentication"
+msgstr "Two-Factor Authentication"
+
+msgid "Enter verification code"
+msgstr "Enter verification code"
+
+msgid "Invalid credentials"
+msgstr "Invalid credentials"
+
+msgid "Account locked"
+msgstr "Account locked"
+
+# ---------------------------------------------------------------------------
+# Financial strings
+# ---------------------------------------------------------------------------
+
+msgid "Income"
+msgstr "Income"
+
+msgid "Expenses"
+msgstr "Expenses"
+
+msgid "Profit"
+msgstr "Profit"
+
+msgid "Revenue"
+msgstr "Revenue"
+
+msgid "Total"
+msgstr "Total"
+
+msgid "Net Profit"
+msgstr "Net Profit"
+
+msgid "Tax"
+msgstr "Tax"
+
+msgid "VAT"
+msgstr "VAT"
+
+msgid "Service Charge"
+msgstr "Service Charge"
+
+msgid "Subtotal"
+msgstr "Subtotal"
+
+msgid "Amount"
+msgstr "Amount"
+
+msgid "Date"
+msgstr "Date"
+
+msgid "Period"
+msgstr "Period"
+
+msgid "Daily"
+msgstr "Daily"
+
+msgid "Weekly"
+msgstr "Weekly"
+
+msgid "Monthly"
+msgstr "Monthly"
+
+msgid "Annual"
+msgstr "Annual"
+
+msgid "Financial Report"
+msgstr "Financial Report"
+
+# ---------------------------------------------------------------------------
+# Inventory strings
+# ---------------------------------------------------------------------------
+
+msgid "Stock"
+msgstr "Stock"
+
+msgid "Low Stock"
+msgstr "Low Stock"
+
+msgid "Out of Stock"
+msgstr "Out of Stock"
+
+msgid "Expiry Warning"
+msgstr "Expiry Warning"
+
+msgid "Inventory"
+msgstr "Inventory"
+
+msgid "Supplier"
+msgstr "Supplier"
+
+msgid "Quantity"
+msgstr "Quantity"
+
+msgid "Unit"
+msgstr "Unit"
+
+msgid "Reorder Level"
+msgstr "Reorder Level"
+
+msgid "Expiry Date"
+msgstr "Expiry Date"
+
+# ---------------------------------------------------------------------------
+# Table / Order strings
+# ---------------------------------------------------------------------------
+
+msgid "Table Number"
+msgstr "Table Number"
+
+msgid "Special Instructions"
+msgstr "Special Instructions"
+
+msgid "Place Order"
+msgstr "Place Order"
+
+msgid "Order Total"
+msgstr "Order Total"
+
+msgid "Order Number"
+msgstr "Order Number"
+
+msgid "Order Status"
+msgstr "Order Status"
+
+msgid "Order Details"
+msgstr "Order Details"
+
+msgid "Your Order"
+msgstr "Your Order"
+
+msgid "Cart"
+msgstr "Cart"
+
+msgid "Items"
+msgstr "Items"
+
+msgid "Table"
+msgstr "Table"
+
+msgid "Branch"
+msgstr "Branch"
+
+# ---------------------------------------------------------------------------
+# Staff / roles
+# ---------------------------------------------------------------------------
+
+msgid "Staff"
+msgstr "Staff"
+
+msgid "Manager"
+msgstr "Manager"
+
+msgid "Kitchen Staff"
+msgstr "Kitchen Staff"
+
+msgid "Receptionist"
+msgstr "Receptionist"
+
+msgid "Tenant Owner"
+msgstr "Tenant Owner"
+
+msgid "Role"
+msgstr "Role"
+
+# ---------------------------------------------------------------------------
+# General UI
+# ---------------------------------------------------------------------------
+
+msgid "Welcome"
+msgstr "Welcome"
+
+msgid "Loading..."
+msgstr "Loading..."
+
+msgid "No results found."
+msgstr "No results found."
+
+msgid "Yes"
+msgstr "Yes"
+
+msgid "No"
+msgstr "No"
+
+msgid "Select"
+msgstr "Select"
+
+msgid "All"
+msgstr "All"
+
+msgid "None"
+msgstr "None"
+
+msgid "Active"
+msgstr "Active"
+
+msgid "Inactive"
+msgstr "Inactive"
+
+msgid "Name"
+msgstr "Name"
+
+msgid "Status"
+msgstr "Status"
+
+msgid "Actions"
+msgstr "Actions"
+
+msgid "Details"
+msgstr "Details"
+
+msgid "Notes"
+msgstr "Notes"
+
+msgid "Phone"
+msgstr "Phone"
+
+msgid "Address"
+msgstr "Address"
+
+msgid "are you sure?"
+msgstr "Are you sure?"

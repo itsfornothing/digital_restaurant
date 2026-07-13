@@ -1,0 +1,127 @@
+version: "3.9"
+
+# ---------------------------------------------------------------------------
+# Production Docker Compose
+#
+# Key differences from docker-compose.yml (development):
+#   - Uses DJANGO_SETTINGS_MODULE=config.settings.production
+#   - web: 4 Gunicorn workers (scale via `deploy.replicas`)
+#   - asgi: scale via `deploy.replicas` (default 2)
+#   - nginx: TLS 1.3 + wildcard subdomain routing + WebSocket upgrade headers
+#   - All services have health check probes
+#   - No source-code volume mounts (image is the source of truth)
+#   - Secrets loaded exclusively from environment variables
+#
+# Requirements: 19.4, 19.8, 19.9
+# ---------------------------------------------------------------------------
+
+x-django-prod-env: &django-prod-env
+  DJANGO_SETTINGS_MODULE: config.settings.production
+  DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY}
+  DB_NAME: ${DB_NAME}
+  DB_USER: ${DB_USER}
+  DB_PASSWORD: ${DB_PASSWORD}
+  DB_HOST: ${DB_HOST:-db}
+  DB_PORT: ${DB_PORT:-5432}
+  R2_ENDPOINT_URL: ${R2_ENDPOINT_URL}
+  R2_ACCESS_KEY_ID: ${R2_ACCESS_KEY_ID}
+  R2_SECRET_ACCESS_KEY: ${R2_SECRET_ACCESS_KEY}
+  R2_BUCKET_NAME: ${R2_BUCKET_NAME}
+  R2_CUSTOM_DOMAIN: ${R2_CUSTOM_DOMAIN:-}
+  ALLOWED_HOSTS: ${ALLOWED_HOSTS}
+  PLATFORM_DOMAIN: ${PLATFORM_DOMAIN}
+  EMAIL_HOST: ${EMAIL_HOST:-smtp.sendgrid.net}
+  EMAIL_PORT: ${EMAIL_PORT:-587}
+  EMAIL_HOST_USER: ${EMAIL_HOST_USER:-}
+  EMAIL_HOST_PASSWORD: ${EMAIL_HOST_PASSWORD:-}
+  DEFAULT_FROM_EMAIL: ${DEFAULT_FROM_EMAIL:-noreply@platform.example.com}
+  REPLICA_DB_HOST: ${REPLICA_DB_HOST:-}
+  REPLICA_DB_NAME: ${REPLICA_DB_NAME:-}
+  REPLICA_DB_USER: ${REPLICA_DB_USER:-}
+  REPLICA_DB_PASSWORD: ${REPLICA_DB_PASSWORD:-}
+
+x-app-prod: &app-prod
+  image: ${REGISTRY_URL}/${IMAGE_NAME:-restaurant-platform}:${IMAGE_TAG:-latest}
+  restart: unless-stopped
+  depends_on:
+    db:
+      condition: service_healthy
+
+services:
+
+  # -------------------------------------------------------------------------
+  # PostgreSQL 15 (managed externally in production — kept here for reference
+  # and for environments where the DB runs as a container)
+  # -------------------------------------------------------------------------
+  db:
+    image: postgres:15-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-postgres} -d ${DB_NAME:-restaurant_platform}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+  # -------------------------------------------------------------------------
+  # Daphne — ASGI server (HTTP + WebSocket in one process)
+  # Single process required for InMemoryChannelLayer.
+  # -------------------------------------------------------------------------
+  asgi:
+    <<: *app-prod
+    environment:
+      <<: *django-prod-env
+    command: daphne -b 0.0.0.0 -p 8000 config.asgi:application
+    expose:
+      - "8000"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:8000/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    deploy:
+      replicas: 1  # Must be 1 — InMemoryChannelLayer only works within a single process
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+      update_config:
+        parallelism: 1
+        delay: 10s
+        failure_action: rollback
+
+  # -------------------------------------------------------------------------
+  # Nginx — TLS 1.3, wildcard subdomain routing, proxies all traffic to Daphne
+  # -------------------------------------------------------------------------
+  nginx:
+    image: nginx:alpine
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.prod.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./nginx/ssl:/etc/nginx/ssl:ro
+      - ./staticfiles:/app/staticfiles:ro
+    depends_on:
+      asgi:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "nginx -t && curl -fsS http://localhost/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
+
+# ---------------------------------------------------------------------------
+# Named volumes
+# ---------------------------------------------------------------------------
+volumes:
+  postgres_data:

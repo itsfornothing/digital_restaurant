@@ -1,0 +1,159 @@
+{% extends "staff/base.html" %}
+{% load i18n %}
+{% block title %}{% trans "Tables &amp; Rooms" %}{% endblock %}
+{% block brand %}{{ restaurant_name|default:"Restaurant" }}{% endblock %}
+{% block page_title %}{% trans "Tables &amp; Rooms" %}{% endblock %}
+
+{% block nav_tables %}active{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h6 class="fw-semibold mb-0">{% trans "All Tables &amp; Rooms" %}</h6>
+  <div class="d-flex gap-2">
+    <button class="btn btn-sm btn-primary" onclick="showAddModal('table')"><i class="bi bi-plus me-1"></i>{% trans "Add Table" %}</button>
+    <button class="btn btn-sm btn-outline-primary" onclick="showAddModal('room')"><i class="bi bi-plus me-1"></i>{% trans "Add Room" %}</button>
+  </div>
+</div>
+
+<div class="card">
+  <div class="table-responsive">
+    <table class="table table-hover mb-0">
+      <thead class="table-light">
+        <tr><th>{% trans "Name" %}</th><th>{% trans "Type" %}</th><th>{% trans "Capacity" %}</th><th>{% trans "Actions" %}</th></tr>
+      </thead>
+      <tbody id="tables-tbody">
+        <tr><td colspan="4" class="text-center text-muted py-4">{% trans "Loading…" %}</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Add / Edit Modal -->
+<div class="modal fade" id="tableModal" tabindex="-1">
+  <div class="modal-dialog modal-sm modal-dialog-centered"><div class="modal-content">
+    <div class="modal-header"><h5 class="modal-title" id="tableModalTitle">{% trans "Add Table" %}</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+    <div class="modal-body">
+      <input type="hidden" id="edit-id"/>
+      <input type="hidden" id="edit-type" value="table"/>
+      <div class="mb-3">
+        <label class="form-label" id="name-label">{% trans "Table Number" %}</label>
+        <input type="text" id="item-name" class="form-control" required/>
+      </div>
+      <div class="mb-3">
+        <label class="form-label" id="capacity-label">{% trans "Seat Count" %}</label>
+        <input type="number" id="item-capacity" class="form-control" min="1" value="4"/>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" data-bs-dismiss="modal">{% trans "Cancel" %}</button>
+      <button class="btn btn-primary" onclick="saveItem()">{% trans "Save" %}</button>
+    </div>
+  </div></div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+const BRANCH_ID = '{{ branch_id }}';
+
+async function loadItems() {
+  const [tablesResp, roomsResp] = await Promise.all([
+    fetch(`/api/v1/branches/${BRANCH_ID}/tables/`, {credentials:'same-origin'}),
+    fetch(`/api/v1/branches/${BRANCH_ID}/rooms/`, {credentials:'same-origin'}),
+  ]);
+  const tables = (await tablesResp.json()).results || [];
+  const rooms = (await roomsResp.json()).results || [];
+  const allItems = [
+    ...tables.map(t => ({...t, type: 'table', label: `Table ${t.number}`})),
+    ...rooms.map(r => ({...r, type: 'room', label: r.name})),
+  ];
+  const tbody = document.getElementById('tables-tbody');
+  if (allItems.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="4" class="text-center text-muted py-4">No tables or rooms yet.</td></tr>';
+    return;
+  }
+  tbody.innerHTML = allItems.map(item => `<tr>
+    <td><strong>${item.label}</strong></td>
+    <td><span class="badge ${item.type==='table'?'badge-status-received':'badge-status-preparing'}">${item.type}</span></td>
+    <td data-label="{% trans 'Capacity' %}">${item.seat_count || item.capacity || '—'}</td>
+    <td>
+      <button class="btn btn-sm btn-outline-primary me-1" onclick="editItem('${item.id}', '${item.type}')"><i class="bi bi-pencil"></i></button>
+      <button class="btn btn-sm btn-outline-danger" onclick="deleteItem('${item.id}', '${item.type}')"><i class="bi bi-trash"></i></button>
+    </td>
+  </tr>`).join('');
+}
+
+function showAddModal(type) {
+  document.getElementById('tableModalTitle').textContent = type === 'table' ? 'Add Table' : 'Add Room';
+  document.getElementById('edit-type').value = type;
+  document.getElementById('edit-id').value = '';
+  document.getElementById('item-name').value = '';
+  document.getElementById('item-capacity').value = '4';
+  document.getElementById('name-label').textContent = type === 'table' ? 'Table Number' : 'Room Name';
+  document.getElementById('capacity-label').textContent = type === 'table' ? 'Seat Count' : 'Capacity';
+  new bootstrap.Modal(document.getElementById('tableModal')).show();
+}
+
+function editItem(id, type) {
+  document.getElementById('tableModalTitle').textContent = type === 'table' ? 'Edit Table' : 'Edit Room';
+  document.getElementById('edit-type').value = type;
+  document.getElementById('edit-id').value = id;
+  document.getElementById('name-label').textContent = type === 'table' ? 'Table Number' : 'Room Name';
+  document.getElementById('capacity-label').textContent = type === 'table' ? 'Seat Count' : 'Capacity';
+  // Fetch current values
+  fetch(`/api/v1/branches/${BRANCH_ID}/${type === 'table' ? 'tables' : 'rooms'}/${id}/`, {credentials:'same-origin'})
+    .then(r => r.json())
+    .then(data => {
+      document.getElementById('item-name').value = data.number || data.name || '';
+      document.getElementById('item-capacity').value = data.seat_count || data.capacity || '';
+    });
+  new bootstrap.Modal(document.getElementById('tableModal')).show();
+}
+
+async function saveItem() {
+  const id = document.getElementById('edit-id').value;
+  const type = document.getElementById('edit-type').value;
+  const name = document.getElementById('item-name').value.trim();
+  const capacity = parseInt(document.getElementById('item-capacity').value) || 1;
+  if (!name) { alert('Name is required'); return; }
+
+  const csrf = document.cookie.split('; ').find(r => r.startsWith('csrftoken='))?.split('=')[1] || '';
+  const payload = type === 'table' ? {number: name, seat_count: capacity} : {name, capacity};
+  const method = id ? 'PATCH' : 'POST';
+  const url = id
+    ? `/api/v1/branches/${BRANCH_ID}/${type === 'table' ? 'tables' : 'rooms'}/${id}/`
+    : `/api/v1/branches/${BRANCH_ID}/${type === 'table' ? 'tables' : 'rooms'}/`;
+
+  const resp = await fetch(url, {
+    method, credentials: 'same-origin',
+    headers: {'Content-Type': 'application/json', 'X-CSRFToken': csrf},
+    body: JSON.stringify(payload),
+  });
+
+  if (resp.ok) {
+    bootstrap.Modal.getInstance(document.getElementById('tableModal'))?.hide();
+    loadItems();
+  } else {
+    try {
+      const err = await resp.json();
+      alert(err.detail || Object.values(err).flat().filter(v => typeof v === 'string').join('\n') || JSON.stringify(err));
+    } catch {
+      alert('Failed to save. Server returned ' + resp.status);
+    }
+  }
+}
+
+async function deleteItem(id, type) {
+  if (!confirm(`Delete this ${type}?`)) return;
+  const csrf = document.cookie.split('; ').find(r => r.startsWith('csrftoken='))?.split('=')[1] || '';
+  const resp = await fetch(`/api/v1/branches/${BRANCH_ID}/${type === 'table' ? 'tables' : 'rooms'}/${id}/`, {
+    method: 'DELETE', credentials: 'same-origin',
+    headers: {'X-CSRFToken': csrf},
+  });
+  if (resp.ok) loadItems();
+  else alert('Failed to delete.');
+}
+
+document.addEventListener('DOMContentLoaded', function() { loadItems(); });
+</script>
+{% endblock %}
