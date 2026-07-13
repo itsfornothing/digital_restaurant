@@ -255,6 +255,7 @@ document.addEventListener('hide.bs.modal', function() {
   console.log('[WS] Connecting to', url);
   var ws = null;
   var retries = 0;
+  var MAX_RETRIES = 8;
   function connect() {
     ws = new WebSocket(protocol + '//' + location.host + wsPath);
     ws.onopen = function () { retries = 0; console.log('[WS] Connected'); };
@@ -269,6 +270,7 @@ document.addEventListener('hide.bs.modal', function() {
     };
     ws.onclose = function (e) {
       retries++;
+      if (retries > MAX_RETRIES) return;
       if (retries > 1) console.warn('[WS] Closed (code=' + e.code + '), reconnecting in 3s');
       setTimeout(connect, 3000);
     };

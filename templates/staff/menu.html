@@ -828,6 +828,7 @@ loadMenu();
   var protocol = location.protocol === 'https:' ? 'wss:' : 'ws:';
   var ws = null;
 
+  var menuWsRetries = 0;
   function connect() {
     ws = new WebSocket(protocol + '//' + location.host + wsPath);
     ws.onmessage = function (e) {
@@ -838,7 +839,11 @@ loadMenu();
         }
       } catch (_) {}
     };
-    ws.onclose = function () { setTimeout(connect, 3000); };
+    ws.onclose = function () {
+      menuWsRetries++;
+      if (menuWsRetries > 8) return;
+      setTimeout(connect, 3000);
+    };
     ws.onerror = function () {};
   }
   connect();
