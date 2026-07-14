@@ -156,6 +156,8 @@ document.addEventListener('DOMContentLoaded', function() {
       loadOrders();
     }
   });
+  // Polling fallback (like track order page) — refresh every 10s
+  setInterval(loadOrders, 10000);
 });
 </script>
 {% endblock %}

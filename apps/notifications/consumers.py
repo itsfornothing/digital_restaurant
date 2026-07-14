@@ -101,7 +101,7 @@ class _AuthenticatedConsumer(AsyncJsonWebsocketConsumer):
         def _load_user():
             from importlib import import_module
             from django.contrib.auth import get_user_model
-            from django_tenants.utils import schema_context
+            from django_tenants.utils import schema_context, get_tenant_model
 
             # 1. Resolve tenant from the Host header (same logic as TenantMiddleware)
             hostname = None
@@ -132,15 +132,25 @@ class _AuthenticatedConsumer(AsyncJsonWebsocketConsumer):
             if not user_id:
                 return None
 
-            # 3. Look up user in the tenant schema
+            # 3. Look up user in the resolved tenant schema
             User = get_user_model()
-            try:
-                if tenant:
-                    with schema_context(tenant.schema_name):
+            if tenant:
+                with schema_context(tenant.schema_name):
+                    try:
                         return User.objects.get(id=user_id)
-                return User.objects.get(id=user_id)
-            except User.DoesNotExist:
-                return None
+                    except User.DoesNotExist:
+                        pass
+
+            # 4. Fallback: when ngrok / unknown host, search all tenant schemas
+            TenantModel = get_tenant_model()
+            for t in TenantModel.objects.all():
+                with schema_context(t.schema_name):
+                    try:
+                        return User.objects.get(id=user_id)
+                    except User.DoesNotExist:
+                        continue
+
+            return None
 
         return await sync_to_async(_load_user)()
 
@@ -496,9 +506,55 @@ class CustomerOrderConsumer(AsyncJsonWebsocketConsumer):
         # Extract order_id from URL route
         self._order_id = self.scope["url_route"]["kwargs"].get("order_id", "")
 
-        # Validate customer session
+        # Check 1: authenticated Django user (staff viewing customer tracker)
+        user = self.scope.get("user")
+        is_auth = user is not None and user.is_authenticated
+        if is_auth:
+            self._group = f"order_{self._order_id}_customer"
+            await self.channel_layer.group_add(self._group, self.channel_name)
+            await self.accept()
+            websocket_connections_active().inc()
+            logger.info(
+                "CustomerOrderConsumer accepted (auth user): order_id=%s user=%s",
+                self._order_id, user,
+            )
+            return
+
+        # Check 2: customer session in scope
         session = self.scope.get("session", {})
         customer_session = session.get("customer_session")
+
+        # Check 3: fallback — load session from query string (cookies may not be sent on WS upgrade)
+        if not customer_session:
+            qs = self.scope.get("query_string", b"").decode()
+            if qs.startswith("sessionid="):
+                session_key = qs[len("sessionid="):]
+                if session_key:
+                    from channels.db import database_sync_to_async
+                    from django.contrib.sessions.models import Session as SessionModel
+                    session_obj = await database_sync_to_async(
+                        lambda: SessionModel.objects.filter(session_key=session_key).first()
+                    )()
+                    if session_obj:
+                        decoded = session_obj.get_decoded()
+                        # Accept if it's a customer session
+                        customer_session = decoded.get("customer_session")
+                        # Also accept authenticated user sessions
+                        if not customer_session and decoded.get("_auth_user_id"):
+                            self._group = f"order_{self._order_id}_customer"
+                            await self.channel_layer.group_add(self._group, self.channel_name)
+                            await self.accept()
+                            websocket_connections_active().inc()
+                            logger.info(
+                                "CustomerOrderConsumer accepted (query auth): order_id=%s",
+                                self._order_id,
+                            )
+                            return
+                        if customer_session:
+                            logger.info(
+                                "CustomerOrderConsumer: restored customer session from query string for order_id=%s",
+                                self._order_id,
+                            )
 
         if not customer_session:
             logger.warning(
@@ -509,8 +565,6 @@ class CustomerOrderConsumer(AsyncJsonWebsocketConsumer):
             return
 
         # Optionally: verify the order_id matches the customer's session order.
-        # The customer session stores the order_id after order placement
-        # (set by POST /api/v1/customer/orders/).
         session_order_id = customer_session.get("order_id")
         if session_order_id and str(session_order_id) != str(self._order_id):
             logger.warning(

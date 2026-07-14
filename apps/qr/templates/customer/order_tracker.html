@@ -165,7 +165,7 @@
 
   /* ----------------------------------------------------------------
      Cancelled state
-  ---------------------------------------------------------------- */
+   ---------------------------------------------------------------- */
   .tracker-cancelled-banner {
     background: #f8d7da;
     border-radius: 0.75rem;
@@ -173,11 +173,24 @@
     text-align: center;
     color: #842029;
   }
+
+  /* ----------------------------------------------------------------
+     Notification flash — brief background pulse on status change
+   ---------------------------------------------------------------- */
+  @keyframes notif-flash {
+    0%   { background-color: transparent; }
+    25%  { background-color: rgba(59, 130, 246, 0.12); }
+    100% { background-color: transparent; }
+  }
+  .notif-flash {
+    animation: notif-flash 0.6s ease-out;
+  }
 </style>
 {% endblock %}
 
 {% block content %}
 <div
+  id="order-tracker-section"
   class="container-fluid px-2 px-md-3 py-3"
   style="max-width: 640px; margin: 0 auto;"
 >
@@ -413,9 +426,9 @@
 
 const ORDER_ID      = '{{ order_id|escapejs }}';
 const ORDER_NUMBER  = '{{ order_number|escapejs }}';
-const STATUS_API    = '/api/v1/customer/orders/' + ORDER_ID + '/status/';
+const STATUS_API    = '/api/v1/customer/orders/' + ORDER_ID + '/status/?sessionid={{ session_key|escapejs }}';
 const WS_URL        = (location.protocol === 'https:' ? 'wss://' : 'ws://') +
-                      location.host + '/ws/order/' + ORDER_ID + '/';
+                      location.host + '/ws/order/' + ORDER_ID + '/?sessionid={{ session_key|escapejs }}';
 
 /* Initial server-rendered status (prevents flash of wrong state) */
 let currentStatus   = '{{ order_status|escapejs }}';
@@ -557,6 +570,7 @@ async function pollStatus() {
       if (newStatus && newStatus !== currentStatus) {
         currentStatus = newStatus;
         renderPipeline(currentStatus);
+        _playNotifSound();
       }
       setConnBadge('polling');
 
@@ -580,26 +594,65 @@ function startPolling() {
 }
 
 /* ====================================================================
-   Customer notification helpers (browser push + sound)
+   Customer notification helpers (browser push + sound + vibration)
    Used when order status changes to keep the customer informed.
+   Mirrors staff-notifications.js pattern exactly.
 ==================================================================== */
 let _notifAudioCtx = null;
-function _getNotifAudio() {
-  if (!_notifAudioCtx) _notifAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+function _ensureAudioCtx() {
+  if (!_notifAudioCtx) {
+    try {
+      _notifAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    } catch (_) { return null; }
+  }
   return _notifAudioCtx;
 }
+
 function _playNotifSound() {
-  try {
-    const ctx = _getNotifAudio();
+  try { if (navigator.vibrate) navigator.vibrate(200); } catch (_) {}
+
+  var tracker = document.getElementById('order-tracker-section');
+  if (tracker) {
+    tracker.classList.remove('notif-flash');
+    void tracker.offsetWidth;
+    tracker.classList.add('notif-flash');
+  }
+
+  var ctx = _ensureAudioCtx();
+  if (!ctx) return;
+  if (ctx.state === "suspended") {
+    ctx.resume().then(function () { _doBeep(ctx); }).catch(function () {});
+    return;
+  }
+  _doBeep(ctx);
+}
+
+function _initAudioOnGesture() {
+  var listener = function () {
+    var ctx = _ensureAudioCtx();
+    if (!ctx) return;
     if (ctx.state === "suspended") ctx.resume();
-    const osc = ctx.createOscillator(), gain = ctx.createGain();
-    osc.connect(gain); gain.connect(ctx.destination);
+    document.removeEventListener("click", listener);
+    document.removeEventListener("touchstart", listener);
+  };
+  document.addEventListener("click", listener);
+  document.addEventListener("touchstart", listener);
+}
+
+function _doBeep(ctx) {
+  try {
+    var osc = ctx.createOscillator();
+    var gain = ctx.createGain();
+    osc.connect(gain);
+    gain.connect(ctx.destination);
     osc.type = "sine";
     osc.frequency.setValueAtTime(660, ctx.currentTime);
     osc.frequency.setValueAtTime(880, ctx.currentTime + 0.12);
     gain.gain.setValueAtTime(0.25, ctx.currentTime);
     gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.25);
-    osc.start(ctx.currentTime); osc.stop(ctx.currentTime + 0.25);
+    osc.start(ctx.currentTime);
+    osc.stop(ctx.currentTime + 0.25);
   } catch (_) {}
 }
 function _notifyCustomer(title, body) {
@@ -715,6 +768,11 @@ function connectWebSocket() {
 document.addEventListener('DOMContentLoaded', function () {
   /* Render the initial pipeline state from server-rendered status */
   renderPipeline(currentStatus);
+
+  /* Initialise gesture-based AudioContext unlock (same pattern as
+     staff-notifications.js — creates/resumes context on first click
+     or touch so it starts in "running" state). */
+  _initAudioOnGesture();
 
   /* Attempt WebSocket connection; falls back to polling if it fails */
   connectWebSocket();

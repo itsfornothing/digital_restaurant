@@ -6,13 +6,31 @@
 let _audioCtx = null;
 
 function _ensureAudioCtx() {
-  if (!_audioCtx) return null;
+  if (!_audioCtx) {
+    try {
+      _audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    } catch (e) {
+      return null;
+    }
+  }
   return _audioCtx;
 }
 
 function playNotificationSound() {
+  /* Vibration — works on mobile without user gesture */
+  try { if (navigator.vibrate) navigator.vibrate(200); } catch (_) {}
   var ctx = _ensureAudioCtx();
-  if (!ctx || ctx.state !== "running") return;
+  if (!ctx) return;
+  if (ctx.state === "suspended") {
+    ctx.resume().then(function () {
+      _playBeep(ctx);
+    }).catch(function () {});
+    return;
+  }
+  _playBeep(ctx);
+}
+
+function _playBeep(ctx) {
   try {
     var osc = ctx.createOscillator();
     var gain = ctx.createGain();
@@ -37,14 +55,10 @@ function requestNotificationPermission() {
 }
 
 function initAudioOnGesture() {
-  if (_audioCtx) return;
   var _gestureListener = function () {
-    if (_audioCtx) return;
-    try {
-      _audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    } catch (e) {
-      return;
-    }
+    var ctx = _ensureAudioCtx();
+    if (!ctx) return;
+    if (ctx.state === "suspended") ctx.resume();
     document.removeEventListener("click", _gestureListener);
     document.removeEventListener("touchstart", _gestureListener);
   };

@@ -110,24 +110,27 @@ def _get_qr_style(template_name: str) -> dict:
 
 def _get_tenant_subdomain() -> str:
     """
-    Return the subdomain for the current tenant context.
+    Return the hostname for QR code scan URLs.
 
-    django-tenants sets the active tenant on the database connection.
-    We read it from connection.tenant (available in any tenant-schema request).
-    Falls back to 'localhost' in test/development environments where there is
-    no active tenant.
+    Priority:
+      1. CUSTOMER_DOMAIN env var (set to your ngrok/Render URL)
+      2. Tenant's primary domain (from Domain records)
+      3. 'localhost' fallback for test/development
     """
+    import os
+    import re
+    custom = os.environ.get("CUSTOMER_DOMAIN")
+    if custom:
+        custom = custom.strip().rstrip("/")
+        custom = re.sub(r"^https?://", "", custom)
+        return custom
     try:
         tenant = connection.tenant
-        # django-tenants Domain records hold the FQDN; the tenant slug is
-        # typically the subdomain prefix.  We use the domain's primary FQDN
-        # if available, otherwise fall back to tenant.schema_name.
         domain = tenant.get_primary_domain()
         if domain:
             return domain.domain
         return tenant.schema_name
     except Exception:
-        # Fallback for test environments
         return "localhost"
 
 
@@ -227,7 +230,7 @@ class QRService:
         # ----------------------------------------------------------------
         # Step 4: Render QR image
         # ----------------------------------------------------------------
-        scan_url = f"https://{subdomain}/scan/{new_token}/"
+        scan_url = f"https://{subdomain}/qr/scan/{new_token}/"
         style = _get_qr_style(qr_design_template)
 
         qr_image_obj = qrcode.QRCode(

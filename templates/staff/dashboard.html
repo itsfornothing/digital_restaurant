@@ -225,5 +225,17 @@ function statusBadgeClass(s) {
 }
 
 document.addEventListener('DOMContentLoaded', function() { loadDashboard(); });
+
+// Live updates via WebSocket from base.html
+document.addEventListener('staff:wsmsg', function(e) {
+  if (!e.detail) return;
+  var type = e.detail.type || '';
+  if (type.indexOf('order.') === 0) {
+    loadDashboard();
+  }
+});
+
+// Polling fallback (like track order page) — refresh every 15s
+setInterval(loadDashboard, 15000);
 </script>
 {% endblock %}

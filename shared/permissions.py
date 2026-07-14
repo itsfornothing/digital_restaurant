@@ -175,12 +175,30 @@ class IsCustomerSession(BasePermission):
     message = "A valid customer session is required."
 
     def has_permission(self, request, view) -> bool:
+        session = getattr(request, "session", None)
+
+        # Allow authenticated staff users (they are already logged in)
+        if request.user.is_authenticated:
+            return True
+
         # Customer sessions are stored in the Django session under 'customer_session'
         # (set by POST /api/v1/customer/session/ in Task 16).
-        session = getattr(request, "session", None)
-        if session is None:
-            return False
-        return bool(session.get("customer_session"))
+        if session and session.get("customer_session"):
+            return True
+
+        # Fallback: load session from ?sessionid= query parameter when the
+        # session cookie is not sent (ngrok cross-domain / third-party cookies).
+        session_id = request.query_params.get("sessionid")
+        if session_id:
+            from importlib import import_module
+            from django.conf import settings
+            engine = import_module(settings.SESSION_ENGINE)
+            loaded = engine.SessionStore(session_id)
+            if loaded.load() and loaded.get("customer_session"):
+                request.session = loaded
+                return True
+
+        return False
 
 
 # ---------------------------------------------------------------------------

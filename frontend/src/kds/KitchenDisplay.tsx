@@ -512,21 +512,26 @@ const KitchenDisplay: React.FC<KitchenDisplayProps> = ({
 
   useReconnectingWs(wsUrl, handleMessage);
 
-  // Fetch existing active orders on mount via REST API
+  // Fetch active orders on mount + poll every 10s as fallback
   useEffect(() => {
     if (!base) return;
-    fetch(`${base}/api/v1/branches/${branchId}/orders/?status=confirmed,received,preparing,ready&placed_date=today`, {
-      credentials: "include",
-      headers: { "Accept": "application/json" },
-    })
-      .then((r) => (r.ok ? r.json() : Promise.resolve([])))
-      .then((data) => {
-        const orders: Order[] = Array.isArray(data) ? data : (data.results ?? []);
-        if (orders.length > 0) {
-          dispatch({ type: "SET_ALL", orders });
-        }
+    const fetchOrders = () => {
+      fetch(`${base}/api/v1/branches/${branchId}/orders/?status=confirmed,received,preparing,ready&placed_date=today`, {
+        credentials: "include",
+        headers: { "Accept": "application/json" },
       })
-      .catch(() => {/* silently ignore — WS will populate on reconnect */});
+        .then((r) => (r.ok ? r.json() : Promise.resolve([])))
+        .then((data) => {
+          const orders: Order[] = Array.isArray(data) ? data : (data.results ?? []);
+          if (orders.length > 0) {
+            dispatch({ type: "SET_ALL", orders });
+          }
+        })
+        .catch(() => {});
+    };
+    fetchOrders();
+    const id = setInterval(fetchOrders, 10000);
+    return () => clearInterval(id);
   }, [base, branchId]);
 
   // -- Status update with optimistic UI -----------------------------------

@@ -336,19 +336,32 @@ class OrderViewSet(AuditLogMixin, viewsets.GenericViewSet):
             getattr(request.user, "id", "anonymous"),
         )
 
-        # Push real-time updates via WebSocket
-        ws_payload = {
-            "order_id": str(order.id),
-            "order_number": order.order_number,
-            "previous_status": previous_status,
-            "new_status": new_status,
-            "branch_id": str(order.branch_id),
-            "table_number": str(order.table.number) if order.table else None,
-            "timestamp": str(order.placed_at.isoformat()),
-        }
         from apps.notifications.utils import push_customer_event, push_staff_roles_event
 
-        # Notify relevant staff groups based on the new status
+        # Staff push — use full Order shape + dot-notation type for KDS compat
+        staff_payload = {
+            "id": str(order.id),
+            "order_id": str(order.id),
+            "order_number": order.order_number,
+            "status": new_status,
+            "previous_status": previous_status,
+            "branch_id": str(order.branch_id),
+            "table_number": str(order.table.number) if order.table else None,
+            "placed_at": order.placed_at.isoformat(),
+            "total_amount": str(order.total_amount),
+            "customer_name": order.customer_name or "",
+            "items": [
+                {
+                    "id": str(item.id),
+                    "menu_item": str(item.menu_item_id),
+                    "menu_item_name": item.menu_item.name,
+                    "quantity": item.quantity,
+                    "unit_price": str(item.unit_price),
+                    "special_instructions": item.special_instructions or "",
+                }
+                for item in order.items.select_related("menu_item").all()
+            ],
+        }
         staff_roles = {
             "received": ["kitchen"],
             "preparing": ["kitchen"],
@@ -356,8 +369,20 @@ class OrderViewSet(AuditLogMixin, viewsets.GenericViewSet):
             "served": [],
             "cancelled": ["kitchen", "reception"],
         }.get(new_status, ["kitchen", "reception"])
-        push_staff_roles_event(str(order.branch_id), "order_status_changed", ws_payload, staff_roles)
-        push_customer_event(str(order.id), "order_status_changed", ws_payload)
+        push_staff_roles_event(str(order.branch_id), "order.status_changed", staff_payload, staff_roles)
+
+        # Customer push — original format (new_status / timestamp keys)
+        customer_payload = {
+            "id": str(order.id),
+            "order_id": str(order.id),
+            "order_number": order.order_number,
+            "new_status": new_status,
+            "previous_status": previous_status,
+            "branch_id": str(order.branch_id),
+            "table_number": str(order.table.number) if order.table else None,
+            "timestamp": order.placed_at.isoformat(),
+        }
+        push_customer_event(str(order.id), "order_status_changed", customer_payload)
 
         # Enqueue Celery side-effect tasks on key transitions
         if new_status == "preparing":

@@ -24,7 +24,7 @@ import uuid
 from django.shortcuts import redirect, render
 from django.utils.translation import get_language
 from rest_framework import serializers as drf_serializers
-from rest_framework import status, viewsets
+from rest_framework import authentication, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
@@ -441,6 +441,42 @@ class CustomerMenuPageView(APIView):
 # ---------------------------------------------------------------------------
 
 
+class CustomerSessionQueryStringAuthentication(authentication.BaseAuthentication):
+    """
+    Fallback authentication for the customer polling endpoint.
+
+    When the session cookie is not sent by the browser (e.g. ngrok
+    cross-domain or third-party cookie restrictions), the polling JS
+    passes ``?sessionid=<key>`` in the URL.  This auth class loads
+    that session and sets it on the request so that
+    ``IsCustomerSession`` can find the ``customer_session`` data.
+
+    Must be listed **before** ``SessionAuthentication`` in
+    ``authentication_classes`` so it runs first.
+    """
+
+    def authenticate(self, request):
+        session_id = request.query_params.get("sessionid")
+        if not session_id:
+            return None  # let the next auth class handle it
+
+        from importlib import import_module
+        from django.conf import settings
+
+        engine = import_module(settings.SESSION_ENGINE)
+        session = engine.SessionStore(session_id)
+        if not session.load():
+            return None  # invalid / expired session key
+
+        if not session.get("customer_session"):
+            return None  # not a customer session
+
+        # Replace the (empty / anonymous) request session with the
+        # loaded customer session so IsCustomerSession can find it.
+        request.session = session
+        return (authentication.AnonymousUser(), None)
+
+
 class CustomerMenuView(AuditLogMixin, APIView):
     """
     GET /api/v1/customer/menu/
@@ -568,8 +604,6 @@ class CustomerMenuView(AuditLogMixin, APIView):
                 )
 
         return Response(response_data, status=status.HTTP_200_OK)
-
-
 class CustomerOrderViewSet(AuditLogMixin, viewsets.GenericViewSet):
     """
     POST /api/v1/customer/orders/          — place order
@@ -585,6 +619,12 @@ class CustomerOrderViewSet(AuditLogMixin, viewsets.GenericViewSet):
 
     def get_queryset(self):
         from apps.orders.models import Order
+        # Authenticated staff users can access any order via pk lookup
+        if self.request.user.is_authenticated:
+            return Order.objects.all().select_related(
+                "table", "room", "branch"
+            ).prefetch_related("items__menu_item")
+        # Customer sessions are scoped to their branch
         session = self.request.session.get("customer_session", {})
         branch_id = session.get("branch_id")
         if branch_id:
@@ -612,6 +652,7 @@ class CustomerOrderViewSet(AuditLogMixin, viewsets.GenericViewSet):
         order.save(update_fields=["status"])
         from apps.notifications.utils import push_customer_event, push_staff_roles_event
         ws_payload = {
+            "id": str(order.id),
             "order_id": str(order.id),
             "order_number": order.order_number,
             "previous_status": previous_status,
@@ -750,7 +791,7 @@ class CustomerOrderCreateView(AuditLogMixin, APIView):
       2. Snapshot unit_price from MenuItem.price at placement time (Req 14.8).
       3. Compute total_amount as sum(unit_price × quantity) across all items.
       4. Persist Order with status='confirmed' and all OrderItems.
-      5. Enqueue send_order_notification Celery task (Req 17.1).
+       5. Push WebSocket notification synchronously to staff groups (Req 17.1).
 
     Returns:
         201 — serialized created Order with all items and computed total.
@@ -952,17 +993,42 @@ class CustomerOrderCreateView(AuditLogMixin, APIView):
             len(line_items),
         )
 
-        # -- 7. Enqueue notification task (non-blocking) ----------------
+        # -- 7. Push WebSocket notifications synchronously --------------
+        # NOTE: Must push directly (not via Celery) because CHANNEL_LAYERS
+        # uses InMemoryChannelLayer which is process-local; Celery workers
+        # run in a different process and their group_send calls would be
+        # silently lost.
         try:
-            from apps.notifications.tasks import send_order_notification
-            send_order_notification.delay(str(order.id))
-        except Exception as task_exc:
-            # Never let task-queuing failure block the order response.
-            logger.warning(
-                "Failed to enqueue send_order_notification for order %s: %s",
-                order.id,
-                task_exc,
+            from apps.notifications.utils import (
+                push_staff_roles_event,
+                push_customer_event,
             )
+            items_payload = []
+            for li in line_items:
+                order_item = order.items.filter(menu_item=li["menu_item"]).first()
+                items_payload.append({
+                    "id": str(order_item.id) if order_item else "",
+                    "menu_item": str(li["menu_item"].id),
+                    "menu_item_name": li["menu_item"].name,
+                    "quantity": li["quantity"],
+                    "unit_price": str(li["unit_price"]),
+                    "special_instructions": li.get("special_instructions", ""),
+                })
+            payload = {
+                "id": str(order.id),
+                "order_id": str(order.id),
+                "order_number": order.order_number,
+                "status": order.status,
+                "table_number": getattr(order.table, "number", None) or getattr(order.room, "name", None) or "?",
+                "customer_name": customer_name,
+                "total_amount": str(total_amount),
+                "placed_at": order.placed_at.isoformat(),
+                "items": items_payload,
+            }
+            push_staff_roles_event(str(branch_id), "order.new", payload, ["kitchen", "reception", "manager"])
+            push_customer_event(str(order.id), "order_status_changed", payload)
+        except Exception as notify_exc:
+            logger.warning("Failed to push order notification for %s: %s", order.id, notify_exc)
 
         # -- 8. Store last_order_id in session so the menu page can show
         #         a "Track Your Order" link returning customers can follow.
@@ -1115,6 +1181,7 @@ class OrderTrackerPageView(APIView):
             "order_status_display": order_status_display,
             "order_items": order_items,
             "order_total": order_total,
+            "session_key": request.session.session_key or "",
             "table_number": (
                 order.table.number
                 if order and order.table
