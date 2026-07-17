@@ -22,16 +22,17 @@ SECRET_KEY = config("DJANGO_SECRET_KEY")
 # Database
 # ---------------------------------------------------------------------------
 
-# Support DATABASE_URL (Koyeb / common PaaS convention) as an alternative to
+# Support DATABASE_URL (Railway / common PaaS convention) as an alternative to
 # individual DB_* env vars.  When DATABASE_URL is set it takes precedence.
 _database_url = config("DATABASE_URL", default=None)
 if _database_url:
-    import re
-    m = re.match(r"postgres(?:ql)?://(.+?):(.+?)@(.+?):(\d+)/(.+?)(?:\?.*)?$", _database_url)
-    if m:
-        _db_user, _db_pass, _db_host, _db_port, _db_name = m.groups()
-    else:
-        raise ValueError(f"Cannot parse DATABASE_URL: {_database_url}")
+    from urllib.parse import urlparse, unquote
+    p = urlparse(_database_url.replace("+psycopg2", ""))
+    _db_user = unquote(p.username) if p.username else ""
+    _db_pass = unquote(p.password) if p.password else ""
+    _db_host = p.hostname or ""
+    _db_port = str(p.port) if p.port else "5432"
+    _db_name = p.path.lstrip("/").split("?")[0]
 else:
     _db_name = config("DB_NAME")
     _db_user = config("DB_USER")
