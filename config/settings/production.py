@@ -22,23 +22,38 @@ SECRET_KEY = config("DJANGO_SECRET_KEY")
 # Database
 # ---------------------------------------------------------------------------
 
+# Support DATABASE_URL (Koyeb / common PaaS convention) as an alternative to
+# individual DB_* env vars.  When DATABASE_URL is set it takes precedence.
+_database_url = config("DATABASE_URL", default=None)
+if _database_url:
+    import re
+    m = re.match(r"postgres(?:ql)?://(.+?):(.+?)@(.+?):(\d+)/(.+?)(?:\?.*)?$", _database_url)
+    if m:
+        _db_user, _db_pass, _db_host, _db_port, _db_name = m.groups()
+    else:
+        raise ValueError(f"Cannot parse DATABASE_URL: {_database_url}")
+else:
+    _db_name = config("DB_NAME")
+    _db_user = config("DB_USER")
+    _db_pass = config("DB_PASSWORD")
+    _db_host = config("DB_HOST")
+    _db_port = config("DB_PORT", default="5432")
+
 DATABASES = {
     "default": {
-        # django_prometheus.db.backends.postgresql wraps the standard backend
-        # to automatically export DB query count and duration metrics
-        # (django_db_execute_total) — Requirement 6.8.
         "ENGINE": "django_tenants.postgresql_backend",
-        "NAME": config("DB_NAME"),
-        "USER": config("DB_USER"),
-        "PASSWORD": config("DB_PASSWORD"),
-        "HOST": config("DB_HOST"),
-        "PORT": config("DB_PORT", default="5432"),
+        "NAME": _db_name,
+        "USER": _db_user,
+        "PASSWORD": _db_pass,
+        "HOST": _db_host,
+        "PORT": _db_port,
         "CONN_MAX_AGE": 60,
         "OPTIONS": {
             "sslmode": "require",
         },
     }
 }
+del _database_url, _db_name, _db_user, _db_pass, _db_host, _db_port
 
 # ---------------------------------------------------------------------------
 # Read Replica database (Task 20.4 — Requirement 19.9)
