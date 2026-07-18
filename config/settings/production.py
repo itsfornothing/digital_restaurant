@@ -89,17 +89,23 @@ DATABASES["replica"] = {
 # Security headers
 # ---------------------------------------------------------------------------
 
-SECURE_SSL_REDIRECT = True
-SECURE_HSTS_SECONDS = 31536000  # 1 year
-SECURE_HSTS_INCLUDE_SUBDOMAINS = True
-SECURE_HSTS_PRELOAD = True
-SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+# USE_HTTPS controls SSL-related settings.  Defaults to True.  Set to
+# "false" when deploying behind an HTTP-only proxy (e.g. Railway TCP proxy).
+_use_https = config("USE_HTTPS", default="True").lower() in ("true", "1", "yes")
+
+SECURE_SSL_REDIRECT = _use_https
+SECURE_HSTS_SECONDS = 31536000 if _use_https else 0
+SECURE_HSTS_INCLUDE_SUBDOMAINS = _use_https
+SECURE_HSTS_PRELOAD = _use_https
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https") if _use_https else None
 SECURE_CONTENT_TYPE_NOSNIFF = True
 SECURE_BROWSER_XSS_FILTER = True
 X_FRAME_OPTIONS = "DENY"
-CSRF_COOKIE_SECURE = True
-SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = _use_https
+SESSION_COOKIE_SECURE = _use_https
 SESSION_COOKIE_SAMESITE = "Lax"
+
+del _use_https
 
 # ---------------------------------------------------------------------------
 # Content Security Policy (django-csp 3.8)
