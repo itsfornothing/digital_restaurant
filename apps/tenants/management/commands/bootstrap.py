@@ -55,11 +55,17 @@ class Command(BaseCommand):
         )
         self.stdout.write(f"  Tenant: {tenant.name} (schema={tenant.schema_name})")
 
-        # 3. Override domain with Render hostname (or localhost)
-        render_host = os.environ.get("RENDER_EXTERNAL_HOSTNAME", "localhost")
-        # Update the primary domain — replace whatever create_tenant set
+        # 3. Override domain with platform hostname (strip port — django-tenants
+        #    extracts hostname without port via hostname_from_request).
+        deploy_host = (
+            os.environ.get("CUSTOMER_DOMAIN")
+            or os.environ.get("RAILWAY_STATIC_URL")
+            or os.environ.get("RENDER_EXTERNAL_HOSTNAME")
+            or "localhost"
+        )
+        deploy_host = deploy_host.split(":")[0]  # strip port
         domain = Domain.objects.get(tenant=tenant, is_primary=True)
-        domain.domain = render_host
+        domain.domain = deploy_host
         domain.save(update_fields=["domain"])
         self.stdout.write(f"  Domain set to: {domain.domain}")
 

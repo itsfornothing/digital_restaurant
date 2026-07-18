@@ -230,7 +230,10 @@ class QRService:
         # ----------------------------------------------------------------
         # Step 4: Render QR image
         # ----------------------------------------------------------------
-        scan_url = f"https://{subdomain}/qr/scan/{new_token}/"
+        import os
+        use_https = os.environ.get("USE_HTTPS", "True").lower() in ("true", "1", "yes")
+        protocol = "https" if use_https else "http"
+        scan_url = f"{protocol}://{subdomain}/qr/scan/{new_token}/"
         style = _get_qr_style(qr_design_template)
 
         qr_image_obj = qrcode.QRCode(

@@ -4,9 +4,17 @@
 
 set -e
 
-echo "[entrypoint] Waiting for PostgreSQL…"
-until pg_isready -h "${DB_HOST:-db}" -p "${DB_PORT:-5432}" -U "${DB_USER:-postgres}" 2>/dev/null; do
-    sleep 1
+# Parse DATABASE_URL into DB_* vars when individual vars are not set
+if [ -n "$DATABASE_URL" ] && [ -z "$DB_HOST" ]; then
+    DB_HOST=$(echo "$DATABASE_URL" | sed -n 's|.*//.*@\([^:/]*\).*|\1|p')
+    DB_PORT=$(echo "$DATABASE_URL" | sed -n 's|.*:\([0-9]*\)/.*|\1|p')
+    [ -z "$DB_PORT" ] && DB_PORT=5432
+fi
+
+echo "[entrypoint] Waiting for PostgreSQL at ${DB_HOST:-db}:${DB_PORT:-5432}…"
+until pg_isready -h "${DB_HOST:-db}" -p "${DB_PORT:-5432}" -U "${DB_USER:-postgres}" -t 5 2>/dev/null; do
+    echo "[entrypoint] Waiting for database…"
+    sleep 2
 done
 echo "[entrypoint] PostgreSQL is ready."
 
