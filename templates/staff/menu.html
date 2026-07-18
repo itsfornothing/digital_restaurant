@@ -817,36 +817,14 @@ async function loadInventoryDropdown() {
 
 loadMenu();
 
-// WebSocket — auto-refresh on menu item updates from other staff
-(function initStaffMenuWebSocket() {
-  var ROLE = '{{ user_role }}';
-  var wsPath = ROLE === 'Kitchen_Staff' ? '/ws/kitchen/'
-    : ROLE === 'Receptionist' ? '/ws/reception/'
-    : '/ws/manager/';
-  var sid = '{{ session_key }}';
-  if (sid) wsPath += '?sessionid=' + sid;
-  var protocol = location.protocol === 'https:' ? 'wss:' : 'ws:';
-  var ws = null;
-
-  var menuWsRetries = 0;
-  function connect() {
-    ws = new WebSocket(protocol + '//' + location.host + wsPath);
-    ws.onmessage = function (e) {
-      try {
-        const msg = JSON.parse(e.data);
-        if (msg.type === 'menu.item_updated') {
-          loadMenu();
-        }
-      } catch (_) {}
-    };
-    ws.onclose = function () {
-      menuWsRetries++;
-      if (menuWsRetries > 8) return;
-      setTimeout(connect, 3000);
-    };
-    ws.onerror = function () {};
+// Listen for menu updates from base.html's shared WebSocket (via staff:wsmsg).
+// Avoids a duplicate WS connection that ngrok free-tier often drops.
+document.addEventListener('staff:wsmsg', function (e) {
+  if (e.detail && e.detail.type === 'menu.item_updated') {
+    loadMenu();
   }
-  connect();
-})();
+});
+// Polling fallback — refresh menu every 15s when WS is unavailable
+setInterval(loadMenu, 15000);
 </script>
 {% endblock %}
