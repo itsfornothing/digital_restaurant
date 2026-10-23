@@ -1,50 +1,25 @@
 # render.yaml — Render Blueprint for Restaurant Platform
 # https://render.com/docs/blueprint-spec
-#
-# Deploy:
-#   1. Push this repo to GitHub
-#   2. In Render Dashboard: New → Blueprint → Connect your repo
-#   3. Render auto-creates the web service + managed PostgreSQL
-#
-# Manual alternative:
-#   Create a Web Service → Docker → point at this repo, add env vars below.
 
 services:
   - type: web
     name: restaurant-platform
     env: docker
     dockerfilePath: ./Dockerfile
-    dockerCommand: daphne -b 0.0.0.0 -p $PORT config.asgi:application
-    plan: starter
-    region: ohio
+    plan: free
+    region: frankfurt
     healthCheckPath: /health
     envVars:
       - key: DJANGO_SETTINGS_MODULE
         value: config.settings.production
       - key: ALLOWED_HOSTS
-        value: .onrender.com
+        value: .onrender.com,localhost
+      - key: CSRF_TRUSTED_ORIGINS
+        value: https://*.onrender.com
       - key: DJANGO_SECRET_KEY
         generateValue: true
-      - key: DB_NAME
-        fromDatabase:
-          name: restaurant-platform-db
-          property: database
-      - key: DB_USER
-        fromDatabase:
-          name: restaurant-platform-db
-          property: user
-      - key: DB_PASSWORD
-        fromDatabase:
-          name: restaurant-platform-db
-          property: password
-      - key: DB_HOST
-        fromDatabase:
-          name: restaurant-platform-db
-          property: host
-      - key: DB_PORT
-        fromDatabase:
-          name: restaurant-platform-db
-          property: port
+      - key: DATABASE_URL
+        sync: false
       - key: R2_ENDPOINT_URL
         sync: false
       - key: R2_ACCESS_KEY_ID
@@ -64,9 +39,3 @@ services:
       - key: DEFAULT_FROM_EMAIL
         value: noreply@platform.example.com
 
-databases:
-  - name: restaurant-platform-db
-    plan: starter
-    region: ohio
-    databaseName: restaurant_platform
-    ipAllowList: []  # allow only from Render services
