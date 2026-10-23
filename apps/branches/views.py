@@ -39,6 +39,7 @@ from shared.permissions import (
     AuditLogMixin,
     IsBranchManager,
     IsBranchStaff,
+    IsSuperAdmin,
     IsSuperAdminOrTenantOwner,
     IsTenantOwner,
 )
@@ -161,7 +162,7 @@ class TableViewSet(
     def get_permissions(self):
         if self.action in ("list", "retrieve"):
             return [_BranchReadPermission()]
-        return [IsTenantOwner()]
+        return [IsTenantOwner() | IsBranchManager() | IsSuperAdmin()]
 
     def get_queryset(self):
         branch_pk = self.kwargs.get("branch_pk")
@@ -222,7 +223,7 @@ class RoomViewSet(
     def get_permissions(self):
         if self.action in ("list", "retrieve"):
             return [_BranchReadPermission()]
-        return [IsTenantOwner()]
+        return [IsTenantOwner() | IsBranchManager() | IsSuperAdmin()]
 
     def get_queryset(self):
         branch_pk = self.kwargs.get("branch_pk")

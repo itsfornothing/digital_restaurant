@@ -39,6 +39,14 @@ class QRCodeSerializer(serializers.ModelSerializer):
 
     table_id = serializers.UUIDField(source="table.id", read_only=True, allow_null=True)
     room_id = serializers.UUIDField(source="room.id", read_only=True, allow_null=True)
+    image_url = serializers.SerializerMethodField()
+
+    def get_image_url(self, obj) -> str:
+        """Return the persisted image_url or dynamic fallback endpoint."""
+        url = (obj.image_url or "").strip()
+        if url and not url.startswith("https://dummy") and not url.startswith("http://dummy"):
+            return url
+        return f"/qr/image/{obj.token}.png"
 
     class Meta:
         model = QRCode

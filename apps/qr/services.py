@@ -253,27 +253,26 @@ class QRService:
         image_buffer.seek(0)
 
         # ----------------------------------------------------------------
-        # Step 5: Save QR image to local storage (served via /media/)
+        # Step 5: Save QR image to storage
         # ----------------------------------------------------------------
         prefix = "room-codes" if is_room else "qr-codes"
         object_name = f"{prefix}/{branch_id}/{location.pk}/{new_token}.png"
 
+        image_url = ""
         try:
             stored_name = default_storage.save(object_name, image_buffer)
-            image_url = default_storage.url(stored_name)
-            logger.info(
-                "QRService.generate_qr: saved QR image as '%s'",
-                stored_name,
-            )
+            url_res = default_storage.url(stored_name)
+            if url_res and not url_res.startswith("https://dummy"):
+                if url_res.startswith("/"):
+                    image_url = f"{protocol}://{subdomain}{url_res}"
+                else:
+                    image_url = url_res
+            logger.info("QRService.generate_qr: saved QR image as '%s'", stored_name)
         except Exception as exc:
-            # Non-fatal: persist the QRCode record even if the save fails.
-            # The image_url will remain empty; staff can regenerate.
-            logger.error(
-                "QRService.generate_qr: local save failed for QRCode %s: %s",
-                qr_code.pk,
-                exc,
-            )
-            image_url = ""
+            logger.warning("QRService.generate_qr: storage save failed (%s), using dynamic URL", exc)
+
+        if not image_url:
+            image_url = f"{protocol}://{subdomain}/qr/image/{new_token}.png"
 
         # ----------------------------------------------------------------
         # Step 6: Persist image_url

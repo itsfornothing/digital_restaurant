@@ -21,8 +21,20 @@ from apps.qr.customer_views import (
     OrderTrackerPageView,
     QRScanView,
 )
+from apps.qr.views import QRCodeImageView
 
 urlpatterns = [
+    # Dynamic QR code image serving
+    path(
+        "qr/image/<str:token>",
+        QRCodeImageView.as_view(),
+        name="qr-image",
+    ),
+    path(
+        "qr/image/<str:token>/",
+        QRCodeImageView.as_view(),
+        name="qr-image-slash",
+    ),
     # Browser entry point when customer physically scans a QR code
     path(
         "qr/scan/<str:token>/",

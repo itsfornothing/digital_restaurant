@@ -21,18 +21,24 @@ from __future__ import annotations
 
 import logging
 
+import io
+import os
+import uuid
+import qrcode
+from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from rest_framework import mixins, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.exceptions import NotFound, ValidationError
+from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from apps.branches.models import Branch, Table
 from apps.qr.models import QRCode
 from apps.qr.serializers import QRCodeSerializer
-from apps.qr.services import QRService
-from shared.permissions import AuditLogMixin, IsBranchManager
+from apps.qr.services import QRService, _get_qr_style, _get_tenant_subdomain
+from shared.permissions import AuditLogMixin, IsBranchManager, IsTenantOwner, IsSuperAdmin
 
 logger = logging.getLogger(__name__)
 
@@ -56,18 +62,18 @@ class QRCodeListCreateView(AuditLogMixin, APIView):
         The view:
           1. Validates that the branch exists.
           2. Validates that the table belongs to that branch.
-           3. Calls QRService().generate_qr(table) which:
+          3. Calls QRService().generate_qr(table) which:
                 - Deactivates all prior QRCode records for the table.
                 - Creates a new QRCode with a fresh UUID token.
-                - Renders and saves the QR image to local storage.
+                - Renders and saves the QR image.
                 - Persists the public image_url on the QRCode record.
           4. Returns the new QRCode serialized as 201 Created.
 
-    Permission: IsBranchManager
+    Permission: IsBranchManager | IsTenantOwner | IsSuperAdmin
     Requirements: 14.1, 14.3
     """
 
-    permission_classes = [IsBranchManager]
+    permission_classes = [IsBranchManager | IsTenantOwner | IsSuperAdmin]
 
     def _get_branch(self, branch_pk):
         """Resolve the branch from URL, raising 404 if not found."""
@@ -204,7 +210,7 @@ class QRCodeRegenerateView(AuditLogMixin, APIView):
     Requirements: 14.1, 14.3
     """
 
-    permission_classes = [IsBranchManager]
+    permission_classes = [IsBranchManager | IsTenantOwner | IsSuperAdmin]
 
     def post(self, request, pk=None):
         """Regenerate the QR code for the location associated with the given QRCode pk."""
@@ -256,5 +262,52 @@ class QRCodeRegenerateView(AuditLogMixin, APIView):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
+class QRCodeImageView(APIView):
+    """
+    GET /qr/image/<str:token>.png
+    GET /qr/image/<str:token>/
+
+    Public endpoint to stream the QR code image for a QRCode token.
+    Dynamically generates the QR code on the fly if needed,
+    ensuring QR codes NEVER fail or 404 even after container restarts
+    or without external S3/R2 storage.
+    """
+    permission_classes = [AllowAny]
+    authentication_classes = []
+
+    def get(self, request, token):
+        token_str = str(token).removesuffix(".png").removesuffix("/")
+        try:
+            token_uuid = uuid.UUID(token_str)
+        except (ValueError, AttributeError):
+            raise NotFound("Invalid QR token format.")
+
+        qr = QRCode.objects.filter(token=token_uuid).first()
+        if not qr:
+            raise NotFound("QR code not found.")
+
+        use_https = os.environ.get("USE_HTTPS", "True").lower() in ("true", "1", "yes")
+        protocol = "https" if use_https or request.is_secure() else "http"
+        subdomain = _get_tenant_subdomain()
+        scan_url = f"{protocol}://{subdomain}/qr/scan/{token_uuid}/"
+
+        style = _get_qr_style("default")
+        qr_image_obj = qrcode.QRCode(
+            version=None,
+            error_correction=style["error_correction"],
+            box_size=style["box_size"],
+            border=style["border"],
+        )
+        qr_image_obj.add_data(scan_url)
+        qr_image_obj.make(fit=True)
+        pil_image = qr_image_obj.make_image(fill_color="black", back_color="white")
+
+        buf = io.BytesIO()
+        pil_image.save(buf, format="PNG")
+        resp = HttpResponse(buf.getvalue(), content_type="image/png")
+        resp["Cache-Control"] = "public, max-age=86400"
+        return resp
+
+
 class QRCodeViewSet(AuditLogMixin, viewsets.GenericViewSet):
-    permission_classes = [IsBranchManager]
+    permission_classes = [IsBranchManager | IsTenantOwner | IsSuperAdmin]

@@ -84,5 +84,10 @@ urlpatterns = [
     path("", include("apps.qr.customer_urls_browser")),
 ]
 
-# Serve media files in development (production serves via Nginx)
-urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+from django.urls import re_path
+from django.views.static import serve
+
+# Serve media files in both development and production (fallback when not on S3/R2)
+urlpatterns += [
+    re_path(r"^media/(?P<path>.*)$", serve, {"document_root": settings.MEDIA_ROOT}),
+]

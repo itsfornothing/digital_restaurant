@@ -4,189 +4,338 @@
 {% block brand %}{{ restaurant_name|default:"Restaurant" }}{% endblock %}
 {% block page_title %}{% trans "QR Code Management" %}{% endblock %}
 
+{% block extra_head %}
+<meta name="csrf-token" content="{{ csrf_token }}">
+<style>
+  .qr-thumb {
+    width: 52px;
+    height: 52px;
+    object-fit: cover;
+    border-radius: 6px;
+    border: 1px solid #dee2e6;
+    background: #fff;
+    cursor: pointer;
+    transition: transform 0.15s, box-shadow 0.15s;
+  }
+  .qr-thumb:hover {
+    transform: scale(1.08);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+  }
+</style>
+{% endblock %}
+
 {% block nav_qr %}active{% endblock %}
 
 {% block content %}
+{% csrf_token %}
 <div class="d-flex justify-content-between align-items-center mb-3">
-  <h6 class="fw-semibold mb-0">{% trans "Tables &amp; QR Codes" %}</h6>
+  <div>
+    <h6 class="fw-semibold mb-1">{% trans "Tables, Rooms & QR Codes" %}</h6>
+    <small class="text-muted">{% trans "Generate and print QR codes for customers to scan and place orders." %}</small>
+  </div>
+  <button class="btn btn-sm btn-outline-secondary" onclick="loadQRCodes()">
+    <i class="bi bi-arrow-clockwise me-1"></i>{% trans "Refresh" %}
+  </button>
 </div>
 
-<div class="card">
+<div class="card shadow-sm border-0">
   <div class="table-responsive">
-    <table class="table table-hover mb-0">
+    <table class="table table-hover align-middle mb-0">
       <thead class="table-light">
-        <tr><th>{% trans "Location" %}</th><th>{% trans "Type" %}</th><th>{% trans "QR Code" %}</th><th>{% trans "Status" %}</th><th>{% trans "Last Generated" %}</th><th>{% trans "Actions" %}</th></tr>
+        <tr>
+          <th>{% trans "Location" %}</th>
+          <th>{% trans "Type" %}</th>
+          <th>{% trans "QR Code" %}</th>
+          <th>{% trans "Status" %}</th>
+          <th>{% trans "Last Generated" %}</th>
+          <th class="text-end">{% trans "Actions" %}</th>
+        </tr>
       </thead>
       <tbody id="qr-tbody">
-        <tr><td colspan="6" class="text-center text-muted py-4">{% trans "Loading…" %}</td></tr>
+        <tr><td colspan="6" class="text-center text-muted py-4"><span class="spinner-border spinner-border-sm me-2"></span>{% trans "Loading locations…" %}</td></tr>
       </tbody>
     </table>
   </div>
 </div>
 
 <!-- QR Image Modal -->
-<div class="modal fade" id="qrImageModal" tabindex="-1">
-  <div class="modal-dialog modal-sm modal-dialog-centered"><div class="modal-content">
-    <div class="modal-header"><h5 class="modal-title">{% trans "QR Code" %}</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
-    <div class="modal-body text-center" id="qrImageModalBody"></div>
-  </div></div>
+<div class="modal fade" id="qrImageModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-sm modal-dialog-centered">
+    <div class="modal-content shadow border-0">
+      <div class="modal-header">
+        <h5 class="modal-title" id="qrModalTitle">{% trans "Table QR Code" %}</h5>
+        <button class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body text-center p-4" id="qrImageModalBody"></div>
+    </div>
+  </div>
 </div>
 {% endblock %}
 
 {% block extra_scripts %}
 <script>
-const BRANCH_ID = '{{ branch_id }}';
+let currentBranchId = '{{ branch_id }}';
 const QR_I18N = {
   table: '{% trans "Table" %}',
   room: '{% trans "Room" %}',
   seats: '{% trans "Seats:" %}',
-  noTables: '{% trans "No tables or rooms yet. Create one in the Menu section first." %}',
+  noTables: '{% trans "No tables or rooms found. Add tables in the Tables section first." %}',
   noQR: '{% trans "\u2014" %}',
   active: '{% trans "Active" %}',
   notGenerated: '{% trans "Not generated" %}',
   generate: '{% trans "Generate" %}',
   regenerate: '{% trans "Regenerate" %}',
   generating: '{% trans "Generating\u2026" %}',
-  download: '{% trans "Download" %}',
+  download: '{% trans "Download PNG" %}',
   print: '{% trans "Print" %}',
+  view: '{% trans "View" %}',
+  confirmRegenerate: '{% trans "Regenerating this QR code will deactivate the current printed QR code for this table. Customers scanning the old code will no longer be able to order. Are you sure you want to continue?" %}',
   failedGenerate: '{% trans "Failed to generate QR code." %}',
   networkError: '{% trans "Network error. Please try again." %}',
 };
 
+function getCsrf() {
+  const meta = document.querySelector('meta[name="csrf-token"]');
+  if (meta && meta.content) return meta.content;
+  const input = document.querySelector('input[name="csrfmiddlewaretoken"]');
+  if (input && input.value) return input.value;
+  const match = document.cookie.match(/csrftoken=([^;]+)/);
+  return match ? match[1] : '';
+}
+
+function toList(data) {
+  if (Array.isArray(data)) return data;
+  if (data && Array.isArray(data.results)) return data.results;
+  return [];
+}
+
+async function resolveBranchId() {
+  if (currentBranchId) return currentBranchId;
+  try {
+    const resp = await fetch('/api/v1/branches/', {credentials: 'same-origin'});
+    if (resp.ok) {
+      const data = await resp.json();
+      const branches = toList(data);
+      if (branches.length > 0) {
+        currentBranchId = branches[0].id;
+        return currentBranchId;
+      }
+    }
+  } catch (e) {
+    console.error('Failed to resolve branch:', e);
+  }
+  return '';
+}
+
 async function loadQRCodes() {
   const tbody = document.getElementById('qr-tbody');
+  tbody.innerHTML = '<tr><td colspan="6" class="text-center text-muted py-4"><span class="spinner-border spinner-border-sm me-2"></span>' + '{% trans "Loading locations…" %}' + '</td></tr>';
 
-  // Fetch tables and QR codes in parallel
-  const [tablesResp, roomsResp, qrResp] = await Promise.all([
-    fetch(`/api/v1/branches/${BRANCH_ID}/tables/`, {credentials:'same-origin'}),
-    fetch(`/api/v1/branches/${BRANCH_ID}/rooms/`, {credentials:'same-origin'}),
-    fetch(`/api/v1/branches/${BRANCH_ID}/qr-codes/`, {credentials:'same-origin'}),
-  ]);
-
-  const tables = await tablesResp.json();
-  const rooms = await roomsResp.json();
-  const allQrCodes = await qrResp.json();
-
-  // Build lookup: location_type:location_id -> active qr code
-  const qrMap = {};
-  for (const qr of allQrCodes) {
-    if (!qr.is_active) continue;
-    const key = qr.table_id ? `table:${qr.table_id}` : qr.room_id ? `room:${qr.room_id}` : null;
-    if (key) qrMap[key] = qr;
-  }
-
-  // Also grab latest inactive for "last generated" info
-  const latestMap = {};
-  for (const qr of allQrCodes) {
-    const key = qr.table_id ? `table:${qr.table_id}` : qr.room_id ? `room:${qr.room_id}` : null;
-    if (!key) continue;
-    if (!latestMap[key] || new Date(qr.created_at) > new Date(latestMap[key].created_at)) {
-      latestMap[key] = qr;
-    }
-  }
-
-  const tableItems = (tables.results || tables).map(t => ({
-    id: t.id,
-    name: `${QR_I18N.table} ${t.number}`,
-    type: 'table',
-    seat_count: t.seat_count,
-  }));
-
-  const roomItems = (rooms.results || rooms).map(r => ({
-    id: r.id,
-    name: r.name,
-    type: 'room',
-    seat_count: r.capacity,
-  }));
-
-  const allLocations = [...tableItems, ...roomItems];
-
-  if (allLocations.length === 0) {
+  const branchId = await resolveBranchId();
+  if (!branchId) {
     tbody.innerHTML = '<tr><td colspan="6" class="text-center text-muted py-4">' + QR_I18N.noTables + '</td></tr>';
     return;
   }
 
-  tbody.innerHTML = allLocations.map(loc => {
-    const key = `${loc.type}:${loc.id}`;
-    const qr = qrMap[key] || null;
-    const latest = latestMap[key] || null;
+  try {
+    const [tablesResp, roomsResp, qrResp] = await Promise.all([
+      fetch(`/api/v1/branches/${branchId}/tables/`, {credentials:'same-origin'}),
+      fetch(`/api/v1/branches/${branchId}/rooms/`, {credentials:'same-origin'}),
+      fetch(`/api/v1/branches/${branchId}/qr-codes/`, {credentials:'same-origin'}),
+    ]);
 
-    let qrDisplay = '<span class="text-muted">' + QR_I18N.noQR + '</span>';
-    if (qr && qr.image_url) {
-      qrDisplay = `<a href="#" onclick="event.preventDefault(); viewQR('${qr.image_url}')"><img src="${qr.image_url}" alt="QR" style="height:48px;width:48px;object-fit:cover;border-radius:4px;cursor:pointer;" loading="lazy"/></a>`;
+    const rawTables = tablesResp.ok ? await tablesResp.json() : [];
+    const rawRooms = roomsResp.ok ? await roomsResp.json() : [];
+    const rawQr = qrResp.ok ? await qrResp.json() : [];
+
+    const tables = toList(rawTables);
+    const rooms = toList(rawRooms);
+    const allQrCodes = toList(rawQr);
+
+    // Build lookup: location_type:location_id -> active qr code
+    const qrMap = {};
+    for (const qr of allQrCodes) {
+      if (!qr.is_active) continue;
+      const key = qr.table_id ? `table:${qr.table_id}` : qr.room_id ? `room:${qr.room_id}` : null;
+      if (key) qrMap[key] = qr;
     }
 
-    const statusBadge = qr
-      ? '<span class="badge badge-status-ready">' + QR_I18N.active + '</span>'
-      : '<span class="badge badge-status-served">' + QR_I18N.notGenerated + '</span>';
+    // Lookup latest for last-generated timestamp
+    const latestMap = {};
+    for (const qr of allQrCodes) {
+      const key = qr.table_id ? `table:${qr.table_id}` : qr.room_id ? `room:${qr.room_id}` : null;
+      if (!key) continue;
+      if (!latestMap[key] || new Date(qr.created_at) > new Date(latestMap[key].created_at)) {
+        latestMap[key] = qr;
+      }
+    }
 
-    const lastGen = latest
-      ? new Date(latest.created_at).toLocaleDateString()
-      : '—';
+    const tableItems = tables.map(t => ({
+      id: t.id,
+      name: `${QR_I18N.table} ${t.number}`,
+      type: 'table',
+      seat_count: t.seat_count,
+    }));
 
-    return `<tr>
-      <td data-label="{% trans 'Location' %}"><strong>${loc.name}</strong>${loc.seat_count ? `<br/><small class="text-muted">${QR_I18N.seats} ${loc.seat_count}</small>` : ''}</td>
-      <td data-label="{% trans 'Type' %}"><span class="badge ${loc.type==='table'?'badge-status-received':'badge-status-preparing'}">${loc.type === 'table' ? QR_I18N.table : QR_I18N.room}</span></td>
-      <td data-label="{% trans 'QR Code' %}">${qrDisplay}</td>
-      <td data-label="{% trans 'Status' %}">${statusBadge}</td>
-      <td data-label="{% trans 'Last Generated' %}"><small class="text-muted">${lastGen}</small></td>
-      <td data-label="{% trans 'Actions' %}">
-        <div class="action-buttons">
-          <button class="btn btn-sm btn-outline-primary" onclick="generateQR(event, '${loc.id}', '${loc.type}')">
-            <i class="bi bi-qr-code me-1"></i>${qr ? QR_I18N.regenerate : QR_I18N.generate}
-          </button>
-          ${qr && qr.image_url ? `<a href="${qr.image_url}" download class="btn btn-sm btn-outline-secondary"><i class="bi bi-download me-1"></i></a>` : ''}
-        </div>
-      </td>
-    </tr>`;
-  }).join('');
+    const roomItems = rooms.map(r => ({
+      id: r.id,
+      name: r.name,
+      type: 'room',
+      seat_count: r.capacity,
+    }));
+
+    const allLocations = [...tableItems, ...roomItems];
+
+    if (allLocations.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="6" class="text-center text-muted py-4">' + QR_I18N.noTables + '</td></tr>';
+      return;
+    }
+
+    tbody.innerHTML = allLocations.map(loc => {
+      const key = `${loc.type}:${loc.id}`;
+      const qr = qrMap[key] || null;
+      const latest = latestMap[key] || null;
+
+      const imageUrl = qr ? (qr.image_url || (qr.token ? `/qr/image/${qr.token}.png` : '')) : '';
+
+      let qrDisplay = '<span class="text-muted">' + QR_I18N.noQR + '</span>';
+      if (imageUrl) {
+        qrDisplay = `<a href="#" onclick="event.preventDefault(); viewQR('${imageUrl}', '${loc.name.replace(/'/g, "\\'")}')" title="${QR_I18N.view}"><img src="${imageUrl}" alt="QR" class="qr-thumb" loading="lazy"/></a>`;
+      }
+
+      const statusBadge = qr
+        ? '<span class="badge badge-status-ready"><i class="bi bi-check-circle me-1"></i>' + QR_I18N.active + '</span>'
+        : '<span class="badge badge-status-served">' + QR_I18N.notGenerated + '</span>';
+
+      const lastGen = latest
+        ? new Date(latest.created_at).toLocaleString()
+        : '—';
+
+      return `<tr>
+        <td data-label="{% trans 'Location' %}">
+          <strong>${loc.name}</strong>
+          ${loc.seat_count ? `<br/><small class="text-muted">${QR_I18N.seats} ${loc.seat_count}</small>` : ''}
+        </td>
+        <td data-label="{% trans 'Type' %}">
+          <span class="badge ${loc.type==='table'?'badge-status-received':'badge-status-preparing'}">
+            ${loc.type === 'table' ? QR_I18N.table : QR_I18N.room}
+          </span>
+        </td>
+        <td data-label="{% trans 'QR Code' %}">${qrDisplay}</td>
+        <td data-label="{% trans 'Status' %}">${statusBadge}</td>
+        <td data-label="{% trans 'Last Generated' %}"><small class="text-muted">${lastGen}</small></td>
+        <td data-label="{% trans 'Actions' %}" class="text-end">
+          <div class="action-buttons justify-content-end">
+            <button class="btn btn-sm ${qr ? 'btn-outline-warning' : 'btn-primary'}" onclick="generateQR(event, '${loc.id}', '${loc.type}', ${qr ? 'true' : 'false'})">
+              <i class="bi bi-qr-code me-1"></i>${qr ? QR_I18N.regenerate : QR_I18N.generate}
+            </button>
+            ${imageUrl ? `
+              <a href="${imageUrl}" download="${loc.name.toLowerCase().replace(/\s+/g, '_')}_qr.png" class="btn btn-sm btn-outline-secondary" title="${QR_I18N.download}">
+                <i class="bi bi-download"></i>
+              </a>
+              <button class="btn btn-sm btn-outline-secondary" onclick="printQR('${imageUrl}', '${loc.name.replace(/'/g, "\\'")}')" title="${QR_I18N.print}">
+                <i class="bi bi-printer"></i>
+              </button>
+            ` : ''}
+          </div>
+        </td>
+      </tr>`;
+    }).join('');
+  } catch (err) {
+    console.error('loadQRCodes error:', err);
+    tbody.innerHTML = '<tr><td colspan="6" class="text-center text-danger py-4">' + QR_I18N.networkError + '</td></tr>';
+  }
 }
 
-function viewQR(imageUrl) {
+function viewQR(imageUrl, locationName) {
+  document.getElementById('qrModalTitle').textContent = locationName + ' ' + '{% trans "QR Code" %}';
   const body = document.getElementById('qrImageModalBody');
-  body.innerHTML = `<img src="${imageUrl}" alt="QR Code" class="img-fluid" style="max-width:280px;" /><br/>
-    <a href="${imageUrl}" download class="btn btn-sm btn-outline-primary mt-3"><i class="bi bi-download me-1"></i>${QR_I18N.download}</a>
-    <button class="btn btn-sm btn-outline-secondary mt-3 ms-2" onclick="printQR('${imageUrl}')"><i class="bi bi-printer me-1"></i>${QR_I18N.print}</button>`;
+  const safeName = (locationName || 'qr_code').toLowerCase().replace(/\s+/g, '_') + '.png';
+  body.innerHTML = `
+    <img src="${imageUrl}" alt="QR Code" class="img-fluid rounded border p-2 mb-3 bg-white" style="max-width:240px;width:100%;" /><br/>
+    <div class="d-flex justify-content-center gap-2">
+      <a href="${imageUrl}" download="${safeName}" class="btn btn-sm btn-outline-primary">
+        <i class="bi bi-download me-1"></i>${QR_I18N.download}
+      </a>
+      <button class="btn btn-sm btn-outline-secondary" onclick="printQR('${imageUrl}', '${locationName}')">
+        <i class="bi bi-printer me-1"></i>${QR_I18N.print}
+      </button>
+    </div>
+  `;
   new bootstrap.Modal(document.getElementById('qrImageModal')).show();
 }
 
-function printQR(imageUrl) {
-  const win = window.open('');
-  win.document.write(`<img src="${imageUrl}" onload="window.print();window.close()" style="max-width:100%;"/>`);
+function printQR(imageUrl, locationName) {
+  const win = window.open('', '_blank');
+  win.document.write(`
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <title>Print QR — ${locationName}</title>
+        <style>
+          body { font-family: system-ui, sans-serif; text-align: center; padding: 40px; margin: 0; }
+          .card { display: inline-block; border: 2px solid #333; border-radius: 12px; padding: 24px; max-width: 320px; }
+          h2 { margin: 0 0 8px; font-size: 24px; }
+          p { margin: 0 0 16px; color: #666; font-size: 14px; }
+          img { width: 240px; height: 240px; display: block; margin: 0 auto; }
+        </style>
+      </head>
+      <body>
+        <div class="card">
+          <h2>${locationName}</h2>
+          <p>{% trans "Scan to view menu &amp; order" %}</p>
+          <img src="${imageUrl}" onload="window.print(); window.close();" />
+        </div>
+      </body>
+    </html>
+  `);
+  win.document.close();
 }
 
-async function generateQR(event, locationId, locationType) {
+async function generateQR(event, locationId, locationType, isRegenerate) {
+  if (isRegenerate && !confirm(QR_I18N.confirmRegenerate)) {
+    return;
+  }
+
   const btn = event.target.closest('button');
   btn.disabled = true;
-  btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> ' + QR_I18N.generating;
+  btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> ' + QR_I18N.generating;
 
-  const csrf = document.cookie.split('; ').find(r => r.startsWith('csrftoken='))?.split('=')[1] || '';
+  const branchId = await resolveBranchId();
+  const csrf = getCsrf();
 
   const payload = {};
   if (locationType === 'table') payload.table_id = locationId;
   else payload.room_id = locationId;
 
   try {
-    const resp = await fetch(`/api/v1/branches/${BRANCH_ID}/qr-codes/`, {
+    const resp = await fetch(`/api/v1/branches/${branchId}/qr-codes/`, {
       method: 'POST',
       credentials: 'same-origin',
-      headers: {'Content-Type': 'application/json', 'X-CSRFToken': csrf},
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': csrf,
+      },
       body: JSON.stringify(payload),
     });
 
     if (resp.ok) {
-      loadQRCodes();
+      await loadQRCodes();
       return;
     }
-    const err = await resp.json();
-    alert(err.detail || QR_I18N.failedGenerate);
+    const err = await resp.json().catch(() => ({}));
+    alert(err.detail || (err.table_id ? err.table_id[0] : null) || QR_I18N.failedGenerate);
   } catch (err) {
+    console.error('generateQR error:', err);
     alert(QR_I18N.networkError);
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '<i class="bi bi-qr-code me-1"></i>' + (isRegenerate ? QR_I18N.regenerate : QR_I18N.generate);
   }
-  btn.disabled = false;
-  btn.innerHTML = '<i class="bi bi-qr-code me-1"></i>' + QR_I18N.generate;
 }
 
-document.addEventListener('DOMContentLoaded', function() { loadQRCodes(); });
+document.addEventListener('DOMContentLoaded', function() {
+  loadQRCodes();
+});
 </script>
 {% endblock %}

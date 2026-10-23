@@ -436,8 +436,6 @@ class CustomerMenuConsumer(AsyncJsonWebsocketConsumer):
     """
 
     async def connect(self):
-        await self.accept()
-
         session = self.scope.get("session", {})
         customer_session = session.get("customer_session")
 
@@ -451,14 +449,16 @@ class CustomerMenuConsumer(AsyncJsonWebsocketConsumer):
         branch_id = str(customer_session["branch_id"])
         self._group = f"branch_{branch_id}_menu"
         await self.channel_layer.group_add(self._group, self.channel_name)
-        await self.accept()
-        websocket_connections_active().inc()
-
-        logger.info(
-            "CustomerMenuConsumer accepted: branch_id=%s group=%s",
-            branch_id,
-            self._group,
-        )
+        try:
+            await self.accept()
+            websocket_connections_active().inc()
+            logger.info(
+                "CustomerMenuConsumer accepted: branch_id=%s group=%s",
+                branch_id,
+                self._group,
+            )
+        except Exception as exc:
+            logger.warning("CustomerMenuConsumer: accept failed (%s)", exc)
 
     async def disconnect(self, code):
         group = getattr(self, "_group", None)
