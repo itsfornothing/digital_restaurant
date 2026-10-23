@@ -50,7 +50,7 @@ DATABASES = {
         "PASSWORD": _db_pass,
         "HOST": _db_host,
         "PORT": _db_port,
-        "CONN_MAX_AGE": 60,
+        "CONN_MAX_AGE": config("CONN_MAX_AGE", default=0, cast=int),
         "OPTIONS": {
             "sslmode": "require",
         },
@@ -79,7 +79,7 @@ DATABASES["replica"] = {
     "PASSWORD": config("REPLICA_DB_PASSWORD", default=config("DB_PASSWORD", default="")),
     "HOST": config("REPLICA_DB_HOST", default=config("DB_HOST", default="")),
     "PORT": config("REPLICA_DB_PORT", default=config("DB_PORT", default="5432")),
-    "CONN_MAX_AGE": 60,
+    "CONN_MAX_AGE": config("CONN_MAX_AGE", default=0, cast=int),
     "OPTIONS": {
         "sslmode": "require",
     },

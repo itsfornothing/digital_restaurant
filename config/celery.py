@@ -27,9 +27,11 @@ app.autodiscover_tasks()
 @app.on_after_configure.connect
 def setup_periodic_tasks(sender, **kwargs):
     """Schedule periodic inventory-menu reconciliation every 5 minutes."""
+    from celery import signature
+
     sender.add_periodic_task(
         300.0,  # every 5 minutes
-        "apps.inventory.tasks.reconcile_menu_availability",
+        signature("apps.inventory.tasks.reconcile_menu_availability"),
         name="reconcile-menu-availability-every-5min",
     )
 

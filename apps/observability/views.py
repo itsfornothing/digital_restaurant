@@ -45,6 +45,7 @@ def _check_postgres() -> dict:
 
         with connection.cursor() as cursor:
             cursor.execute("SELECT 1")
+        connection.close()
         latency_ms = (time.monotonic() - start) * 1000
         return {"status": "ok", "latency_ms": round(latency_ms, 2), "detail": None}
     except Exception as exc:
@@ -85,6 +86,9 @@ def _check_redis() -> dict:
 
 def _check_celery() -> dict:
     """Inspect active Celery workers with a short timeout."""
+    if getattr(settings, "CELERY_TASK_ALWAYS_EAGER", False):
+        return {"status": "ok", "latency_ms": 0.0, "detail": "eager mode"}
+
     start = time.monotonic()
     try:
         from config.celery import app as celery_app
