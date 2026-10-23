@@ -18,6 +18,21 @@ class Command(BaseCommand):
         from apps.tenants.models import Tenant, Domain
 
         if Tenant.objects.exists():
+            deploy_host = (
+                os.environ.get("RENDER_EXTERNAL_HOSTNAME")
+                or os.environ.get("CUSTOMER_DOMAIN")
+                or os.environ.get("RAILWAY_STATIC_URL")
+            )
+            if deploy_host:
+                deploy_host = deploy_host.split(":")[0]
+                tenant = Tenant.objects.filter(is_active=True).first() or Tenant.objects.first()
+                if tenant:
+                    Domain.objects.get_or_create(
+                        domain=deploy_host,
+                        tenant=tenant,
+                        defaults={"is_primary": True},
+                    )
+                    self.stdout.write(f"  Registered domain: {deploy_host}")
             self.stdout.write("Already bootstrapped — skipping.")
             return
 

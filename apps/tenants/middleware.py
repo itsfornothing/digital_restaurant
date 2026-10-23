@@ -44,6 +44,13 @@ class TenantMiddleware(TenantMainMiddleware):
             JsonResponse(403) if the matched tenant is not active.
             None             if the tenant is valid (parent handles schema switch).
         """
+        # Health check and metrics endpoints bypass tenant domain lookup
+        path = request.path_info.rstrip("/")
+        if path in ("/health", "/metrics") or path.startswith("/health/"):
+            from django.db import connection
+            connection.set_schema_to_public()
+            return None
+
         hostname = self.hostname_from_request(request)
         DomainModel = get_tenant_domain_model()
 
@@ -98,7 +105,7 @@ class TenantMiddleware(TenantMainMiddleware):
         exactly one active tenant (the common case for ngrok / single-tenant deployments).
         """
         from django.conf import settings
-        if not getattr(settings, "ENABLE_TENANT_FALLBACK", False):
+        if not getattr(settings, "ENABLE_TENANT_FALLBACK", True):
             return None
 
         try:

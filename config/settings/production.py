@@ -16,6 +16,8 @@ DEBUG = False
 ALLOWED_HOSTS = [h.strip() for h in config("ALLOWED_HOSTS", default="").split(",") if h.strip()]
 CSRF_TRUSTED_ORIGINS = [o.strip() for o in config("CSRF_TRUSTED_ORIGINS", default="").split(",") if o.strip()]
 
+ENABLE_TENANT_FALLBACK = config("ENABLE_TENANT_FALLBACK", default=True, cast=bool)
+
 SECRET_KEY = config("DJANGO_SECRET_KEY")
 
 # ---------------------------------------------------------------------------
