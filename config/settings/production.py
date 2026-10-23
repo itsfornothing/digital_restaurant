@@ -13,8 +13,8 @@ from .base import INSTALLED_APPS, MIDDLEWARE  # noqa: F401
 
 DEBUG = False
 
-ALLOWED_HOSTS = config("ALLOWED_HOSTS", default="").split(",")
-CSRF_TRUSTED_ORIGINS = config("CSRF_TRUSTED_ORIGINS", default="").split(",")
+ALLOWED_HOSTS = [h.strip() for h in config("ALLOWED_HOSTS", default="").split(",") if h.strip()]
+CSRF_TRUSTED_ORIGINS = [o.strip() for o in config("CSRF_TRUSTED_ORIGINS", default="").split(",") if o.strip()]
 
 SECRET_KEY = config("DJANGO_SECRET_KEY")
 
