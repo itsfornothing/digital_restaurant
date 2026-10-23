@@ -142,9 +142,12 @@ class ProvisioningService:
         Raises:
             ProvisioningError: if the migration subprocess exits non-zero.
         """
+        from django.conf import settings
+
+        manage_py = str(settings.BASE_DIR / "manage.py")
         cmd = [
             sys.executable,
-            "manage.py",
+            manage_py,
             "migrate_schemas",
             "--tenant",
             f"--schema={schema_name}",
@@ -155,6 +158,7 @@ class ProvisioningService:
         )
         result = subprocess.run(
             cmd,
+            cwd=str(settings.BASE_DIR),
             capture_output=True,
             text=True,
         )
