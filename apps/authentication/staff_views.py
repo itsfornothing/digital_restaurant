@@ -100,10 +100,7 @@ def _require_auth(view_fn):
 # ---------------------------------------------------------------------------
 
 def staff_register(request):
-    """GET/POST /staff/register/ — Manager invite flow."""
-    if not request.user.is_authenticated:
-        return redirect(f"/staff/login/?next={request.path}")
-
+    """GET/POST /staff/register/ — Self-registration (unauthenticated) or Manager invite flow (authenticated)."""
     from apps.authentication.models import User
 
     error = None
