@@ -345,6 +345,8 @@ def _make_request(user=None, session_data: dict | None = None):
     req.tenant = None
     req.META = {"REMOTE_ADDR": "127.0.0.1", "HTTP_USER_AGENT": "pytest"}
     req.session = session_data if session_data is not None else {}
+    req.query_params = {}
+    req.GET = {}
     return req
 
 

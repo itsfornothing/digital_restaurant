@@ -75,6 +75,7 @@ INSTALLED_APPS = [
     "apps.privacy",
     "apps.notifications",
     "apps.observability",
+    "apps.webhooks",
 ]
 
 STATIC_URL = "/static/"

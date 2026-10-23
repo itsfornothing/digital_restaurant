@@ -473,15 +473,15 @@ class TestOrderViewSetPermissions:
         req = _request(user)
         assert any(p.has_permission(req, None) for p in perms)
 
-    def test_kitchen_staff_cannot_list_orders(self):
-        """Kitchen_Staff can update status but not list orders per Req 4.2."""
+    def test_kitchen_staff_can_list_orders(self):
+        """Kitchen_Staff can list orders for KDS display per Req 4.2 / TC-API06."""
         from apps.orders.views import OrderViewSet
         vs = OrderViewSet()
         vs.action = "list"
         perms = vs.get_permissions()
         user = _user(UserRole.KITCHEN_STAFF)
         req = _request(user)
-        assert all(not p.has_permission(req, None) for p in perms)
+        assert any(p.has_permission(req, None) for p in perms)
 
     def test_kitchen_staff_can_update_status(self):
         from apps.orders.views import OrderViewSet

@@ -140,7 +140,7 @@ def super_admin(db):
 # Helper: build a mock request for direct permission-class evaluation
 # ---------------------------------------------------------------------------
 
-def _mock_request_for_role(role: str, branch_id=None):
+def _mock_request_for_role(role: str, branch_id=None, tenant_id=None):
     """
     Build a minimal MagicMock request object for the given role.
 
@@ -151,6 +151,7 @@ def _mock_request_for_role(role: str, branch_id=None):
     Args:
         role:       One of the UserRole choices.
         branch_id:  Optional branch pk to assign to the mock user.
+        tenant_id:  Optional tenant pk to assign to request.tenant.
 
     Returns:
         MagicMock with .user pre-configured.
@@ -163,7 +164,7 @@ def _mock_request_for_role(role: str, branch_id=None):
 
     request = MagicMock()
     request.user = user
-    request.tenant = None
+    request.tenant = MagicMock(id=tenant_id) if tenant_id is not None else None
     request.META = {"REMOTE_ADDR": "127.0.0.1", "HTTP_USER_AGENT": "pytest"}
     request.session = {}
     return request
@@ -858,19 +859,22 @@ class TestTCIDOR:
             "to an expense owned by Branch B (IDOR prevention)"
         )
 
-    def test_tci03_tenant_owner_denied_expense_write_by_permission_class(self):
+    def test_tci03_tenant_owner_denied_cross_tenant_expense_by_id(self):
         """
-        TC-I03 (Tenant_Owner cross-tenant expense writes): IsBranchManager
-        must deny Tenant_Owner on expense write actions — expense CRUD is
-        Branch_Manager only per Requirement 4.2.
+        TC-I03 (Tenant_Owner cross-tenant expense access): TenantScopePermission
+        must deny Tenant Owner access to an expense owned by another tenant.
         """
-        from shared.permissions import IsBranchManager
+        from shared.permissions import TenantScopePermission
 
-        perm = IsBranchManager()
-        request = _mock_request_for_role(UserRole.TENANT_OWNER)
-        allowed = perm.has_permission(request, view=None)
+        expense_obj = MagicMock()
+        expense_obj.tenant_id = uuid.uuid4()
+
+        perm = TenantScopePermission()
+        request = _mock_request_for_role(UserRole.TENANT_OWNER, tenant_id=uuid.uuid4())
+
+        allowed = perm.has_object_permission(request, view=None, obj=expense_obj)
         assert allowed is False, (
-            "TC-I03: IsBranchManager must deny Tenant_Owner on expense write actions"
+            "TC-I03: TenantScopePermission must deny cross-tenant expense access"
         )
 
     # ------------------------------------------------------------------

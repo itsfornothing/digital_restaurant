@@ -225,6 +225,22 @@
   </section>
 
   <!-- ================================================================
+       Recommendations Section (FR-P2.1, FR-C1.4)
+  ================================================================ -->
+  <section id="recommendations-section" class="mb-4 d-none" aria-label="{% trans 'Recommended for you' %}">
+    <div class="d-flex align-items-center justify-content-between mb-2">
+      <div class="d-flex align-items-center gap-2">
+        <span class="fs-5 text-warning" aria-hidden="true"><i class="bi bi-stars"></i></span>
+        <h2 class="h6 mb-0 fw-bold">{% trans "Recommended For You" %}</h2>
+      </div>
+      <span class="badge bg-light text-muted border small fw-normal">{% trans "Chef's Picks & Trending" %}</span>
+    </div>
+    <div id="recommendations-container" class="d-flex gap-3 overflow-x-auto pb-2" style="scrollbar-width: thin; -webkit-overflow-scrolling: touch;">
+      <!-- Recommendations dynamically populated here -->
+    </div>
+  </section>
+
+  <!-- ================================================================
        Menu Items Grid  (id="menu-items")
        Rendered via JavaScript fetch from /api/v1/customer/menu/
        HTMX-style: filter button clicks update this section without
@@ -306,6 +322,7 @@
    Configuration from Django context
 ==================================================================== */
 const MENU_API_URL = '/api/v1/customer/menu/';
+const RECOMMENDATIONS_API_URL = '/api/v1/customer/recommendations/';
 const CURRENCY     = '{{ config.currency|default:"ETB" }}';
 
 /* ====================================================================
@@ -454,6 +471,76 @@ async function loadMenu() {
     grid.innerHTML = '<div class="col-12"><div class="alert alert-danger">' +
       '{% trans "Network error. Please check your connection and try again." %}</div></div>';
   }
+
+  // Load smart recommendations (FR-P2.1, FR-C1.4)
+  loadRecommendations();
+}
+
+async function loadRecommendations() {
+  const section = document.getElementById('recommendations-section');
+  const container = document.getElementById('recommendations-container');
+  if (!section || !container) return;
+
+  let url = RECOMMENDATIONS_API_URL + '?type=for_you&limit=6';
+  const tags = Array.from(activeFilters).join(',');
+  if (tags) url += '&dietary_tags=' + encodeURIComponent(tags);
+
+  try {
+    const resp = await fetch(url, {
+      credentials: 'same-origin',
+      headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
+    });
+    if (!resp.ok) {
+      section.classList.add('d-none');
+      return;
+    }
+    const items = await resp.json();
+    if (!Array.isArray(items) || items.length === 0) {
+      section.classList.add('d-none');
+      return;
+    }
+    // Cache items into menuItemsMap so modal click works
+    items.forEach(item => { if (item.id && !menuItemsMap[item.id]) menuItemsMap[item.id] = item; });
+
+    container.innerHTML = items.map(item => buildRecommendationCard(item)).join('');
+    section.classList.remove('d-none');
+  } catch (err) {
+    console.warn('Recommendations fetch failed:', err);
+    section.classList.add('d-none');
+  }
+}
+
+function buildRecommendationCard(item) {
+  const itemId = escHtml(item.id || '');
+  const name = escHtml(item.name_translated || item.name || '');
+  const price = item.price ? parseFloat(item.price).toFixed(2) : '0.00';
+  const prep = item.prep_time_minutes || 0;
+  const imageUrl = item.image_url || '';
+  const tags = Array.isArray(item.dietary_tags) ? item.dietary_tags : [];
+  const tagBadges = tags.slice(0, 2).map(t =>
+    `<span class="badge rounded-pill bg-success text-white small" style="font-size:0.65rem;">${escHtml(dietaryTagLabel(t))}</span>`
+  ).join(' ');
+
+  const imageHtml = imageUrl
+    ? `<img src="${escHtml(imageUrl)}" class="rounded" style="width:72px;height:72px;object-fit:cover;" alt="${name}" loading="lazy"/>`
+    : `<div class="rounded d-flex align-items-center justify-content-center bg-light" style="width:72px;height:72px;"><i class="bi bi-star text-warning" style="font-size:1.5rem;"></i></div>`;
+
+  return `
+    <div class="card p-2 shadow-sm border-0 flex-shrink-0" style="width: 240px; cursor: pointer; border-radius: 0.75rem;" onclick="openItemDetail('${itemId}')">
+      <div class="d-flex gap-2 align-items-center">
+        ${imageHtml}
+        <div class="flex-grow-1 overflow-hidden">
+          <div class="fw-semibold text-truncate small mb-1">${name}</div>
+          <div class="text-primary fw-bold small">${CURRENCY} ${price}</div>
+          <div class="text-muted" style="font-size:0.7rem;"><i class="bi bi-clock me-1"></i>${prep} min</div>
+        </div>
+      </div>
+      <div class="d-flex justify-content-between align-items-center mt-2 pt-1 border-top">
+        <div class="d-flex gap-1 overflow-hidden">${tagBadges}</div>
+        <button type="button" class="btn btn-sm btn-outline-primary py-0 px-2" style="font-size:0.75rem;min-height:30px;" onclick="event.stopPropagation(); addToCart('${itemId}', '${name.replace(/'/g,"\\'")}', ${price})" aria-label="{% trans 'Add' %} ${name}"><i class="bi bi-plus"></i> {% trans "Add" %}</button>
+      </div>
+    </div>
+  `;
 }
 
 function buildSkeletons(n) {

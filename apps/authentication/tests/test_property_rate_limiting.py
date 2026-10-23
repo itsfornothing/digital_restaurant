@@ -39,6 +39,7 @@ Notes on cache isolation between test iterations:
 import pytest
 from django.core.cache import cache
 from django.contrib.auth import get_user_model
+from django.test import override_settings
 from hypothesis import given, settings
 from hypothesis import strategies as st
 from rest_framework import status
@@ -97,6 +98,7 @@ def _fire_n_requests(client: APIClient, n: int, email: str = _EMAIL) -> None:
 # Property 9a — After 10 attempts in 60s, the 11th returns 429
 # ---------------------------------------------------------------------------
 
+@override_settings(RATELIMIT_ENABLE=True)
 @pytest.mark.django_db
 @given(prefix=st.integers(min_value=0, max_value=9))
 @settings(max_examples=200)
@@ -146,6 +148,7 @@ def test_property_9a_eleventh_request_returns_429(prefix: int) -> None:
 # Property 9b — After window reset, requests are permitted again
 # ---------------------------------------------------------------------------
 
+@override_settings(RATELIMIT_ENABLE=True)
 @pytest.mark.django_db
 @given(extra_over_limit=st.integers(min_value=0, max_value=5))
 @settings(max_examples=200)

@@ -582,13 +582,14 @@ class TestBranchOrdersEndpoint:
         )
 
         # The created order must appear in the results
-        order_ids = [str(o["id"]) for o in response.data]
+        results = response.data.get("results", response.data) if isinstance(response.data, dict) else response.data
+        order_ids = [str(o["id"]) for o in results]
         assert str(created_order_id) in order_ids, (
             f"TC-API06: Created order {created_order_id} not in Kitchen Staff order list"
         )
 
         # All returned orders must belong to the kitchen staff's branch
-        for order_data in response.data:
+        for order_data in results:
             assert str(order_data["branch"]) == str(branch.id), (
                 f"TC-API06: Order {order_data['id']} belongs to branch "
                 f"{order_data['branch']!r}, expected {branch.id!r}"
@@ -622,7 +623,8 @@ class TestBranchOrdersEndpoint:
         assert response.status_code == status.HTTP_200_OK, (
             f"TC-API06 scope: Expected 200 (empty), got {response.status_code}: {response.data}"
         )
-        assert response.data == [], (
+        results = response.data.get("results", response.data) if isinstance(response.data, dict) else response.data
+        assert results == [], (
             f"TC-API06 scope: Other-branch Kitchen_Staff should see no orders, "
             f"got: {response.data}"
         )

@@ -762,7 +762,14 @@ class TestQROrderFlowE2E01:
             },
         )
 
-        served_msg = await customer_comm.receive_json_from(timeout=3.0)
+        served_msg = None
+        for _ in range(5):
+            msg = await customer_comm.receive_json_from(timeout=3.0)
+            if msg.get("payload", {}).get("status") == "served":
+                served_msg = msg
+                break
+
+        assert served_msg is not None
         assert served_msg.get("type") == "order_status_changed"
         assert served_msg["payload"]["status"] == "served"
 

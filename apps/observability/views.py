@@ -189,7 +189,7 @@ def health_check(request):
     r2_status = checks["r2"]["status"]
     r2_ok = r2_status in ("ok", "skipped")
 
-    if not postgres_ok:
+    if not postgres_ok or not redis_ok:
         overall_status = "down"
     elif not celery_ok or not r2_ok:
         overall_status = "degraded"

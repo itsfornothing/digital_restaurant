@@ -235,6 +235,7 @@ class LoginView(RateLimitMixin, APIView):
             import uuid
             from django.core.cache import cache
 
+            request.session["pending_2fa_user_id"] = str(user.id)
             partial_token = uuid.uuid4()
             cache.set(
                 f"2fa_partial:{partial_token}",

@@ -109,9 +109,16 @@ class BillingService:
         # TenantSubscription lives in the public schema. Use the public tenant
         # connection to look it up, regardless of the current schema context.
         try:
-            from django_tenants.utils import get_public_schema_name, schema_context
+            from django.db import connection
 
-            with schema_context(get_public_schema_name()):
+            if hasattr(connection, "tenant"):
+                from django_tenants.utils import get_public_schema_name, schema_context
+
+                with schema_context(get_public_schema_name()):
+                    subscription = TenantSubscription.objects.select_related("plan").get(
+                        tenant_id=tenant.pk
+                    )
+            else:
                 subscription = TenantSubscription.objects.select_related("plan").get(
                     tenant_id=tenant.pk
                 )

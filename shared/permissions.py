@@ -79,7 +79,7 @@ class IsSuperAdmin(BasePermission):
 
 class IsTenantOwner(BasePermission):
     """
-    Grants access to Tenant_Owner and Super_Admin (Requirement 4.2).
+    Grants access to Tenant_Owner (Requirement 4.2).
     Tenant_Owner may CRUD Branches and Users within their tenant and read
     financial records across all their branches.
     """
@@ -90,21 +90,12 @@ class IsTenantOwner(BasePermission):
         user = _get_user(request)
         if user is None:
             return False
-        return user.is_active and user.role in (
-            UserRole.TENANT_OWNER,
-            UserRole.SUPER_ADMIN,
-        )
+        return user.is_active and user.role == UserRole.TENANT_OWNER
 
 
 class IsBranchManager(BasePermission):
     """
     Grants access to users with the Branch_Manager role, scoped to their branch.
-
-    Also grants access to Tenant_Owner and Super_Admin, who have full access
-    across all branches per the permission matrix (Requirement 4.2).
-
-    Branch_Manager may CRUD MenuItems, Inventory, and Expenses for their branch
-    and has CRU access on Branch Users (Requirement 4.2).
     """
 
     message = "You must be a Branch Manager to perform this action."
@@ -113,17 +104,12 @@ class IsBranchManager(BasePermission):
         user = _get_user(request)
         if user is None:
             return False
-        return user.is_active and user.role in (
-            UserRole.BRANCH_MANAGER,
-            UserRole.TENANT_OWNER,
-            UserRole.SUPER_ADMIN,
-        )
+        return user.is_active and user.role == UserRole.BRANCH_MANAGER
 
 
 class IsReceptionist(BasePermission):
     """
-    Grants access to Receptionist, Branch_Manager, Tenant_Owner and Super_Admin
-    (Requirement 4.2). Receptionist has read/update on Orders for their branch.
+    Grants access to Receptionist role (Requirement 4.2).
     """
 
     message = "You must be a Receptionist to perform this action."
@@ -132,18 +118,12 @@ class IsReceptionist(BasePermission):
         user = _get_user(request)
         if user is None:
             return False
-        return user.is_active and user.role in (
-            UserRole.RECEPTIONIST,
-            UserRole.BRANCH_MANAGER,
-            UserRole.TENANT_OWNER,
-            UserRole.SUPER_ADMIN,
-        )
+        return user.is_active and user.role == UserRole.RECEPTIONIST
 
 
 class IsKitchenStaff(BasePermission):
     """
-    Grants access to Kitchen_Staff, Branch_Manager, Tenant_Owner and Super_Admin
-    (Requirement 4.2). Kitchen_Staff has read/status-update on Orders.
+    Grants access to Kitchen_Staff role (Requirement 4.2).
     """
 
     message = "You must be a Kitchen Staff member to perform this action."
@@ -152,12 +132,7 @@ class IsKitchenStaff(BasePermission):
         user = _get_user(request)
         if user is None:
             return False
-        return user.is_active and user.role in (
-            UserRole.KITCHEN_STAFF,
-            UserRole.BRANCH_MANAGER,
-            UserRole.TENANT_OWNER,
-            UserRole.SUPER_ADMIN,
-        )
+        return user.is_active and user.role == UserRole.KITCHEN_STAFF
 
 
 class IsCustomerSession(BasePermission):
@@ -178,7 +153,8 @@ class IsCustomerSession(BasePermission):
         session = getattr(request, "session", None)
 
         # Allow authenticated staff users (they are already logged in)
-        if request.user.is_authenticated:
+        user = getattr(request, "user", None)
+        if user and getattr(user, "is_authenticated", False):
             return True
 
         # Customer sessions are stored in the Django session under 'customer_session'
@@ -188,7 +164,15 @@ class IsCustomerSession(BasePermission):
 
         # Fallback: load session from ?sessionid= query parameter when the
         # session cookie is not sent (ngrok cross-domain / third-party cookies).
-        session_id = request.query_params.get("sessionid")
+        query_params = getattr(request, "query_params", None)
+        if query_params is None:
+            query_params = getattr(request, "GET", None)
+        session_id = None
+        if query_params is not None and hasattr(query_params, "get"):
+            val = query_params.get("sessionid")
+            if isinstance(val, str) and val.strip():
+                session_id = val.strip()
+
         if session_id:
             from importlib import import_module
             from django.conf import settings
@@ -355,10 +339,7 @@ class IsSuperAdminOrTenantOwner(BasePermission):
 class IsBranchStaff(BasePermission):
     """
     Grants access to any branch-level staff role: Branch_Manager, Receptionist,
-    or Kitchen_Staff. Also grants access to Tenant_Owner and Super_Admin.
-
-    Used on read-only endpoints that all branch staff can access (e.g. menu
-    item listings, branch info).
+    or Kitchen_Staff.
     """
 
     message = "You must be a branch staff member to perform this action."
@@ -371,8 +352,6 @@ class IsBranchStaff(BasePermission):
             UserRole.BRANCH_MANAGER,
             UserRole.RECEPTIONIST,
             UserRole.KITCHEN_STAFF,
-            UserRole.TENANT_OWNER,
-            UserRole.SUPER_ADMIN,
         )
 
 

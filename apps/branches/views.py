@@ -161,7 +161,7 @@ class TableViewSet(
     def get_permissions(self):
         if self.action in ("list", "retrieve"):
             return [_BranchReadPermission()]
-        return [IsBranchManager()]
+        return [IsTenantOwner()]
 
     def get_queryset(self):
         branch_pk = self.kwargs.get("branch_pk")
@@ -222,7 +222,7 @@ class RoomViewSet(
     def get_permissions(self):
         if self.action in ("list", "retrieve"):
             return [_BranchReadPermission()]
-        return [IsBranchManager()]
+        return [IsTenantOwner()]
 
     def get_queryset(self):
         branch_pk = self.kwargs.get("branch_pk")

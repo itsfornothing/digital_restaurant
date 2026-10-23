@@ -181,8 +181,10 @@ def test_deduct_inventory_sla(branch_with_inventory):
     elapsed_times: list[float] = []
     errors: list[str] = []
 
-    # Run deduct_inventory concurrently using a thread pool
-    with ThreadPoolExecutor(max_workers=CONCURRENCY) as executor:
+    # Run deduct_inventory concurrently using a thread pool (serialize under SQLite due to file/table lock)
+    from django.db import connection
+    max_workers = 1 if connection.vendor == "sqlite" else CONCURRENCY
+    with ThreadPoolExecutor(max_workers=max_workers) as executor:
         futures = {
             executor.submit(_measure_deduct_inventory, str(order.id)): order.id
             for order in orders

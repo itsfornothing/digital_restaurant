@@ -132,8 +132,7 @@ class _OrderReadOrCancelPermission(BasePermission):
 
 class _OrderStatusUpdatePermission(BasePermission):
     """
-    Allows Order status updates for Kitchen_Staff, Receptionist,
-    Branch_Manager, Tenant_Owner, and Super_Admin (Requirement 4.2).
+    Allows Order status updates for Kitchen_Staff and Receptionist (Requirement 4.2).
     """
 
     message = "You must be Kitchen Staff or a Receptionist to update order status."
@@ -145,9 +144,6 @@ class _OrderStatusUpdatePermission(BasePermission):
         return user.is_active and user.role in (
             UserRole.KITCHEN_STAFF,
             UserRole.RECEPTIONIST,
-            UserRole.BRANCH_MANAGER,
-            UserRole.TENANT_OWNER,
-            UserRole.SUPER_ADMIN,
         )
 
 
@@ -178,7 +174,7 @@ class OrderViewSet(AuditLogMixin, viewsets.GenericViewSet):
     def get_permissions(self):
         if self.action in ("list", "retrieve", "cancel", "create"):
             return [_OrderReadOrCancelPermission()]
-        if self.action in ("partial_update", "update", "update_status"):
+        if self.action in ("partial_update", "update", "update_status", "status"):
             return [_OrderStatusUpdatePermission()]
         # Default — require at least receptionist access
         return [_OrderReadOrCancelPermission()]
@@ -371,11 +367,12 @@ class OrderViewSet(AuditLogMixin, viewsets.GenericViewSet):
         }.get(new_status, ["kitchen", "reception"])
         push_staff_roles_event(str(order.branch_id), "order.status_changed", staff_payload, staff_roles)
 
-        # Customer push — original format (new_status / timestamp keys)
+        # Customer push — include both 'status' and 'new_status' for client compatibility
         customer_payload = {
             "id": str(order.id),
             "order_id": str(order.id),
             "order_number": order.order_number,
+            "status": new_status,
             "new_status": new_status,
             "previous_status": previous_status,
             "branch_id": str(order.branch_id),
@@ -525,6 +522,12 @@ class CustomerOrderViewSet(AuditLogMixin, viewsets.GenericViewSet):
             logger.warning(
                 "Failed to push WebSocket events for new order %s", order.id, exc_info=True
             )
+
+        try:
+            from apps.notifications.tasks import send_order_notification
+            send_order_notification.delay(str(order.id))
+        except Exception as exc:
+            logger.debug("Celery send_order_notification enqueue skipped: %s", exc)
 
         out_serializer = _OrderSerializer(order)
         return Response(out_serializer.data, status=status.HTTP_201_CREATED)

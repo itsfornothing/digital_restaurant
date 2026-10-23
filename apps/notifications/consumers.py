@@ -652,3 +652,7 @@ class InventoryConsumer(_AuthenticatedConsumer):
                 )
                 return False
         return True
+
+
+# Backward compatibility alias
+OrderNotificationConsumer = ReceptionConsumer

@@ -551,14 +551,19 @@ class CustomerMenuView(AuditLogMixin, APIView):
 
         from apps.menus.models import MenuItem
 
-        # Base queryset: non-archived items for branch (both available and unavailable)
-        # The frontend shows unavailable items with a badge so staff changes propagate instantly.
-        # Requirement 14.11: archived items are hidden from customers.
+        # Base queryset: non-archived items for branch
+        # By default only available items are returned (Requirement 14.11).
+        # Optional ?include_unavailable=true allows frontend to show badges.
+        include_unavailable = request.query_params.get("include_unavailable", "false").lower() == "true"
+        filter_kwargs = {
+            "branch_id": branch_id,
+            "is_archived": False,
+        }
+        if not include_unavailable:
+            filter_kwargs["status"] = "available"
+
         qs = (
-            MenuItem.objects.filter(
-                branch_id=branch_id,
-                is_archived=False,
-            )
+            MenuItem.objects.filter(**filter_kwargs)
             .select_related("nutrition")
             .prefetch_related("categories")
             .order_by("name")
@@ -604,6 +609,98 @@ class CustomerMenuView(AuditLogMixin, APIView):
                 )
 
         return Response(response_data, status=status.HTTP_200_OK)
+
+
+# ---------------------------------------------------------------------------
+# CustomerRecommendationsView
+# GET /api/v1/customer/recommendations/
+# ---------------------------------------------------------------------------
+
+
+class CustomerRecommendationsView(AuditLogMixin, APIView):
+    """
+    GET /api/v1/customer/recommendations/
+
+    Returns smart menu recommendations for the active customer session.
+    Supported query parameters:
+      - type: 'popular' | 'pairings' | 'for_you' (default 'for_you')
+      - item_ids: comma-separated MenuItem UUIDs (for cart pairings)
+      - dietary_tags: comma-separated dietary tags (e.g. 'vegan,gluten_free')
+      - limit: integer max items (default 6, max 20)
+      - wrap: 'true' to return envelope dict {'recommendation_type', 'count', 'items'}
+
+    Requirements: SRS Section 2.1, Section 7, FR-P2.1, FR-C1.4
+    """
+
+    permission_classes = [IsCustomerSession]
+
+    def get(self, request):
+        session_data = request.session.get("customer_session", {})
+        branch_id = session_data.get("branch_id")
+        if not branch_id:
+            user = getattr(request, "user", None)
+            if user and getattr(user, "is_authenticated", False) and getattr(user, "branch_id", None):
+                branch_id = str(user.branch_id)
+            else:
+                return Response(
+                    {"code": "SESSION_INVALID", "detail": "No active customer session found."},
+                    status=status.HTTP_401_UNAUTHORIZED,
+                )
+
+        rec_type = request.query_params.get("type", "for_you").lower().strip()
+        limit_param = request.query_params.get("limit", "6")
+        try:
+            limit = max(1, min(int(limit_param), 20))
+        except (ValueError, TypeError):
+            limit = 6
+
+        tags_param = request.query_params.get("dietary_tags", "")
+        dietary_tags = [t.strip() for t in tags_param.split(",") if t.strip()] if tags_param else []
+
+        item_ids_param = request.query_params.get("item_ids", "")
+        item_ids = [i.strip() for i in item_ids_param.split(",") if i.strip()] if item_ids_param else []
+
+        from apps.menus.recommendation_service import RecommendationService
+
+        if rec_type == "popular":
+            items = RecommendationService.get_popular_items(
+                branch_id=branch_id,
+                limit=limit,
+                dietary_tags=dietary_tags,
+            )
+        elif rec_type == "pairings":
+            items = RecommendationService.get_pairings_for_items(
+                branch_id=branch_id,
+                item_ids=item_ids,
+                limit=limit,
+                dietary_tags=dietary_tags,
+            )
+        else:
+            items = RecommendationService.get_personalized_recommendations(
+                branch_id=branch_id,
+                customer_session=session_data,
+                limit=limit,
+                dietary_tags=dietary_tags,
+            )
+
+        serializer = CustomerMenuItemSerializer(items, many=True)
+        wrap = request.query_params.get("wrap", "").lower() == "true"
+
+        if wrap:
+            data = {
+                "recommendation_type": rec_type,
+                "count": len(items),
+                "items": serializer.data,
+            }
+        else:
+            data = serializer.data
+
+        resp = Response(data, status=status.HTTP_200_OK)
+        resp["X-Recommendation-Type"] = rec_type
+        resp["X-Recommendation-Count"] = str(len(items))
+        return resp
+
+
 class CustomerOrderViewSet(AuditLogMixin, viewsets.GenericViewSet):
     """
     POST /api/v1/customer/orders/          — place order
@@ -1029,6 +1126,12 @@ class CustomerOrderCreateView(AuditLogMixin, APIView):
             push_customer_event(str(order.id), "order_status_changed", payload)
         except Exception as notify_exc:
             logger.warning("Failed to push order notification for %s: %s", order.id, notify_exc)
+
+        try:
+            from apps.notifications.tasks import send_order_notification
+            send_order_notification.delay(str(order.id))
+        except Exception as exc:
+            logger.debug("Celery send_order_notification enqueue skipped: %s", exc)
 
         # -- 8. Store last_order_id in session so the menu page can show
         #         a "Track Your Order" link returning customers can follow.

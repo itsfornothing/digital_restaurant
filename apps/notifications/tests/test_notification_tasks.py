@@ -13,6 +13,7 @@ Tests verify:
 Requirements: 17.1
 """
 
+import asyncio
 import uuid
 from decimal import Decimal
 from unittest.mock import AsyncMock, MagicMock, call, patch
@@ -20,6 +21,15 @@ from unittest.mock import AsyncMock, MagicMock, call, patch
 import pytest
 
 from apps.notifications.tasks import send_order_notification
+
+
+def _sync_runner(coro_fn):
+    def _inner(*args, **kwargs):
+        res = coro_fn(*args, **kwargs)
+        if asyncio.iscoroutine(res):
+            asyncio.run(res)
+        return res
+    return _inner
 
 
 # ---------------------------------------------------------------------------
@@ -93,7 +103,7 @@ def test_task_sends_correct_message_envelope():
 
     with patch("apps.orders.models.Order.objects") as mock_qs, \
          patch("channels.layers.get_channel_layer", return_value=mock_channel_layer), \
-         patch("asgiref.sync.async_to_sync", side_effect=lambda coro_fn: lambda *a, **kw: coro_fn(*a, **kw)):
+         patch("asgiref.sync.async_to_sync", side_effect=_sync_runner):
         mock_qs.select_related.return_value.prefetch_related.return_value.get.return_value = order
         # Run eagerly (CELERY_TASK_ALWAYS_EAGER=True in test settings)
         send_order_notification(str(order_id))
@@ -126,7 +136,7 @@ def test_task_sends_to_both_kitchen_and_reception_groups():
 
     with patch("apps.orders.models.Order.objects") as mock_qs, \
          patch("channels.layers.get_channel_layer", return_value=mock_channel_layer), \
-         patch("asgiref.sync.async_to_sync", side_effect=lambda fn: lambda *a, **kw: fn(*a, **kw)):
+         patch("asgiref.sync.async_to_sync", side_effect=_sync_runner):
         mock_qs.select_related.return_value.prefetch_related.return_value.get.return_value = order
         send_order_notification(str(order_id))
 
@@ -149,7 +159,7 @@ def test_task_items_payload_contains_correct_fields():
 
     with patch("apps.orders.models.Order.objects") as mock_qs, \
          patch("channels.layers.get_channel_layer", return_value=mock_channel_layer), \
-         patch("asgiref.sync.async_to_sync", side_effect=lambda fn: lambda *a, **kw: fn(*a, **kw)):
+         patch("asgiref.sync.async_to_sync", side_effect=_sync_runner):
         mock_qs.select_related.return_value.prefetch_related.return_value.get.return_value = order
         send_order_notification(str(order_id))
 
@@ -174,7 +184,7 @@ def test_task_uses_select_related_and_prefetch_related():
 
     with patch("apps.orders.models.Order.objects") as mock_qs, \
          patch("channels.layers.get_channel_layer", return_value=mock_channel_layer), \
-         patch("asgiref.sync.async_to_sync", side_effect=lambda fn: lambda *a, **kw: fn(*a, **kw)):
+         patch("asgiref.sync.async_to_sync", side_effect=_sync_runner):
         chain_mock = mock_qs.select_related.return_value.prefetch_related.return_value
         chain_mock.get.return_value = order
 

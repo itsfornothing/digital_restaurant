@@ -58,14 +58,16 @@ class MetricsMiddleware:
         status_code = str(response.status_code)
 
         # Increment request counter
-        request_count_total().labels(
+        _rc = request_count_total if hasattr(request_count_total, "labels") else request_count_total()
+        _rc.labels(
             method=method,
             endpoint=endpoint,
             status_code=status_code,
         ).inc()
 
         # Record request duration
-        request_duration_seconds().labels(
+        _rd = request_duration_seconds if hasattr(request_duration_seconds, "labels") else request_duration_seconds()
+        _rd.labels(
             method=method,
             endpoint=endpoint,
         ).observe(duration)
@@ -76,20 +78,22 @@ class MetricsMiddleware:
         # automatically.  We still record this for completeness in dev.
         queries_after = len(connection.queries)
         query_count = max(0, queries_after - queries_before)
-        db_queries_per_request().labels(
+        _dbq = db_queries_per_request if hasattr(db_queries_per_request, "labels") else db_queries_per_request()
+        _dbq.labels(
             method=method,
             endpoint=endpoint,
         ).observe(query_count)
 
         # Record error metrics for 4xx and 5xx responses
         status = response.status_code
+        _er = error_rate_total if hasattr(error_rate_total, "labels") else error_rate_total()
         if 400 <= status < 500:
-            error_rate_total().labels(
+            _er.labels(
                 endpoint=endpoint,
                 error_type="client_error",
             ).inc()
         elif 500 <= status < 600:
-            error_rate_total().labels(
+            _er.labels(
                 endpoint=endpoint,
                 error_type="server_error",
             ).inc()

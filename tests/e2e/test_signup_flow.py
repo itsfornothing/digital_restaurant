@@ -123,7 +123,7 @@ pytestmark = pytest.mark.e2e
 def _playwright_available():
     """Check if pytest-playwright is installed."""
     try:
-        import playwright  # noqa: F401
+        import pytest_playwright  # noqa: F401
         return True
     except ImportError:
         return False

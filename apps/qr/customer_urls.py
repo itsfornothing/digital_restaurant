@@ -24,6 +24,7 @@ from apps.qr.customer_views import (
     CustomerMenuView,
     CustomerOrderCreateView,
     CustomerOrderViewSet,
+    CustomerRecommendationsView,
     CustomerSessionView,
     OrderTrackerPageView,
     QRScanView,
@@ -37,6 +38,8 @@ urlpatterns = [
     path("session/", CustomerSessionView.as_view(), name="customer-session"),
     # GET /api/v1/customer/menu/ — get branch menu (requires active customer session)
     path("menu/", CustomerMenuView.as_view(), name="customer-menu"),
+    # GET /api/v1/customer/recommendations/ — smart menu recommendations (FR-P2.1, FR-C1.4)
+    path("recommendations/", CustomerRecommendationsView.as_view(), name="customer-recommendations"),
     # POST /api/v1/customer/orders/ — place an order (Task 17.1)
     path("orders/", CustomerOrderCreateView.as_view(), name="customer-order-create"),
     # GET /api/v1/customer/orders/my/ — list active orders for this session

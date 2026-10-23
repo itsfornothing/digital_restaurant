@@ -95,10 +95,19 @@ def send_order_notification(self, order_id: str):
         }
 
         # Attempt to send via the configured Django Channels layer.
-        try:
-            from apps.notifications.utils import push_staff_roles_event
+        from channels.layers import get_channel_layer
 
-            push_staff_roles_event(branch_id, "order.new", message["payload"], ["kitchen", "reception"])
+        channel_layer = get_channel_layer()
+        if channel_layer is None:
+            logger.warning(
+                "No channel layer configured; skipping notification for order %s",
+                order_id,
+            )
+            return
+
+        try:
+            for group in (f"branch_{branch_id}_kitchen", f"branch_{branch_id}_reception"):
+                async_to_sync(channel_layer.group_send)(group, message)
 
             logger.info(
                 "Sent new_order push for order %s to kitchen/reception (branch %s)",

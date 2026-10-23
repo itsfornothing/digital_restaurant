@@ -115,8 +115,10 @@ _items_list_st = st.lists(_item_spec_st, min_size=1, max_size=10)
 # ---------------------------------------------------------------------------
 
 def _reset_branch(branch: Branch) -> None:
-    """Delete all MenuItems for *branch* to start each iteration clean."""
+    """Delete all MenuItems for *branch* to start each iteration clean and clear cache."""
+    from django.core.cache import cache
     MenuItem.objects.filter(branch=branch).delete()
+    cache.clear()
 
 
 def _create_menu_item(branch: Branch, dietary_tags: list, status: str, is_archived: bool, idx: int) -> MenuItem:
@@ -141,14 +143,27 @@ def _establish_customer_session(client: APIClient, qr_token: uuid.UUID) -> bool:
     return resp.status_code == 200
 
 
-def _get_menu(client: APIClient, filter_tags: list | None = None) -> list:
+def _get_menu(client: APIClient, filter_tags: list | None = None, branch: Branch | None = None) -> list:
     """
     GET /api/v1/customer/menu/ with an optional dietary_tags filter.
     Returns the parsed list of menu item dicts.
     """
+    from django.conf import settings
+
     url = MENU_URL
     if filter_tags:
         url = MENU_URL + "?dietary_tags=" + ",".join(filter_tags)
+
+    target_branch = branch or Branch.objects.first()
+    if target_branch:
+        session = client.session
+        session["customer_session"] = {
+            "branch_id": str(target_branch.id),
+            "table_number": "T28",
+        }
+        session.save()
+        client.cookies[settings.SESSION_COOKIE_NAME] = session.session_key
+
     resp = client.get(url)
     assert resp.status_code == 200, (
         f"GET {url} returned {resp.status_code}: {getattr(resp, 'data', resp.content)}"
@@ -209,6 +224,9 @@ class TestPropertyDietaryFilterCorrectness(TestCase):
           - Branch + Table + active QRCode for customer session.
           - APIClient instance reused across iterations (session cookie persists).
         """
+        from django.core.cache import cache
+        cache.clear()
+
         self.branch = Branch.objects.create(
             name="Dietary Filter Property Test Branch",
             address="28 Filter Street, Addis Ababa",
@@ -231,6 +249,11 @@ class TestPropertyDietaryFilterCorrectness(TestCase):
         self.client = APIClient()
         ok = _establish_customer_session(self.client, self.qr_code.token)
         self.assertTrue(ok, "setUp: customer session could not be established — check QR/session flow")
+
+    def tearDown(self):
+        from django.core.cache import cache
+        cache.clear()
+        super().tearDown()
 
     # -----------------------------------------------------------------------
     # 28a — Every returned item possesses the single requested tag
@@ -266,7 +289,7 @@ class TestPropertyDietaryFilterCorrectness(TestCase):
         ]
 
         # Call the API with a single tag filter
-        returned_items = _get_menu(self.client, filter_tags=[filter_tag])
+        returned_items = _get_menu(self.client, filter_tags=[filter_tag], branch=self.branch)
 
         for item_data in returned_items:
             item_tags = item_data.get("dietary_tags", [])
@@ -312,7 +335,7 @@ class TestPropertyDietaryFilterCorrectness(TestCase):
             for i, (tags, status, archived) in enumerate(item_specs)
         ]
 
-        returned_items = _get_menu(self.client, filter_tags=filter_tags)
+        returned_items = _get_menu(self.client, filter_tags=filter_tags, branch=self.branch)
 
         for item_data in returned_items:
             item_tags = item_data.get("dietary_tags", [])
@@ -362,7 +385,7 @@ class TestPropertyDietaryFilterCorrectness(TestCase):
             for i, (tags, status, archived) in enumerate(item_specs)
         ]
 
-        returned_items = _get_menu(self.client, filter_tags=filter_tags)
+        returned_items = _get_menu(self.client, filter_tags=filter_tags, branch=self.branch)
         returned_ids = {item_data.get("id") for item_data in returned_items}
 
         excluded_ids = _items_that_must_not_appear(created_items, filter_tags)
@@ -407,7 +430,7 @@ class TestPropertyDietaryFilterCorrectness(TestCase):
             for i, (tags, status, archived) in enumerate(item_specs)
         ]
 
-        returned_items = _get_menu(self.client, filter_tags=None)
+        returned_items = _get_menu(self.client, filter_tags=None, branch=self.branch)
         returned_ids = {item_data.get("id") for item_data in returned_items}
 
         # All available, non-archived items must appear
@@ -501,7 +524,7 @@ class TestPropertyDietaryFilterCorrectness(TestCase):
             )
             visible_items.append(item)
 
-        returned_items = _get_menu(self.client, filter_tags=filter_tags)
+        returned_items = _get_menu(self.client, filter_tags=filter_tags, branch=self.branch)
         returned_ids = {item_data.get("id") for item_data in returned_items}
 
         # Hidden items must NOT appear
@@ -562,7 +585,7 @@ class TestPropertyDietaryFilterCorrectness(TestCase):
             for i, (tags, status, archived) in enumerate(item_specs)
         ]
 
-        returned_items = _get_menu(self.client, filter_tags=filter_tags)
+        returned_items = _get_menu(self.client, filter_tags=filter_tags, branch=self.branch)
         returned_ids = {item_data.get("id") for item_data in returned_items}
 
         qualifying_ids = _items_that_should_appear(created_items, filter_tags)

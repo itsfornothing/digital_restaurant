@@ -75,8 +75,8 @@ class Order(_FakeModel, name="Order", app_label="orders"):
 
 # DATABASES dict that includes a 'replica' key (simulates production / base.py)
 _DATABASES_WITH_REPLICA = {
-    "default": {"ENGINE": "django.db.backends.sqlite3", "NAME": ":memory:"},
-    "replica": {"ENGINE": "django.db.backends.sqlite3", "NAME": ":memory:"},
+    "default": {"ENGINE": "django.db.backends.postgresql", "NAME": "restaurant_primary"},
+    "replica": {"ENGINE": "django.db.backends.postgresql", "NAME": "restaurant_replica"},
 }
 
 # DATABASES dict without a 'replica' key (simulates environments without replica)

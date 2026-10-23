@@ -94,14 +94,22 @@ class TenantMiddleware(TenantMainMiddleware):
         This allows the app to respond to any arbitrary hostname (e.g. a
         freshly-generated ngrok URL, or a Render .onrender.com URL) without
         requiring the operator to manually create a Domain record for each
-        one.  It only activates when there is exactly one active tenant (the
-        common case for ngrok / single-tenant deployments).
+        one.  It only activates when ENABLE_TENANT_FALLBACK is True and there is
+        exactly one active tenant (the common case for ngrok / single-tenant deployments).
         """
-        from apps.tenants.models import Domain as DomainModel
-        from apps.tenants.models import Tenant
-
-        tenant = Tenant.objects.filter(is_active=True).first()
-        if tenant is None:
+        from django.conf import settings
+        if not getattr(settings, "ENABLE_TENANT_FALLBACK", False):
             return None
-        domain = DomainModel.objects.filter(tenant=tenant, is_primary=True).first()
-        return domain
+
+        try:
+            from apps.tenants.models import Domain as DomainModel
+            from apps.tenants.models import Tenant
+
+            active_tenants = list(Tenant.objects.filter(is_active=True)[:2])
+            if len(active_tenants) != 1:
+                return None
+            tenant = active_tenants[0]
+            domain = DomainModel.objects.filter(tenant=tenant, is_primary=True).first()
+            return domain
+        except Exception:
+            return None

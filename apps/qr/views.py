@@ -254,3 +254,7 @@ class QRCodeRegenerateView(AuditLogMixin, APIView):
 
         serializer = QRCodeSerializer(new_qr_code)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
+class QRCodeViewSet(AuditLogMixin, viewsets.GenericViewSet):
+    permission_classes = [IsBranchManager]

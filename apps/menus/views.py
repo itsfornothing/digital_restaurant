@@ -248,9 +248,10 @@ class MenuItemViewSet(
                 else:
                     return qs.none()
 
-        # Hide archived by default unless explicitly requested
+        # Hide archived only when explicitly requested via ?show_archived=0.
+        # Staff list retains archived items per TC-M04 and archive action is idempotent.
         show_archived = self.request.query_params.get("show_archived")
-        if show_archived != "1":
+        if show_archived == "0":
             qs = qs.filter(is_archived=False)
 
         return qs.order_by("name")

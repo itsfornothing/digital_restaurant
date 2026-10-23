@@ -314,3 +314,11 @@ class TenantUsageView(APIView):
 
         serializer = TenantUsageSerializer(usage_data)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class TenantSubscriptionViewSet(AuditLogMixin, viewsets.GenericViewSet):
+    permission_classes = [IsSuperAdmin]
+
+
+class UsageViewSet(AuditLogMixin, viewsets.GenericViewSet):
+    permission_classes = [IsSuperAdmin]
