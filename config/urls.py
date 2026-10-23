@@ -10,6 +10,7 @@ from django.conf.urls.i18n import i18n_patterns
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import include, path
+from django.views.generic import RedirectView
 
 try:
     from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
@@ -25,6 +26,9 @@ from apps.authentication.staff_views import (
 )
 
 urlpatterns = [
+    # Redirect root to staff login
+    path("", RedirectView.as_view(url="/staff/login/", permanent=False)),
+
     # Django i18n language switching endpoint (/i18n/setlang/)
     path("i18n/", include("django.conf.urls.i18n")),
 
