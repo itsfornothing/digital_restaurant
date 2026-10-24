@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: restaurant-platform 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-24 11:26+0000\n"
+"POT-Creation-Date: 2026-10-24 12:05+0000\n"
 "PO-Revision-Date: 2024-01-01 00:00+0000\n"
 "Last-Translator: Restaurant Platform Team\n"
 "Language-Team: English\n"
@@ -27,37 +27,39 @@ msgid ""
 msgstr ""
 "Browse our menu, filter by dietary preferences, and place your order online."
 
-#: apps/qr/templates/customer/base.html:239
+#: apps/qr/templates/customer/base.html:387
 msgid "Skip to main content"
 msgstr "Skip to main content"
 
-#: apps/qr/templates/customer/base.html:244
+#: apps/qr/templates/customer/base.html:392
 msgid "Main navigation"
 msgstr "Main navigation"
 
-#: apps/qr/templates/customer/base.html:250
+#: apps/qr/templates/customer/base.html:398
 msgid "Go to menu"
 msgstr "Go to menu"
 
-#: apps/qr/templates/customer/base.html:255
+#: apps/qr/templates/customer/base.html:403
 #: apps/qr/templates/customer/qr_invalid.html:75
 msgid "logo"
 msgstr "logo"
 
-#: apps/qr/templates/customer/base.html:264
+#: apps/qr/templates/customer/base.html:412
 msgid "Restaurant"
 msgstr "Restaurant"
 
 # ---------------------------------------------------------------------------
 # Table / Order strings
 # ---------------------------------------------------------------------------
-#: apps/qr/templates/customer/base.html:270
+#: apps/qr/templates/customer/base.html:419
 #: apps/qr/templates/customer/cart.html:165
 #: apps/qr/templates/customer/order_tracker.html:244
 msgid "Table number"
 msgstr "Table number"
 
-#: apps/qr/templates/customer/base.html:272
+#: apps/qr/templates/customer/base.html:419
+#: apps/qr/templates/customer/base.html:421
+#: apps/qr/templates/customer/base.html:492
 #: apps/qr/templates/customer/cart.html:167
 #: apps/qr/templates/customer/order_tracker.html:247
 #: apps/qr/templates/customer/test_entry.html:45 templates/staff/base.html:226
@@ -68,42 +70,62 @@ msgstr "Table number"
 msgid "Table"
 msgstr "Table"
 
-#: apps/qr/templates/customer/base.html:277
-#: apps/qr/templates/customer/base.html:279
+#: apps/qr/templates/customer/base.html:429
+#: apps/qr/templates/customer/base.html:430
 msgid "Track Order"
 msgstr "Track Order"
 
-#: apps/qr/templates/customer/base.html:277
+#: apps/qr/templates/customer/base.html:429
 msgid "track your active order"
 msgstr "track your active order"
 
-#: apps/qr/templates/customer/base.html:285
+#: apps/qr/templates/customer/base.html:434
+#: apps/qr/templates/customer/base.html:647
+msgid "Track"
+msgstr "Track"
+
+#: apps/qr/templates/customer/base.html:447
+#: apps/qr/templates/customer/base.html:448
+msgid "Language and settings"
+msgstr "Language and settings"
+
+#: apps/qr/templates/customer/base.html:461
 msgid "Language"
 msgstr "Language"
 
-#: apps/qr/templates/customer/base.html:302
+#: apps/qr/templates/customer/base.html:500
+#| msgid "Active Orders"
+msgid "Track Active Order"
+msgstr "Track Active Order"
+
+#: apps/qr/templates/customer/base.html:507
+#| msgid "Browse the Menu"
+msgid "Browse Menu"
+msgstr "Browse Menu"
+
+#: apps/qr/templates/customer/base.html:519
 msgid "Open cart"
 msgstr "Open cart"
 
-#: apps/qr/templates/customer/base.html:319
+#: apps/qr/templates/customer/base.html:538
 msgid "Main content"
 msgstr "Main content"
 
-#: apps/qr/templates/customer/base.html:336
+#: apps/qr/templates/customer/base.html:555
 #: apps/qr/templates/customer/cart.html:5
 #: apps/qr/templates/customer/cart.html:156
 msgid "Your Cart"
 msgstr "Your Cart"
 
-#: apps/qr/templates/customer/base.html:342
+#: apps/qr/templates/customer/base.html:561
 msgid "Close cart"
 msgstr "Close cart"
 
-#: apps/qr/templates/customer/base.html:348
+#: apps/qr/templates/customer/base.html:567
 msgid "Cart"
 msgstr "Cart"
 
-#: apps/qr/templates/customer/base.html:349 templates/staff/base.html:177
+#: apps/qr/templates/customer/base.html:568 templates/staff/base.html:177
 #: templates/staff/branch_comparison.html:50
 #: templates/staff/branch_comparison.html:120
 #: templates/staff/financials.html:105 templates/staff/orders.html:3
@@ -111,21 +133,21 @@ msgstr "Cart"
 msgid "Orders"
 msgstr "Orders"
 
-#: apps/qr/templates/customer/base.html:361
+#: apps/qr/templates/customer/base.html:580
 #: apps/qr/templates/customer/order_tracker.html:394
 #: templates/staff/orders.html:36 templates/staff/orders.html:111
 msgid "Total"
 msgstr "Total"
 
-#: apps/qr/templates/customer/base.html:370
+#: apps/qr/templates/customer/base.html:589
 msgid "Review your order and proceed to checkout"
 msgstr "Review your order and proceed to checkout"
 
-#: apps/qr/templates/customer/base.html:372
+#: apps/qr/templates/customer/base.html:591
 msgid "Review Order"
 msgstr "Review Order"
 
-#: apps/qr/templates/customer/base.html:405
+#: apps/qr/templates/customer/base.html:624
 #: templates/staff/branch_comparison.html:56 templates/staff/dashboard.html:87
 #: templates/staff/dashboard.html:97 templates/staff/dashboard.html:112
 #: templates/staff/expenses.html:26 templates/staff/financials.html:82
@@ -134,17 +156,17 @@ msgstr "Review Order"
 msgid "Loading…"
 msgstr "Loading…"
 
-#: apps/qr/templates/customer/base.html:413 templates/staff/dashboard.html:129
+#: apps/qr/templates/customer/base.html:632 templates/staff/dashboard.html:129
 msgid "No active orders"
 msgstr "No active orders"
 
-#: apps/qr/templates/customer/base.html:417
+#: apps/qr/templates/customer/base.html:636
 #: apps/qr/templates/customer/order_tracker.html:575
 #: apps/qr/templates/customer/order_tracker.html:742
 msgid "Order Received"
 msgstr "Order Received"
 
-#: apps/qr/templates/customer/base.html:418
+#: apps/qr/templates/customer/base.html:637
 #: apps/qr/templates/customer/order_tracker.html:297
 #: templates/staff/dashboard.html:135 templates/staff/kds.html:49
 #: templates/staff/orders.html:21 templates/staff/orders.html:58
@@ -152,11 +174,11 @@ msgstr "Order Received"
 msgid "Preparing"
 msgstr "Preparing"
 
-#: apps/qr/templates/customer/base.html:419
+#: apps/qr/templates/customer/base.html:638
 msgid "Ready to Serve"
 msgstr "Ready to Serve"
 
-#: apps/qr/templates/customer/base.html:420
+#: apps/qr/templates/customer/base.html:639
 #: apps/qr/templates/customer/order_tracker.html:321
 #: templates/staff/dashboard.html:137 templates/staff/kds.html:51
 #: templates/staff/orders.html:23 templates/staff/orders.html:60
@@ -164,17 +186,13 @@ msgstr "Ready to Serve"
 msgid "Served"
 msgstr "Served"
 
-#: apps/qr/templates/customer/base.html:421 templates/staff/dashboard.html:138
+#: apps/qr/templates/customer/base.html:640 templates/staff/dashboard.html:138
 #: templates/staff/kds.html:52 templates/staff/orders.html:24
 #: templates/staff/orders.html:61 templates/staff/reception.html:35
 msgid "Cancelled"
 msgstr "Cancelled"
 
-#: apps/qr/templates/customer/base.html:428
-msgid "Track"
-msgstr "Track"
-
-#: apps/qr/templates/customer/base.html:433
+#: apps/qr/templates/customer/base.html:652
 msgid "Could not load orders."
 msgstr "Could not load orders."
 
@@ -310,7 +328,6 @@ msgid "Dietary filters"
 msgstr "Dietary filters"
 
 #: apps/qr/templates/customer/menu.html:321
-#| msgid "Cart items"
 msgid "All items"
 msgstr "All items"
 
@@ -323,7 +340,6 @@ msgid "Open filter modal"
 msgstr "Open filter modal"
 
 #: apps/qr/templates/customer/menu.html:336
-#| msgid "Clear Filters"
 msgid "Filters"
 msgstr "Filters"
 
@@ -535,12 +551,10 @@ msgid "Add to Cart"
 msgstr "Add to Cart"
 
 #: apps/qr/templates/customer/menu.html:491
-#| msgid "Filter: Vegan"
 msgid "Filter Menu"
 msgstr "Filter Menu"
 
 #: apps/qr/templates/customer/menu.html:493
-#| msgid "Clear Filters"
 msgid "Close filters"
 msgstr "Close filters"
 
@@ -549,12 +563,10 @@ msgid "Select one or more dietary preferences to filter the menu."
 msgstr "Select one or more dietary preferences to filter the menu."
 
 #: apps/qr/templates/customer/menu.html:500
-#| msgid "Dietary filters"
 msgid "Dietary options"
 msgstr "Dietary options"
 
 #: apps/qr/templates/customer/menu.html:506
-#| msgid "Clear all filters"
 msgid "Clear all"
 msgstr "Clear all"
 
@@ -563,7 +575,6 @@ msgid "Apply"
 msgstr "Apply"
 
 #: apps/qr/templates/customer/menu.html:525
-#| msgid "Categories"
 msgid "Categories & Tags"
 msgstr "Categories & Tags"
 
@@ -573,7 +584,6 @@ msgid "Close"
 msgstr "Close"
 
 #: apps/qr/templates/customer/menu.html:534
-#| msgid "Details"
 msgid "View Details"
 msgstr "View Details"
 
@@ -582,7 +592,6 @@ msgid "Could not load menu. Please refresh the page."
 msgstr "Could not load menu. Please refresh the page."
 
 #: apps/qr/templates/customer/menu.html:910
-#| msgid "View All Orders"
 msgid "View all tags"
 msgstr "View all tags"
 
@@ -610,7 +619,6 @@ msgid "Categories"
 msgstr "Categories"
 
 #: apps/qr/templates/customer/menu.html:992
-#| msgid "Dietary filters"
 msgid "Dietary Preferences"
 msgstr "Dietary Preferences"
 

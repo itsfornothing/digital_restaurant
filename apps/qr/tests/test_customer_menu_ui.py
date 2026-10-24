@@ -51,6 +51,13 @@ def test_customer_menu_ui_elements(active_qr):
     assert 'openItemTagsPopup' in content
     assert 'card-tags-row' in content
 
+    # Top customer navigation bar action items
+    assert 'class="customer-nav-actions"' in content
+    assert 'class="nav-table-pill"' in content
+    assert 'id="customerSettingsDropdown"' in content
+    assert 'nav-cart-btn' in content
+    assert 'id="cart-count"' in content
+
 
 @pytest.mark.django_db
 def test_customer_menu_ui_amharic_localization(active_qr):
@@ -68,3 +75,4 @@ def test_customer_menu_ui_amharic_localization(active_qr):
     assert "ማጣሪያዎች" in content
     assert "ምናሌን አጣራ" in content
     assert "ምድቦች እና መለያዎች" in content
+    assert "ቋንቋ" in content

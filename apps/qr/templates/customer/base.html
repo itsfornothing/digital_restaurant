@@ -194,38 +194,186 @@
     .navbar-brand-custom { color: var(--primary-color, #8B3A2A) !important; }
 
     /* ----------------------------------------------------------------
-       Navbar action buttons — consistent sizing
+       Customer Navbar & Action Buttons (Compact, Modern & Responsive)
     ---------------------------------------------------------------- */
-    .customer-lang-select {
-      height: 44px;
-      font-size: .75rem;
-      padding: .25rem 1.75rem .25rem .5rem;
-      border: 1px solid var(--primary-color, #8B3A2A);
-      color: var(--body-color, #534341);
-      background: var(--surface-container);
-      background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%238B3A2A' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
-      background-repeat: no-repeat;
-      background-position: right .5rem center;
-      background-size: 12px;
-      appearance: none;
-      -webkit-appearance: none;
-      -moz-appearance: none;
-      border-radius: var(--bs-border-radius);
+    .customer-navbar {
+      background: var(--surface-container, #fdf8f7) !important;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+      padding: 0.45rem 0.85rem;
+      min-height: 54px;
+    }
+    .customer-nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    .nav-table-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.28rem;
+      font-size: 0.76rem;
+      font-weight: 600;
+      padding: 0.28rem 0.65rem;
+      border-radius: 999px;
+      background: #f4ece6;
+      color: var(--primary-color, #8B3A2A);
+      border: 1px solid rgba(139, 58, 42, 0.18);
+      white-space: nowrap;
+      line-height: 1.2;
+    }
+    .nav-table-pill i {
+      font-size: 0.72rem;
+      opacity: 0.85;
+    }
+    .nav-track-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.32rem;
+      font-size: 0.76rem;
+      font-weight: 600;
+      padding: 0.28rem 0.65rem;
+      border-radius: 999px;
+      background: rgba(46, 125, 50, 0.1);
+      color: #2e7d32;
+      border: 1px solid rgba(46, 125, 50, 0.28);
+      text-decoration: none;
+      transition: all 0.15s ease-in-out;
+      white-space: nowrap;
+      line-height: 1.2;
+    }
+    .nav-track-pill:hover,
+    .nav-track-pill:focus-visible {
+      background: #2e7d32;
+      color: #fff !important;
+      border-color: #2e7d32;
+    }
+    .nav-track-pill:hover .pulse-indicator {
+      background-color: #fff;
+      box-shadow: none;
+      animation: none;
+    }
+    .pulse-indicator {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background-color: #2e7d32;
+      box-shadow: 0 0 0 0 rgba(46, 125, 50, 0.7);
+      animation: pulse-green 1.8s infinite;
+      flex-shrink: 0;
+    }
+    @keyframes pulse-green {
+      0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(46, 125, 50, 0.7); }
+      70% { transform: scale(1); box-shadow: 0 0 0 5px rgba(46, 125, 50, 0); }
+      100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(46, 125, 50, 0); }
+    }
+    .nav-icon-btn {
+      height: 36px;
+      min-width: 36px;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.3rem 0.65rem;
+      background: #fff;
+      border: 1px solid #d8c7c1;
+      color: #534341;
+      font-size: 0.8rem;
+      transition: all 0.15s ease-in-out;
       cursor: pointer;
     }
-    .customer-cart-btn {
-      height: 44px;
-      width: 44px;
-      display: flex;
+    .nav-icon-btn:hover,
+    .nav-icon-btn:focus-visible {
+      background: #f7f2ef;
+      border-color: #baa9a5;
+      color: var(--primary-color, #8B3A2A);
+    }
+    .no-caret::after {
+      display: none !important;
+    }
+    .nav-cart-btn {
+      width: 38px;
+      height: 38px;
+      min-width: 38px;
+      border-radius: 50% !important;
+      background: var(--primary-color, #8B3A2A) !important;
+      border: none !important;
+      color: #fff !important;
+      display: inline-flex;
       align-items: center;
       justify-content: center;
       padding: 0;
+      position: relative;
+      transition: transform 0.15s ease, background-color 0.15s ease, box-shadow 0.15s ease;
+      box-shadow: 0 2px 8px rgba(139, 58, 42, 0.28);
     }
-    .customer-lang-select:hover {
-      border-color: var(--primary-color-dark);
+    .nav-cart-btn:hover,
+    .nav-cart-btn:focus-visible {
+      background: var(--primary-color-dark, #6d2c1e) !important;
+      color: #fff !important;
+      transform: scale(1.05);
+      box-shadow: 0 4px 12px rgba(139, 58, 42, 0.35);
     }
-    @media (max-width: 400px) {
-      .customer-nav-text { display: none; }
+    .nav-cart-btn:active {
+      transform: scale(0.96);
+    }
+    .nav-cart-badge {
+      position: absolute;
+      top: -3px;
+      right: -3px;
+      min-width: 19px;
+      height: 19px;
+      padding: 0 4px;
+      font-size: 0.68rem;
+      font-weight: 700;
+      border-radius: 999px;
+      background-color: #d32f2f !important;
+      color: #fff !important;
+      border: 2px solid #fff;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      line-height: 1;
+      text-align: center;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.25);
+    }
+    .nav-dropdown-menu {
+      border-radius: 0.75rem !important;
+      box-shadow: 0 10px 28px rgba(0, 0, 0, 0.12) !important;
+      border: 1px solid rgba(0, 0, 0, 0.08) !important;
+      min-width: 200px;
+      padding: 0.45rem 0;
+      animation: fadeInDropdown 0.15s ease-out;
+    }
+    @keyframes fadeInDropdown {
+      from { opacity: 0; transform: translateY(-6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .active-lang-item {
+      background-color: rgba(139, 58, 42, 0.08) !important;
+      color: var(--primary-color, #8B3A2A) !important;
+      font-weight: 600;
+    }
+    .active-lang-item:hover {
+      background-color: rgba(139, 58, 42, 0.12) !important;
+    }
+    @media (max-width: 575.98px) {
+      .customer-navbar {
+        padding: 0.35rem 0.65rem;
+      }
+      .nav-icon-btn {
+        width: 36px;
+        height: 36px;
+        min-width: 36px;
+        padding: 0;
+        border-radius: 50%;
+      }
+      .navbar-brand-custom span {
+        max-width: 125px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        font-size: 0.88rem !important;
+      }
     }
   </style>
 
@@ -241,11 +389,11 @@
   <!-- ====================================================================
        Navbar
   ==================================================================== -->
-  <nav class="navbar navbar-light shadow-sm sticky-top" style="background:var(--surface-container);" role="navigation" aria-label="{% trans 'Main navigation' %}">
-    <div class="container-fluid px-3">
+  <nav class="navbar navbar-light shadow-sm sticky-top customer-navbar" role="navigation" aria-label="{% trans 'Main navigation' %}">
+    <div class="container-fluid px-1 px-sm-3 d-flex align-items-center justify-content-between">
       <!-- Restaurant logo + name -->
       <a
-        class="navbar-brand d-flex align-items-center gap-2 navbar-brand-custom"
+        class="navbar-brand d-flex align-items-center gap-2 navbar-brand-custom py-0 me-1"
         href="/customer/menu/"
         aria-label="{{ config.restaurant_name|default:'Restaurant' }} — {% trans 'Go to menu' %}"
       >
@@ -253,9 +401,9 @@
         <img
           src="{{ config.logo.url }}"
           alt="{{ config.restaurant_name }} {% trans 'logo' %}"
-          height="36"
+          height="32"
           width="auto"
-          style="max-width:120px; object-fit:contain;"
+          style="max-width:110px; object-fit:contain;"
         />
         {% else %}
         <i class="bi bi-shop fs-4" aria-hidden="true"></i>
@@ -265,36 +413,105 @@
         </span>
       </a>
 
-      <div class="d-flex align-items-center gap-2">
+      <!-- Right Action Items -->
+      <div class="customer-nav-actions">
         {% if table_number %}
-        <span class="badge bg-secondary" aria-label="{% trans 'Table number' %}: {{ table_number }}">
-          <i class="bi bi-geo-alt-fill me-1" aria-hidden="true"></i>
-          {% trans "Table" %} {{ table_number }}
+        <span class="nav-table-pill" aria-label="{% trans 'Table number' %}: {{ table_number }}" title="{% trans 'Table' %} {{ table_number }}">
+          <i class="bi bi-geo-alt-fill" aria-hidden="true"></i>
+          <span><span class="d-none d-sm-inline">{% trans "Table" %} </span>{{ table_number }}</span>
         </span>
         {% endif %}
 
         {% if last_order_id %}
-        <a href="/customer/order/{{ last_order_id }}/" class="btn btn-sm btn-outline-primary" aria-label="{% trans 'Track Order' %} — {% trans 'track your active order' %}">
-          <i class="bi bi-receipt me-1" aria-hidden="true"></i>
-          <span class="customer-nav-text">{% trans "Track Order" %}</span>
+        <a
+          href="/customer/order/{{ last_order_id }}/"
+          class="nav-track-pill"
+          aria-label="{% trans 'Track Order' %} — {% trans 'track your active order' %}"
+          title="{% trans 'Track Order' %}"
+        >
+          <span class="pulse-indicator" aria-hidden="true"></span>
+          <i class="bi bi-receipt" aria-hidden="true"></i>
+          <span class="customer-nav-text d-none d-md-inline">{% trans "Track" %}</span>
         </a>
         {% endif %}
 
-        <form action="/i18n/setlang/" method="post" class="d-flex">
-          {% csrf_token %}
-          <select name="language" class="form-select form-select-sm customer-lang-select" onchange="this.form.submit()" aria-label="{% trans 'Language' %}">
-            {% get_current_language as LANG %}
-            {% get_available_languages as LANGUAGES %}
-            {% get_language_info_list for LANGUAGES as langs %}
-            {% for lang in langs %}
-            <option value="{{ lang.code }}" {% if lang.code == LANG %}selected{% endif %}>{{ lang.name_local }}</option>
-            {% endfor %}
-          </select>
-        </form>
+        <!-- Language & Settings Dropdown (Collapses settings on mobile) -->
+        <div class="dropdown">
+          <button
+            class="btn nav-icon-btn dropdown-toggle no-caret"
+            type="button"
+            id="customerSettingsDropdown"
+            data-bs-toggle="dropdown"
+            data-bs-auto-close="true"
+            aria-expanded="false"
+            aria-label="{% trans 'Language and settings' %}"
+            title="{% trans 'Language and settings' %}"
+          >
+            <i class="bi bi-translate fs-6" aria-hidden="true"></i>
+            <span class="d-none d-lg-inline-block small fw-semibold ms-1">
+              {% get_current_language as LANG %}
+              {% if LANG == 'am' %}አማርኛ{% else %}English{% endif %}
+            </span>
+            <i class="bi bi-chevron-down d-none d-lg-inline-block ms-1" style="font-size:0.65rem;" aria-hidden="true"></i>
+          </button>
+
+          <div class="dropdown-menu dropdown-menu-end shadow-lg border-0 nav-dropdown-menu" aria-labelledby="customerSettingsDropdown">
+            <!-- Language Header & Options -->
+            <h6 class="dropdown-header d-flex align-items-center gap-1 text-uppercase fw-bold text-muted px-3 py-1 mb-1" style="font-size:0.68rem; letter-spacing:0.5px;">
+              <i class="bi bi-translate text-primary"></i> {% trans "Language" %}
+            </h6>
+
+            <form action="/i18n/setlang/" method="post" class="m-0">
+              {% csrf_token %}
+              {% get_current_language as LANG %}
+              {% get_available_languages as LANGUAGES %}
+              {% get_language_info_list for LANGUAGES as langs %}
+              {% for lang in langs %}
+              <button
+                type="submit"
+                name="language"
+                value="{{ lang.code }}"
+                class="dropdown-item d-flex align-items-center justify-content-between px-3 py-2 border-0 bg-transparent {% if lang.code == LANG %}active-lang-item{% endif %}"
+                style="font-size: 0.82rem; cursor: pointer; width: 100%; text-align: left;"
+              >
+                <span>{{ lang.name_local }}</span>
+                {% if lang.code == LANG %}
+                <i class="bi bi-check2 text-primary fw-bold" aria-hidden="true"></i>
+                {% endif %}
+              </button>
+              {% endfor %}
+            </form>
+
+            <!-- Collapsible options for table and order -->
+            {% if table_number or last_order_id %}
+            <div class="dropdown-divider my-1"></div>
+            {% endif %}
+
+            {% if table_number %}
+            <div class="px-3 py-1 text-muted d-flex align-items-center justify-content-between" style="font-size:0.75rem;">
+              <span><i class="bi bi-geo-alt me-1 text-primary"></i>{% trans "Table" %}</span>
+              <span class="fw-semibold text-dark">{{ table_number }}</span>
+            </div>
+            {% endif %}
+
+            {% if last_order_id %}
+            <a href="/customer/order/{{ last_order_id }}/" class="dropdown-item d-flex align-items-center gap-2 px-3 py-2 text-success fw-semibold" style="font-size: 0.82rem;">
+              <i class="bi bi-receipt"></i>
+              <span>{% trans "Track Active Order" %}</span>
+            </a>
+            {% endif %}
+
+            <div class="dropdown-divider my-1"></div>
+            <a href="/customer/menu/" class="dropdown-item d-flex align-items-center gap-2 px-3 py-2 text-muted" style="font-size: 0.82rem;">
+              <i class="bi bi-book"></i>
+              <span>{% trans "Browse Menu" %}</span>
+            </a>
+          </div>
+        </div>
 
         <!-- Cart toggle button -->
         <button
-          class="btn btn-outline-secondary position-relative customer-cart-btn"
+          class="btn nav-cart-btn customer-cart-btn position-relative"
           type="button"
           data-bs-toggle="offcanvas"
           data-bs-target="#cartSidebar"
@@ -304,7 +521,7 @@
           <i class="bi bi-cart3 fs-5" aria-hidden="true"></i>
           <span
             id="cart-count"
-            class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+            class="nav-cart-badge badge rounded-pill bg-danger"
             style="display:none;"
             aria-live="polite"
           >0</span>
