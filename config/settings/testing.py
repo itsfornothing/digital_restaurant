@@ -100,10 +100,29 @@ AUTH_USER_MODEL = "authentication.User"
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
+    "django.middleware.locale.LocaleMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
 ]
+
+LOCALE_PATHS = [BASE_DIR / "locale"]
+LANGUAGES = [
+    ("en", "English"),
+    ("am", "አማርኛ"),
+]
+
+from django.conf import locale
+
+locale.LANG_INFO["am"] = {
+    "code": "am",
+    "name": "Amharic",
+    "name_local": "አማርኛ",
+    "bidi": False,
+}
+
+LANGUAGE_CODE = "en"
+USE_I18N = True
 
 ROOT_URLCONF = "config.urls"
 

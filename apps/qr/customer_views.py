@@ -402,7 +402,8 @@ class CustomerMenuPageView(APIView):
             return render(request, "customer/qr_invalid.html", context, status=403)
 
         config = _get_tenant_config()
-        lang_code = _get_language_code(config)
+        active_lang = get_language()
+        lang_code = active_lang or _get_language_code(config)
         text_direction = "ltr"  # Ethiopic script is LTR
 
         # If customer has a recent active order, show a "Track Your Order" link
@@ -424,7 +425,7 @@ class CustomerMenuPageView(APIView):
             "table_number": session_data.get("table_number", ""),
             "lang_code": lang_code,
             "text_direction": text_direction,
-            "use_amharic": (config.default_language == "am") if config else False,
+            "use_amharic": (lang_code == "am") or ((config.default_language == "am") if config else False),
             "last_order_id": last_order_id,
         }
         from django.views.decorators.cache import never_cache

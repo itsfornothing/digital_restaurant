@@ -8,17 +8,80 @@
 {% block extra_head %}
 <style>
   /* ----------------------------------------------------------------
-     Dietary filter toggle buttons
+     Category navigation bar — compact horizontal swipe
   ---------------------------------------------------------------- */
+  .category-nav-bar {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    position: relative;
+    padding: 2px 0 6px 0;
+    width: 100%;
+  }
+  .category-divider {
+    width: 1px;
+    height: 26px;
+    background-color: #d8c7c1;
+    margin: 0 2px;
+    flex-shrink: 0;
+  }
+  .category-scroll-track {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    overflow-x: auto;
+    white-space: nowrap;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none; /* Firefox */
+    padding-bottom: 2px;
+    flex-grow: 1;
+  }
+  .category-scroll-track::-webkit-scrollbar {
+    display: none; /* Chrome/Safari */
+  }
   .filter-btn {
-    font-size: 0.8rem;
-    padding: 0.3rem 0.65rem;
-    min-height: 44px;   /* WCAG 2.5.5 minimum touch target */
+    font-size: 0.82rem;
+    font-weight: 500;
+    padding: 0.35rem 0.8rem;
+    min-height: 40px;   /* WCAG 2.5.5 minimum touch target */
     border-radius: 999px;
     white-space: nowrap;
-    transition: background-color 0.15s, color 0.15s;
+    flex-shrink: 0;
+    transition: background-color 0.15s, color 0.15s, border-color 0.15s, transform 0.1s;
+    background-color: #fff;
+    border: 1px solid #d4c8c5;
+    color: #493f3d;
+  }
+  .filter-btn:hover {
+    background-color: #f7f2ef;
+    border-color: #baa9a5;
+    color: #222;
+  }
+  .filter-btn:active {
+    transform: scale(0.97);
   }
   .filter-btn.active {
+    background-color: var(--primary-color) !important;
+    border-color: var(--primary-color) !important;
+    color: #fff !important;
+  }
+  .filter-btn-all.active {
+    background-color: #382d2c !important;
+    border-color: #382d2c !important;
+    color: #fff !important;
+  }
+  .filter-btn-modal {
+    background-color: #f4ece6;
+    border-color: #d8c7c1;
+    color: var(--primary-color);
+    font-weight: 600;
+  }
+  .filter-btn-modal:hover {
+    background-color: #eddcd3;
+    border-color: var(--primary-color);
+    color: var(--primary-color-dark);
+  }
+  .filter-btn-modal.active-filters {
     background-color: var(--primary-color) !important;
     border-color: var(--primary-color) !important;
     color: #fff !important;
@@ -30,18 +93,21 @@
   }
 
   /* ----------------------------------------------------------------
-     Menu item cards
+     Menu item cards (uniform height, zero stretching)
   ---------------------------------------------------------------- */
   .menu-card {
     border: none;
     border-radius: 0.75rem;
     overflow: hidden;
     box-shadow: 0 1px 4px rgba(0,0,0,.08);
-    transition: box-shadow 0.2s;
+    transition: transform 0.15s ease, box-shadow 0.2s ease;
+    display: flex;
+    flex-direction: column;
   }
   .menu-card:hover,
   .menu-card:focus-within {
-    box-shadow: 0 4px 12px rgba(0,0,0,.15);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0,0,0,.12);
   }
   .menu-card .card-img-top {
     height: 180px;
@@ -52,7 +118,75 @@
   @media (max-width: 360px) {
     .menu-card .card-img-top { height: 140px; }
   }
-  .menu-card .card-body { padding: 0.75rem 1rem; }
+  .menu-card .card-body {
+    padding: 0.75rem 0.85rem;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+  }
+  .menu-card .card-desc {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    min-height: 2.3em;
+    font-size: 0.78rem;
+    line-height: 1.25;
+  }
+  .card-tags-row {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    flex-wrap: nowrap;
+    overflow: hidden;
+    min-height: 24px;
+    max-height: 24px;
+    margin-top: 0.25rem;
+    margin-bottom: 0.25rem;
+    cursor: pointer;
+  }
+  .card-tag-pill {
+    font-size: 0.68rem;
+    font-weight: 500;
+    padding: 0.2rem 0.5rem;
+    white-space: nowrap;
+    max-width: 95px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: inline-block;
+    vertical-align: middle;
+    line-height: 1.25;
+    border: none;
+  }
+  .badge-item-category {
+    background-color: var(--secondary-color, #5D7061) !important;
+    color: #fff !important;
+  }
+  .badge-item-dietary {
+    background-color: #2e7d32 !important;
+    color: #fff !important;
+  }
+  .more-tags-pill {
+    font-size: 0.68rem;
+    font-weight: 600;
+    padding: 0.2rem 0.55rem;
+    background-color: #f7ede8;
+    color: var(--primary-color, #8B3A2A);
+    border: 1px solid rgba(139, 58, 42, 0.25);
+    white-space: nowrap;
+    cursor: pointer;
+    transition: all 0.15s ease-in-out;
+    flex-shrink: 0;
+    line-height: 1.25;
+    border-radius: 999px;
+  }
+  .more-tags-pill:hover,
+  .more-tags-pill:focus-visible {
+    background-color: var(--primary-color, #8B3A2A);
+    color: #fff;
+    border-color: var(--primary-color, #8B3A2A);
+    outline: none;
+  }
   .menu-card .item-price {
     font-size: 1.05rem;
     font-weight: 700;
@@ -173,28 +307,59 @@
   </h1>
 
   <!-- ================================================================
-       Dietary Filter Toggles (Requirement 14.6)
+       Dietary Filter Toggles (Requirement 14.6) — Compact Single-Row Swipe
   ================================================================ -->
   <section aria-label="{% trans 'Dietary filters' %}" class="mb-3">
-    <div
-      id="dietary-filters"
-      class="d-flex flex-wrap gap-2"
-      role="group"
-      aria-label="{% trans 'Filter menu by dietary category' %}"
-    >
-      <button type="button" class="btn btn-outline-dark filter-btn" data-tag="vegetarian" aria-pressed="false" aria-label="{% trans 'Filter: Vegetarian' %}">🥗 {% trans "Vegetarian" %}</button>
-      <button type="button" class="btn btn-outline-dark filter-btn" data-tag="vegan" aria-pressed="false" aria-label="{% trans 'Filter: Vegan' %}">🌱 {% trans "Vegan" %}</button>
-      <button type="button" class="btn btn-outline-dark filter-btn" data-tag="gluten_free" aria-pressed="false" aria-label="{% trans 'Filter: Gluten-Free' %}">🌾 {% trans "Gluten-Free" %}</button>
-      <button type="button" class="btn btn-outline-dark filter-btn" data-tag="dairy_free" aria-pressed="false" aria-label="{% trans 'Filter: Dairy-Free' %}">🥛 {% trans "Dairy-Free" %}</button>
-      <button type="button" class="btn btn-outline-dark filter-btn" data-tag="halal" aria-pressed="false" aria-label="{% trans 'Filter: Halal' %}">☪️ {% trans "Halal" %}</button>
-      <button type="button" class="btn btn-outline-dark filter-btn" data-tag="low_carb" aria-pressed="false" aria-label="{% trans 'Filter: Low-Carb' %}">📉 {% trans "Low-Carb" %}</button>
-      <button type="button" class="btn btn-outline-dark filter-btn" data-tag="keto" aria-pressed="false" aria-label="{% trans 'Filter: Keto' %}">🥑 {% trans "Keto" %}</button>
-      <button type="button" class="btn btn-outline-dark filter-btn" data-tag="high_protein" aria-pressed="false" aria-label="{% trans 'Filter: High-Protein' %}">💪 {% trans "High-Protein" %}</button>
-      <button type="button" class="btn btn-outline-dark filter-btn" data-tag="spicy" aria-pressed="false" aria-label="{% trans 'Filter: Spicy' %}">🌶️ {% trans "Spicy" %}</button>
-      <button type="button" class="btn btn-outline-dark filter-btn" data-tag="seafood" aria-pressed="false" aria-label="{% trans 'Filter: Seafood' %}">🐟 {% trans "Seafood" %}</button>
-      <button type="button" class="btn btn-outline-dark filter-btn" data-tag="desserts" aria-pressed="false" aria-label="{% trans 'Filter: Desserts' %}">🍰 {% trans "Desserts" %}</button>
-      <button type="button" class="btn btn-outline-dark filter-btn" data-tag="beverages" aria-pressed="false" aria-label="{% trans 'Filter: Beverages' %}">🥤 {% trans "Beverages" %}</button>
-      <button type="button" class="btn btn-outline-dark filter-btn" data-tag="childrens_meals" aria-pressed="false" aria-label="{% trans "Filter: Children's Meals" %}">👧 {% trans "Children's Meals" %}</button>
+    <div class="category-nav-bar">
+      <!-- Pinned All button -->
+      <button
+        type="button"
+        id="btn-filter-all"
+        class="btn filter-btn filter-btn-all active"
+        onclick="clearFilters()"
+        aria-pressed="true"
+        aria-label="{% trans 'All items' %}"
+      >
+        <i class="bi bi-grid-fill me-1" aria-hidden="true"></i>{% trans "All" %}
+      </button>
+
+      <!-- Pinned Filter Modal Button -->
+      <button
+        type="button"
+        id="btn-open-filters-modal"
+        class="btn filter-btn filter-btn-modal d-flex align-items-center gap-1"
+        data-bs-toggle="modal"
+        data-bs-target="#allFiltersModal"
+        aria-label="{% trans 'Open filter modal' %}"
+      >
+        <i class="bi bi-sliders" aria-hidden="true"></i>
+        <span>{% trans "Filters" %}</span>
+        <span id="active-filter-badge" class="badge rounded-pill bg-danger ms-1 d-none">0</span>
+      </button>
+
+      <div class="category-divider" aria-hidden="true"></div>
+
+      <!-- Horizontally swipeable category track -->
+      <div
+        id="dietary-filters"
+        class="category-scroll-track"
+        role="group"
+        aria-label="{% trans 'Filter menu by dietary category' %}"
+      >
+        <button type="button" class="btn filter-btn" data-tag="vegetarian" aria-pressed="false" aria-label="{% trans 'Filter: Vegetarian' %}">🥗 {% trans "Vegetarian" %}</button>
+        <button type="button" class="btn filter-btn" data-tag="vegan" aria-pressed="false" aria-label="{% trans 'Filter: Vegan' %}">🌱 {% trans "Vegan" %}</button>
+        <button type="button" class="btn filter-btn" data-tag="gluten_free" aria-pressed="false" aria-label="{% trans 'Filter: Gluten-Free' %}">🌾 {% trans "Gluten-Free" %}</button>
+        <button type="button" class="btn filter-btn" data-tag="dairy_free" aria-pressed="false" aria-label="{% trans 'Filter: Dairy-Free' %}">🥛 {% trans "Dairy-Free" %}</button>
+        <button type="button" class="btn filter-btn" data-tag="halal" aria-pressed="false" aria-label="{% trans 'Filter: Halal' %}">☪️ {% trans "Halal" %}</button>
+        <button type="button" class="btn filter-btn" data-tag="low_carb" aria-pressed="false" aria-label="{% trans 'Filter: Low-Carb' %}">📉 {% trans "Low-Carb" %}</button>
+        <button type="button" class="btn filter-btn" data-tag="keto" aria-pressed="false" aria-label="{% trans 'Filter: Keto' %}">🥑 {% trans "Keto" %}</button>
+        <button type="button" class="btn filter-btn" data-tag="high_protein" aria-pressed="false" aria-label="{% trans 'Filter: High-Protein' %}">💪 {% trans "High-Protein" %}</button>
+        <button type="button" class="btn filter-btn" data-tag="spicy" aria-pressed="false" aria-label="{% trans 'Filter: Spicy' %}">🌶️ {% trans "Spicy" %}</button>
+        <button type="button" class="btn filter-btn" data-tag="seafood" aria-pressed="false" aria-label="{% trans 'Filter: Seafood' %}">🐟 {% trans "Seafood" %}</button>
+        <button type="button" class="btn filter-btn" data-tag="desserts" aria-pressed="false" aria-label="{% trans 'Filter: Desserts' %}">🍰 {% trans "Desserts" %}</button>
+        <button type="button" class="btn filter-btn" data-tag="beverages" aria-pressed="false" aria-label="{% trans 'Filter: Beverages' %}">🥤 {% trans "Beverages" %}</button>
+        <button type="button" class="btn filter-btn" data-tag="childrens_meals" aria-pressed="false" aria-label="{% trans "Filter: Children's Meals" %}">👧 {% trans "Children's Meals" %}</button>
+      </div>
     </div>
   </section>
 
@@ -314,6 +479,67 @@
     </div>
   </div>
 </div>
+
+<!-- ================================================================
+     All Filters Modal (Categories & Dietary Preferences)
+================================================================ -->
+<div class="modal fade" id="allFiltersModal" tabindex="-1" aria-labelledby="allFiltersModalLabel" aria-modal="true" role="dialog">
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header border-bottom pb-2">
+        <h2 class="modal-title fs-5 fw-bold" id="allFiltersModalLabel">
+          <i class="bi bi-funnel text-primary me-2" aria-hidden="true"></i>{% trans "Filter Menu" %}
+        </h2>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{% trans 'Close filters' %}"></button>
+      </div>
+      <div class="modal-body py-3">
+        <p class="text-muted small mb-3">
+          {% trans "Select one or more dietary preferences to filter the menu." %}
+        </p>
+
+        <div class="d-flex flex-wrap gap-2" id="modalFiltersContainer" role="group" aria-label="{% trans 'Dietary options' %}">
+          <!-- Populated from JS -->
+        </div>
+      </div>
+      <div class="modal-footer border-top d-flex justify-content-between">
+        <button type="button" class="btn btn-outline-secondary" onclick="clearFilters();" data-bs-dismiss="modal">
+          <i class="bi bi-x-circle me-1" aria-hidden="true"></i>{% trans "Clear all" %}
+        </button>
+        <button type="button" class="btn btn-primary px-4" data-bs-dismiss="modal">
+          <i class="bi bi-check2 me-1" aria-hidden="true"></i>{% trans "Apply" %}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ================================================================
+     Item Categories & Tags Pop-up Modal
+================================================================ -->
+<div class="modal fade" id="itemTagsModal" tabindex="-1" aria-labelledby="itemTagsModalLabel" aria-modal="true" role="dialog">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header border-bottom pb-2">
+        <div class="d-flex align-items-center gap-2">
+          <i class="bi bi-tags-fill text-primary fs-5" aria-hidden="true"></i>
+          <h2 class="modal-title fs-6 fw-bold mb-0" id="itemTagsModalLabel">{% trans "Categories & Tags" %}</h2>
+        </div>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{% trans 'Close' %}"></button>
+      </div>
+      <div class="modal-body py-3" id="itemTagsModalBody">
+        <!-- Dynamically populated by openItemTagsPopup(itemId) -->
+      </div>
+      <div class="modal-footer border-top pt-2 pb-2 d-flex justify-content-between">
+        <button type="button" class="btn btn-sm btn-outline-secondary" id="itemTagsViewDetailBtn">
+          <i class="bi bi-info-circle me-1" aria-hidden="true"></i>{% trans "View Details" %}
+        </button>
+        <button type="button" class="btn btn-sm btn-add-to-cart px-3" id="itemTagsAddToCartBtn">
+          <i class="bi bi-plus-circle me-1" aria-hidden="true"></i>{% trans "Add to Cart" %}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
 {% endblock %}
 
 {% block extra_scripts %}
@@ -350,32 +576,104 @@ const DIETARY_TAG_I18N = {
 };
 function dietaryTagLabel(tag) { return DIETARY_TAG_I18N[tag] || tag.replace(/_/g, ' '); }
 
-function toggleFilter(btn) {
-  const tag = btn.dataset.tag;
+function toggleFilter(btnOrTag) {
+  let tag = typeof btnOrTag === 'string' ? btnOrTag : (btnOrTag && btnOrTag.dataset ? btnOrTag.dataset.tag : '');
   if (!tag) return;
   if (activeFilters.has(tag)) {
     activeFilters.delete(tag);
-    btn.classList.remove('active');
-    btn.setAttribute('aria-pressed', 'false');
   } else {
     activeFilters.add(tag);
-    btn.classList.add('active');
-    btn.setAttribute('aria-pressed', 'true');
   }
+  syncFilterUI();
   loadMenu();
 }
 
 function clearFilters() {
   activeFilters.clear();
-  document.querySelectorAll('.filter-btn').forEach(b => {
-    b.classList.remove('active');
-    b.setAttribute('aria-pressed', 'false');
-  });
+  syncFilterUI();
   loadMenu();
 }
 
-// Attach click handlers to filter buttons
-document.querySelectorAll('.filter-btn').forEach(btn => {
+function syncFilterUI() {
+  const allBtn = document.getElementById('btn-filter-all');
+  const modalBtn = document.getElementById('btn-open-filters-modal');
+  const badge = document.getElementById('active-filter-badge');
+
+  const count = activeFilters.size;
+  if (allBtn) {
+    if (count === 0) {
+      allBtn.classList.add('active');
+      allBtn.setAttribute('aria-pressed', 'true');
+    } else {
+      allBtn.classList.remove('active');
+      allBtn.setAttribute('aria-pressed', 'false');
+    }
+  }
+
+  if (modalBtn) {
+    if (count > 0) {
+      modalBtn.classList.add('active-filters');
+    } else {
+      modalBtn.classList.remove('active-filters');
+    }
+  }
+
+  if (badge) {
+    if (count > 0) {
+      badge.textContent = count;
+      badge.classList.remove('d-none');
+    } else {
+      badge.classList.add('d-none');
+    }
+  }
+
+  // Sync scroll-track buttons
+  document.querySelectorAll('#dietary-filters .filter-btn').forEach(btn => {
+    const tag = btn.dataset.tag;
+    const isActive = activeFilters.has(tag);
+    btn.classList.toggle('active', isActive);
+    btn.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+  });
+
+  // Sync modal buttons
+  document.querySelectorAll('#modalFiltersContainer .modal-filter-chip').forEach(btn => {
+    const tag = btn.dataset.tag;
+    const isActive = activeFilters.has(tag);
+    btn.classList.toggle('active', isActive);
+    btn.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+  });
+}
+
+function initModalFilters() {
+  const container = document.getElementById('modalFiltersContainer');
+  if (!container) return;
+  const tags = [
+    { tag: 'vegetarian', icon: '🥗', label: DIETARY_TAG_I18N.vegetarian },
+    { tag: 'vegan', icon: '🌱', label: DIETARY_TAG_I18N.vegan },
+    { tag: 'gluten_free', icon: '🌾', label: DIETARY_TAG_I18N.gluten_free },
+    { tag: 'dairy_free', icon: '🥛', label: DIETARY_TAG_I18N.dairy_free },
+    { tag: 'halal', icon: '☪️', label: DIETARY_TAG_I18N.halal },
+    { tag: 'low_carb', icon: '📉', label: DIETARY_TAG_I18N.low_carb },
+    { tag: 'keto', icon: '🥑', label: DIETARY_TAG_I18N.keto },
+    { tag: 'high_protein', icon: '💪', label: DIETARY_TAG_I18N.high_protein },
+    { tag: 'spicy', icon: '🌶️', label: DIETARY_TAG_I18N.spicy },
+    { tag: 'seafood', icon: '🐟', label: DIETARY_TAG_I18N.seafood },
+    { tag: 'desserts', icon: '🍰', label: DIETARY_TAG_I18N.desserts },
+    { tag: 'beverages', icon: '🥤', label: DIETARY_TAG_I18N.beverages },
+    { tag: 'childrens_meals', icon: '👧', label: DIETARY_TAG_I18N.childrens_meals },
+  ];
+
+  container.innerHTML = tags.map(t => `
+    <button type="button" class="btn filter-btn modal-filter-chip d-flex align-items-center gap-2 py-2 px-3" data-tag="${t.tag}" onclick="toggleFilter('${t.tag}')" aria-pressed="false" style="font-size:0.88rem; min-height:44px;">
+      <span>${t.icon}</span>
+      <span>${escHtml(t.label)}</span>
+    </button>
+  `).join('');
+  syncFilterUI();
+}
+
+// Attach click handlers to filter buttons in the horizontal track
+document.querySelectorAll('#dietary-filters .filter-btn').forEach(btn => {
   btn.addEventListener('click', () => toggleFilter(btn));
 });
 
@@ -578,76 +876,55 @@ function buildItemCard(item, index) {
   const imageUrl    = item.image_url || '';
   const tags        = Array.isArray(item.dietary_tags) ? item.dietary_tags : [];
   const categories  = Array.isArray(item.categories) ? item.categories : [];
-  const nutrition   = item.nutrition || null;
   const isAvailable = item.status === 'available';
   const isAboveFold = index < 4;
   const loadingAttr = isAboveFold ? '' : 'loading="lazy"';
   const fpAttr      = index === 0 ? ' fetchpriority="high"' : '';
 
-  const tagBadges = tags.map(t =>
-    `<span class="badge rounded-pill bg-success text-white dietary-badge" aria-label="Dietary tag: ${escHtml(t)}">${escHtml(dietaryTagLabel(t))}</span>`
-  ).join(' ');
+  // Combine categories and dietary tags into compact single row badges
+  const allBadges = [];
+  categories.forEach(c => {
+    allBadges.push({
+      type: 'category',
+      label: c,
+      html: `<span class="badge rounded-pill badge-item-category card-tag-pill" title="${escHtml(c)}">${escHtml(c)}</span>`
+    });
+  });
+  tags.forEach(t => {
+    const lbl = dietaryTagLabel(t);
+    allBadges.push({
+      type: 'dietary',
+      label: lbl,
+      html: `<span class="badge rounded-pill badge-item-dietary card-tag-pill" title="${escHtml(lbl)}">${escHtml(lbl)}</span>`
+    });
+  });
 
-  const catBadges = categories.map(c =>
-    `<span class="badge rounded-pill bg-secondary text-white dietary-badge" aria-label="Category: ${escHtml(c)}">${escHtml(c)}</span>`
-  ).join(' ');
+  const MAX_VISIBLE_BADGES = 2;
+  const visibleBadges = allBadges.slice(0, MAX_VISIBLE_BADGES);
+  const hiddenCount = allBadges.length - MAX_VISIBLE_BADGES;
+
+  let tagsRowHtml = '';
+  if (allBadges.length > 0) {
+    let morePill = '';
+    if (hiddenCount > 0) {
+      morePill = `<button type="button" class="more-tags-pill" onclick="event.stopPropagation(); openItemTagsPopup('${itemId}')" aria-label="{% trans 'View all tags' %}">+${hiddenCount} {% trans 'more' %}</button>`;
+    }
+    tagsRowHtml = `
+      <div class="card-tags-row" onclick="event.stopPropagation(); openItemTagsPopup('${itemId}')" role="button" tabindex="0" title="{% trans 'View categories & tags' %}" onkeydown="if(event.key==='Enter'||event.key===' '){event.stopPropagation();openItemTagsPopup('${itemId}');}">
+        ${visibleBadges.map(b => b.html).join('')}
+        ${morePill}
+      </div>
+    `;
+  } else {
+    // Keep exact same height spacer so cards never shift height
+    tagsRowHtml = `<div class="card-tags-row" style="visibility:hidden;" aria-hidden="true"><span>&nbsp;</span></div>`;
+  }
 
   const imageHtml = imageUrl
     ? `<img src="${escHtml(imageUrl)}" class="card-img-top" alt="${name}" crossorigin="anonymous"${loadingAttr ? ' ' + loadingAttr : ''}${fpAttr} />`
     : `<div class="card-img-top d-flex align-items-center justify-content-center bg-light" style="height:180px;"><i class="bi bi-image text-muted" style="font-size:2.5rem;" aria-hidden="true"></i></div>`;
 
   const unavailableBadge = isAvailable ? '' : '<span class="badge-unavailable">{% trans "Unavailable" %}</span>';
-
-  const accordionId = 'acc-' + itemId.replace(/-/g, '').substring(0, 12);
-
-  let nutritionRows = '';
-  if (nutrition) {
-    const fields = [
-      ['{% trans "Calories" %}',    nutrition.calories_kcal,  'kcal'],
-      ['{% trans "Protein" %}',     nutrition.protein_g,      'g'],
-      ['{% trans "Carbohydrates" %}',nutrition.carbs_g,        'g'],
-      ['{% trans "Fat" %}',         nutrition.fat_g,           'g'],
-      ['{% trans "Sugar" %}',       nutrition.sugar_g,         'g'],
-      ['{% trans "Sodium" %}',      nutrition.sodium_mg,       'mg'],
-      ['{% trans "Fibre" %}',       nutrition.fibre_g,         'g'],
-    ];
-    nutritionRows = fields
-      .filter(([, val]) => val != null && val !== undefined)
-      .map(([label, val, unit]) =>
-        `<tr><td>${label}</td><td class="fw-medium">${escHtml(String(val))} ${unit}</td></tr>`
-      ).join('');
-
-    if (Array.isArray(nutrition.allergens) && nutrition.allergens.length > 0) {
-      nutritionRows += `<tr><td>{% trans "Allergens" %}</td><td class="fw-medium">${escHtml(nutrition.allergens.join(', '))}</td></tr>`;
-    }
-  }
-
-  const nutritionAccordion = nutritionRows ? `
-    <div class="accordion accordion-flush mt-2" id="${accordionId}">
-      <div class="accordion-item border-0">
-        <h2 class="accordion-header">
-          <button
-            class="accordion-button collapsed p-0 bg-transparent text-muted"
-            type="button"
-            data-bs-toggle="collapse"
-            data-bs-target="#${accordionId}-body"
-            aria-expanded="false"
-            aria-controls="${accordionId}-body"
-            aria-label="{% trans 'Toggle nutritional information for' %} ${name}"
-          >
-            <small><i class="bi bi-info-circle me-1" aria-hidden="true"></i>{% trans "Nutrition" %}</small>
-          </button>
-        </h2>
-        <div id="${accordionId}-body" class="accordion-collapse collapse">
-          <div class="accordion-body p-0 pt-2">
-            <table class="table table-sm nutrition-table mb-0">
-              <tbody>${nutritionRows}</tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-    </div>
-  ` : '';
 
   const addToCartBtn = isAvailable
     ? `<button type="button" class="btn btn-add-to-cart mt-2" onclick="event.stopPropagation(); addToCart('${itemId}', '${name.replace(/'/g,"\\'")}', ${price})" aria-label="{% trans 'Add to Cart' %} — ${name}"><i class="bi bi-plus-circle me-1" aria-hidden="true"></i>{% trans "Add to Cart" %}</button>`
@@ -660,17 +937,15 @@ function buildItemCard(item, index) {
           ${imageHtml}
           ${unavailableBadge}
         </div>
-        <div class="card-body d-flex flex-column gap-1">
-          <h2 class="h6 mb-0 fw-semibold lh-sm">${name}</h2>
-          ${description ? `<p class="text-muted small mb-0 lh-sm" style="display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">${description}</p>` : ''}
-          <div class="d-flex flex-wrap gap-1 mt-1">${tagBadges}${catBadges}</div>
-          <div class="d-flex justify-content-between align-items-center mt-auto pt-2">
-            <div>
-              <span class="item-price">${CURRENCY} ${price}</span>
-              <div class="prep-time">
-                <i class="bi bi-clock me-1" aria-hidden="true"></i>
-                <span>${prep} {% trans "min" %}</span>
-              </div>
+        <div class="card-body">
+          <h2 class="h6 mb-1 fw-semibold lh-sm text-truncate" title="${name}">${name}</h2>
+          <p class="card-desc text-muted mb-1">${description}</p>
+          ${tagsRowHtml}
+          <div class="d-flex justify-content-between align-items-center mt-auto pt-2 border-top">
+            <span class="item-price">${CURRENCY} ${price}</span>
+            <div class="prep-time">
+              <i class="bi bi-clock me-1" aria-hidden="true"></i>
+              <span>${prep} {% trans "min" %}</span>
             </div>
           </div>
           ${addToCartBtn}
@@ -678,6 +953,114 @@ function buildItemCard(item, index) {
       </div>
     </div>
   `;
+}
+
+function openItemTagsPopup(itemId) {
+  const item = menuItemsMap[itemId];
+  if (!item) return;
+
+  const name = escHtml(item.name_translated || item.name || '');
+  const price = item.price ? parseFloat(item.price).toFixed(2) : '0.00';
+  const imgUrl = item.image_url || '';
+  const tags = Array.isArray(item.dietary_tags) ? item.dietary_tags : [];
+  const cats = Array.isArray(item.categories) ? item.categories : [];
+  const allergens = (item.nutrition && Array.isArray(item.nutrition.allergens)) ? item.nutrition.allergens : [];
+  const isAvailable = item.status === 'available';
+
+  const bodyEl = document.getElementById('itemTagsModalBody');
+  if (!bodyEl) return;
+
+  let categoriesHtml = '';
+  if (cats.length > 0) {
+    categoriesHtml = `
+      <div class="mb-3">
+        <div class="text-uppercase text-muted fw-bold small mb-2 d-flex align-items-center gap-1" style="font-size:0.75rem; letter-spacing:0.5px;">
+          <i class="bi bi-bookmark-fill text-secondary"></i> {% trans "Categories" %}
+        </div>
+        <div class="d-flex flex-wrap gap-1">
+          ${cats.map(c => `<span class="badge rounded-pill bg-secondary text-white py-2 px-3 fw-medium" style="font-size:0.8rem;">${escHtml(c)}</span>`).join(' ')}
+        </div>
+      </div>
+    `;
+  }
+
+  let dietaryHtml = '';
+  if (tags.length > 0) {
+    dietaryHtml = `
+      <div class="mb-3">
+        <div class="text-uppercase text-muted fw-bold small mb-2 d-flex align-items-center gap-1" style="font-size:0.75rem; letter-spacing:0.5px;">
+          <i class="bi bi-heart-pulse-fill text-success"></i> {% trans "Dietary Preferences" %}
+        </div>
+        <div class="d-flex flex-wrap gap-1">
+          ${tags.map(t => `<span class="badge rounded-pill bg-success text-white py-2 px-3 fw-medium" style="font-size:0.8rem;">${escHtml(dietaryTagLabel(t))}</span>`).join(' ')}
+        </div>
+      </div>
+    `;
+  }
+
+  let allergensHtml = '';
+  if (allergens.length > 0) {
+    allergensHtml = `
+      <div class="mb-2">
+        <div class="text-uppercase text-muted fw-bold small mb-1 d-flex align-items-center gap-1" style="font-size:0.75rem; letter-spacing:0.5px;">
+          <i class="bi bi-exclamation-triangle-fill text-warning"></i> {% trans "Allergens" %}
+        </div>
+        <div class="small text-danger fw-semibold">
+          ${escHtml(allergens.join(', '))}
+        </div>
+      </div>
+    `;
+  }
+
+  if (!categoriesHtml && !dietaryHtml && !allergensHtml) {
+    dietaryHtml = `<p class="text-muted small mb-0">{% trans "No specific dietary tags or categories." %}</p>`;
+  }
+
+  const thumbHtml = imgUrl
+    ? `<img src="${escHtml(imgUrl)}" alt="${name}" class="rounded flex-shrink-0" style="width:52px;height:52px;object-fit:cover;" crossorigin="anonymous"/>`
+    : `<div class="rounded bg-light flex-shrink-0 d-flex align-items-center justify-content-center text-muted" style="width:52px;height:52px;"><i class="bi bi-cup-hot fs-4"></i></div>`;
+
+  bodyEl.innerHTML = `
+    <div class="d-flex align-items-center gap-3 p-2 rounded bg-light mb-3">
+      ${thumbHtml}
+      <div class="flex-grow-1 overflow-hidden">
+        <h3 class="h6 fw-bold mb-0 text-truncate">${name}</h3>
+        <span class="fw-semibold text-primary small">${CURRENCY} ${price}</span>
+      </div>
+    </div>
+    ${categoriesHtml}
+    ${dietaryHtml}
+    ${allergensHtml}
+  `;
+
+  // Setup buttons
+  const viewDetailBtn = document.getElementById('itemTagsViewDetailBtn');
+  if (viewDetailBtn) {
+    viewDetailBtn.onclick = function() {
+      const modalEl = document.getElementById('itemTagsModal');
+      const bsModal = bootstrap.Modal.getInstance(modalEl);
+      if (bsModal) bsModal.hide();
+      openItemDetail(itemId);
+    };
+  }
+
+  const addBtn = document.getElementById('itemTagsAddToCartBtn');
+  if (addBtn) {
+    if (isAvailable) {
+      addBtn.style.display = '';
+      addBtn.onclick = function() {
+        addToCart(itemId, item.name, price);
+        const modalEl = document.getElementById('itemTagsModal');
+        const bsModal = bootstrap.Modal.getInstance(modalEl);
+        if (bsModal) bsModal.hide();
+      };
+    } else {
+      addBtn.style.display = 'none';
+    }
+  }
+
+  const modalInstance = bootstrap.Modal.getOrCreateInstance(document.getElementById('itemTagsModal'));
+  modalInstance.show();
 }
 
 /* ====================================================================
@@ -939,6 +1322,9 @@ async function addToCartWithDetails(itemId, itemName, itemPrice, qty, instructio
 }
 
 document.addEventListener('DOMContentLoaded', function () {
+  // Initialise dietary modal filter chips
+  initModalFilters();
+
   // Initialise any Bootstrap tooltips
   document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(el => {
     new bootstrap.Tooltip(el);
