@@ -154,6 +154,26 @@ class _AuthenticatedConsumer(AsyncJsonWebsocketConsumer):
 
         return await sync_to_async(_load_user)()
 
+    def get_branch_id(self) -> str:
+        user = self.scope.get("user")
+        if user and getattr(user, "branch_id", None):
+            return str(user.branch_id)
+        from urllib.parse import parse_qs
+        qs = parse_qs(self.scope.get("query_string", b"").decode("utf-8", "ignore"))
+        branch_ids = qs.get("branch_id", [])
+        if branch_ids and branch_ids[0]:
+            return branch_ids[0]
+        # Elevated roles default to first branch of the tenant
+        if user and getattr(user, "role", "") in (UserRole.TENANT_OWNER, UserRole.SUPER_ADMIN):
+            try:
+                from apps.branches.models import Branch
+                b = Branch.objects.first()
+                if b:
+                    return str(b.id)
+            except Exception:
+                pass
+        return "none"
+
     async def connect(self):
         user = self.scope.get("user")
 
@@ -161,16 +181,16 @@ class _AuthenticatedConsumer(AsyncJsonWebsocketConsumer):
         #    on WebSocket upgrades.  Fall back to explicit sessionid in the
         #    query string as a workaround.
         if user is None or not user.is_authenticated:
-            qs_session = self.scope.get("query_string", b"").decode()
-            logger.info("Auth fallback: query_string=%r user=%s", qs_session, user)
-            if qs_session.startswith("sessionid="):
-                session_key = qs_session[len("sessionid="):]
+            from urllib.parse import parse_qs
+            qs = parse_qs(self.scope.get("query_string", b"").decode("utf-8", "ignore"))
+            session_keys = qs.get("sessionid", [])
+            if session_keys and session_keys[0]:
+                session_key = session_keys[0]
                 logger.info("Auth fallback: extracted session_key=%s", session_key)
-                if session_key:
-                    user = await self._auth_from_session_key(session_key)
-                    logger.info("Auth fallback: resolved user=%s", user)
-                    if user:
-                        self.scope["user"] = user
+                user = await self._auth_from_session_key(session_key)
+                logger.info("Auth fallback: resolved user=%s", user)
+                if user:
+                    self.scope["user"] = user
 
         if user is None or not user.is_authenticated:
             logger.warning(
@@ -307,14 +327,12 @@ class KitchenConsumer(_AuthenticatedConsumer):
     )
 
     def group_name(self) -> str:
-        user = self.scope["user"]
-        branch_id = str(user.branch_id) if user.branch_id else "none"
-        return f"branch_{branch_id}_kitchen"
+        return f"branch_{self.get_branch_id()}_kitchen"
 
     async def _check_scope(self, user) -> bool:
-        # Kitchen Staff and Branch Manager must have an assigned branch.
+        # Kitchen Staff and Branch Manager must have an assigned branch or query branch.
         if user.role in (UserRole.KITCHEN_STAFF, UserRole.BRANCH_MANAGER):
-            if not user.branch_id:
+            if not user.branch_id and self.get_branch_id() == "none":
                 logger.warning(
                     "KitchenConsumer: user %s (role=%s) has no branch assigned",
                     user.id,
@@ -352,13 +370,11 @@ class ReceptionConsumer(_AuthenticatedConsumer):
     )
 
     def group_name(self) -> str:
-        user = self.scope["user"]
-        branch_id = str(user.branch_id) if user.branch_id else "none"
-        return f"branch_{branch_id}_reception"
+        return f"branch_{self.get_branch_id()}_reception"
 
     async def _check_scope(self, user) -> bool:
         if user.role in (UserRole.RECEPTIONIST, UserRole.BRANCH_MANAGER):
-            if not user.branch_id:
+            if not user.branch_id and self.get_branch_id() == "none":
                 logger.warning(
                     "ReceptionConsumer: user %s (role=%s) has no branch assigned",
                     user.id,
@@ -396,13 +412,11 @@ class ManagerConsumer(_AuthenticatedConsumer):
     )
 
     def group_name(self) -> str:
-        user = self.scope["user"]
-        branch_id = str(user.branch_id) if user.branch_id else "none"
-        return f"branch_{branch_id}_manager"
+        return f"branch_{self.get_branch_id()}_manager"
 
     async def _check_scope(self, user) -> bool:
         if user.role == UserRole.BRANCH_MANAGER:
-            if not user.branch_id:
+            if not user.branch_id and self.get_branch_id() == "none":
                 logger.warning(
                     "ManagerConsumer: Branch Manager %s has no branch assigned",
                     user.id,
@@ -526,9 +540,11 @@ class CustomerOrderConsumer(AsyncJsonWebsocketConsumer):
 
         # Check 3: fallback — load session from query string (cookies may not be sent on WS upgrade)
         if not customer_session:
-            qs = self.scope.get("query_string", b"").decode()
-            if qs.startswith("sessionid="):
-                session_key = qs[len("sessionid="):]
+            from urllib.parse import parse_qs
+            qs = parse_qs(self.scope.get("query_string", b"").decode("utf-8", "ignore"))
+            session_keys = qs.get("sessionid", [])
+            if session_keys and session_keys[0]:
+                session_key = session_keys[0]
                 if session_key:
                     from channels.db import database_sync_to_async
                     from django.contrib.sessions.models import Session as SessionModel

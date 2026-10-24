@@ -32,17 +32,30 @@ function playNotificationSound() {
 
 function _playBeep(ctx) {
   try {
-    var osc = ctx.createOscillator();
-    var gain = ctx.createGain();
-    osc.connect(gain);
-    gain.connect(ctx.destination);
-    osc.type = "sine";
-    osc.frequency.setValueAtTime(880, ctx.currentTime);
-    osc.frequency.setValueAtTime(660, ctx.currentTime + 0.15);
-    gain.gain.setValueAtTime(0.3, ctx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.3);
-    osc.start(ctx.currentTime);
-    osc.stop(ctx.currentTime + 0.3);
+    var now = ctx.currentTime;
+    // Bell Chime Tone 1: A5 (880Hz)
+    var osc1 = ctx.createOscillator();
+    var gain1 = ctx.createGain();
+    osc1.type = "sine";
+    osc1.frequency.setValueAtTime(880, now);
+    gain1.gain.setValueAtTime(0.4, now);
+    gain1.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+    osc1.connect(gain1);
+    gain1.connect(ctx.destination);
+    osc1.start(now);
+    osc1.stop(now + 0.35);
+
+    // Bell Chime Tone 2: D6 (1174.66Hz) after 130ms
+    var osc2 = ctx.createOscillator();
+    var gain2 = ctx.createGain();
+    osc2.type = "sine";
+    osc2.frequency.setValueAtTime(1174.66, now + 0.13);
+    gain2.gain.setValueAtTime(0.45, now + 0.13);
+    gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.6);
+    osc2.connect(gain2);
+    gain2.connect(ctx.destination);
+    osc2.start(now + 0.13);
+    osc2.stop(now + 0.6);
   } catch (e) {
     console.warn("Audio notification not available:", e);
   }
@@ -80,7 +93,7 @@ function showOrderNotification(orderData) {
     try {
       const n = new Notification("New Order!", {
         body: `Table ${table}: ${summary}`,
-        icon: "/static/eating.svg",
+        icon: "/static/favicon.svg",
         tag: "new-order",
         requireInteraction: true,
       });
@@ -109,7 +122,7 @@ function showStatusNotification(data) {
     try {
       const n = new Notification(title, {
         body: body,
-        icon: "/static/eating.svg",
+        icon: "/static/favicon.svg",
         tag: "order-status",
         requireInteraction: data.new_status === "ready",
       });

@@ -90,8 +90,12 @@ async function resolveBranchId() {
 }
 
 async function loadItems() {
+  const tbody = document.getElementById('tables-tbody');
   const branchId = await resolveBranchId();
-  if (!branchId) return;
+  if (!branchId) {
+    if (tbody) tbody.innerHTML = '<tr><td colspan="4" class="text-center text-muted py-4">No branch found.</td></tr>';
+    return;
+  }
 
   const [tablesResp, roomsResp] = await Promise.all([
     fetch(`/api/v1/branches/${branchId}/tables/`, {credentials:'same-origin'}),
@@ -105,7 +109,6 @@ async function loadItems() {
     ...tables.map(t => ({...t, type: 'table', label: `Table ${t.number}`})),
     ...rooms.map(r => ({...r, type: 'room', label: r.name})),
   ];
-  const tbody = document.getElementById('tables-tbody');
   if (allItems.length === 0) {
     tbody.innerHTML = '<tr><td colspan="4" class="text-center text-muted py-4">No tables or rooms yet.</td></tr>';
     return;
@@ -132,7 +135,7 @@ function showAddModal(type) {
   new bootstrap.Modal(document.getElementById('tableModal')).show();
 }
 
-function editItem(id, type) {
+async function editItem(id, type) {
   document.getElementById('tableModalTitle').textContent = type === 'table' ? 'Edit Table' : 'Edit Room';
   document.getElementById('edit-type').value = type;
   document.getElementById('edit-id').value = id;

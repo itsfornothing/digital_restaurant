@@ -152,7 +152,7 @@ document.addEventListener('DOMContentLoaded', function() {
   // Listen for WS messages forwarded from base.html
   document.addEventListener('staff:wsmsg', function (e) {
     var msg = e.detail;
-    if (['order.new', 'order_status_changed', 'order_cancelled'].includes(msg.type)) {
+    if (['order.new', 'order_status_changed', 'order.status_changed', 'order_cancelled', 'order.cancelled'].includes(msg.type)) {
       loadOrders();
     }
   });

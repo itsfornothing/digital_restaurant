@@ -642,23 +642,27 @@ function _initAudioOnGesture() {
 
 function _doBeep(ctx) {
   try {
-    var osc = ctx.createOscillator();
-    var gain = ctx.createGain();
-    osc.connect(gain);
-    gain.connect(ctx.destination);
-    osc.type = "sine";
-    osc.frequency.setValueAtTime(660, ctx.currentTime);
-    osc.frequency.setValueAtTime(880, ctx.currentTime + 0.12);
-    gain.gain.setValueAtTime(0.25, ctx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.25);
-    osc.start(ctx.currentTime);
-    osc.stop(ctx.currentTime + 0.25);
+    var now = ctx.currentTime;
+    var notes = [523.25, 659.25, 783.99]; // C5, E5, G5 ascending chime
+    notes.forEach(function (freq, idx) {
+      var osc = ctx.createOscillator();
+      var gain = ctx.createGain();
+      osc.type = "sine";
+      var t = now + (idx * 0.12);
+      osc.frequency.setValueAtTime(freq, t);
+      gain.gain.setValueAtTime(0.35, t);
+      gain.gain.exponentialRampToValueAtTime(0.001, t + 0.35);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(t);
+      osc.stop(t + 0.35);
+    });
   } catch (_) {}
 }
 function _notifyCustomer(title, body) {
   if (!("Notification" in window) || Notification.permission !== "granted") return;
   try {
-    const n = new Notification(title, { body, icon: "/static/eating.svg", tag: "customer-order" });
+    const n = new Notification(title, { body, icon: "/static/favicon.svg", tag: "customer-order" });
     n.onclick = function () { window.focus(); this.close(); };
     setTimeout(() => n.close(), 8000);
   } catch (_) {}

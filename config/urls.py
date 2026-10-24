@@ -26,6 +26,9 @@ from apps.authentication.staff_views import (
 )
 
 urlpatterns = [
+    # Favicon redirect
+    path("favicon.ico", RedirectView.as_view(url="/static/favicon.svg", permanent=True)),
+
     # Redirect root to staff login
     path("", RedirectView.as_view(url="/staff/login/", permanent=False)),
 

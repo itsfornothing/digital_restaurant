@@ -29,6 +29,9 @@ python manage.py migrate_schemas --noinput -v 3 2>&1 | tail -50
 echo "[entrypoint] Bootstrapping first tenant (if needed)…"
 python manage.py bootstrap -v 2 2>&1 || echo "[entrypoint] Bootstrap skipped."
 
+echo "[entrypoint] Collecting static files…"
+python manage.py collectstatic --noinput 2>&1 | tail -20 || echo "[entrypoint] Static collection completed with warnings."
+
 # Replace port arg with $PORT if set (Render sets this automatically)
 ARGS="$*"
 if [ -n "$PORT" ]; then

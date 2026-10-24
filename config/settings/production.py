@@ -123,6 +123,8 @@ MIDDLEWARE = [
     "django_prometheus.middleware.PrometheusBeforeMiddleware",
     "apps.tenants.middleware.TenantMiddleware",
     "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
+    "shared.middleware.RequestIdMiddleware",
     "csp.middleware.CSPMiddleware",  # CSP header on every response
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.locale.LocaleMiddleware",
@@ -173,11 +175,12 @@ CSP_IMG_SRC = (
     "https:",
 )
 
-# WebSocket / XHR / Fetch — same origin + WebSocket protocol
+# WebSocket / XHR / Fetch — same origin + WebSocket protocol + CDN source maps
 CSP_CONNECT_SRC = (
     "'self'",
     "ws:",
     "wss:",
+    "https://cdn.jsdelivr.net",
 )
 
 # Disallow framing to prevent clickjacking (belt-and-suspenders with
@@ -203,10 +206,13 @@ EMAIL_USE_TLS = True
 DEFAULT_FROM_EMAIL = config("DEFAULT_FROM_EMAIL", default="noreply@platform.example.com")
 
 # ---------------------------------------------------------------------------
-# Static files — served via Nginx / CDN in production
+# Static files — served via WhiteNoise in production
 # ---------------------------------------------------------------------------
 
-STATIC_ROOT = "/app/staticfiles"
+STATIC_ROOT = BASE_DIR / "staticfiles"
+STATIC_URL = "/static/"
+STATICFILES_DIRS = [BASE_DIR / "static"]
+WHITENOISE_ROOT = STATIC_ROOT
 
 # ---------------------------------------------------------------------------
 # Logging — structured JSON to stdout (collected by container runtime)

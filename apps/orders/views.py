@@ -362,13 +362,7 @@ class OrderViewSet(AuditLogMixin, viewsets.GenericViewSet):
                 for item in order.items.select_related("menu_item").all()
             ],
         }
-        staff_roles = {
-            "received": ["kitchen"],
-            "preparing": ["kitchen"],
-            "ready": ["reception"],
-            "served": [],
-            "cancelled": ["kitchen", "reception"],
-        }.get(new_status, ["kitchen", "reception"])
+        staff_roles = ["kitchen", "reception", "manager"]
         push_staff_roles_event(str(order.branch_id), "order.status_changed", staff_payload, staff_roles)
 
         # Customer push — include both 'status' and 'new_status' for client compatibility
@@ -507,7 +501,7 @@ class CustomerOrderViewSet(AuditLogMixin, viewsets.GenericViewSet):
                     "customer_name": getattr(order, "customer_name", None),
                     "placed_at": order.placed_at.isoformat(),
                 },
-                ["kitchen", "reception"],
+                ["kitchen", "reception", "manager"],
             )
             push_customer_event(
                 str(order.id),
