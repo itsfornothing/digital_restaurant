@@ -10,9 +10,9 @@ venv/
 *.whl
 
 # Django
-*.mo
 *.po~
 *.pot
+!locale/*/LC_MESSAGES/*.mo
 media/
 staticfiles/
 

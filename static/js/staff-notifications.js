@@ -81,18 +81,22 @@ function initAudioOnGesture() {
 
 function showOrderNotification(orderData) {
   if (!("Notification" in window)) return;
+  const i18n = window.NOTIF_I18N || {};
   if (Notification.permission === "granted") {
     const table = orderData.table_number || orderData.table_id || "?";
     const itemCount = (orderData.items || []).length;
     const firstItem = orderData.items && orderData.items[0]
       ? orderData.items[0].menu_item_name || orderData.items[0].menu_item
       : "";
+    const moreLabel = i18n.more || "more";
+    const tableLabel = i18n.table || "Table";
+    const title = i18n.newOrder || "New Order!";
     const summary = itemCount > 1
-      ? `${firstItem} +${itemCount - 1} more`
+      ? `${firstItem} +${itemCount - 1} ${moreLabel}`
       : firstItem;
     try {
-      const n = new Notification("New Order!", {
-        body: `Table ${table}: ${summary}`,
+      const n = new Notification(title, {
+        body: `${tableLabel} ${table}: ${summary}`,
         icon: "/static/favicon.svg",
         tag: "new-order",
         requireInteraction: true,
@@ -108,16 +112,20 @@ function showOrderNotification(orderData) {
 
 function showStatusNotification(data) {
   if (!("Notification" in window)) return;
+  const i18n = window.NOTIF_I18N || {};
   const table = data.table_number || "?";
   const labels = {
-    received: "Order Received — Kitchen",
-    preparing: "Preparing — Kitchen",
-    ready: "Order Ready to Serve — Reception",
-    served: "Order Served",
-    cancelled: "Order Cancelled",
+    received: i18n.orderReceivedKitchen || "Order Received — Kitchen",
+    preparing: i18n.preparingKitchen || "Preparing — Kitchen",
+    ready: i18n.orderReadyServe || "Order Ready to Serve — Reception",
+    served: i18n.orderServed || "Order Served",
+    cancelled: i18n.orderCancelled || "Order Cancelled",
   };
-  const title = labels[data.new_status] || "Order Status Changed";
-  const body = `Order #${data.order_number || ""} — Table ${table}: ${data.previous_status || "new"} → ${data.new_status}`;
+  const title = labels[data.new_status] || (i18n.statusChanged || "Order Status Changed");
+  const orderLabel = i18n.order || "Order";
+  const tableLabel = i18n.table || "Table";
+  const prevStatus = data.previous_status || (i18n.new || "new");
+  const body = `${orderLabel} #${data.order_number || ""} — ${tableLabel} ${table}: ${prevStatus} → ${data.new_status}`;
   if (Notification.permission === "granted") {
     try {
       const n = new Notification(title, {

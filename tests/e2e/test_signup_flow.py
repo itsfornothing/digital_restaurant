@@ -43,12 +43,12 @@ class TestSignupFlowViaClient:
         client.force_login(User.objects.get(email=f"{role.lower()}-e2e@test.com"))
         return client
 
-    def test_register_page_redirects_anonymous(self):
-        """Unauthenticated users are redirected to login."""
+    def test_register_page_renders_for_anonymous_user(self):
+        """Unauthenticated users can access the registration form directly (self-registration)."""
         client = Client()
         resp = client.get(self.REGISTER_URL)
-        assert resp.status_code == 302
-        assert resp["Location"].startswith("/staff/login/")
+        assert resp.status_code == 200
+        assert b"Create Account" in resp.content
 
     def test_register_page_renders_for_authenticated_manager(self):
         """GET /staff/register/ returns 200 for authenticated manager."""

@@ -18,6 +18,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         libpangocairo-1.0-0 \
         libgdk-pixbuf2.0-0 \
         shared-mime-info \
+        gettext \
         curl \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
@@ -36,7 +37,13 @@ RUN pip install --no-cache-dir --upgrade pip && \
 # Copy application source
 COPY . .
 
-# Collect static files (requires DJANGO_SETTINGS_MODULE + DB to not be needed at build time)
+# Compile messages and collect static files
+RUN DJANGO_SETTINGS_MODULE=config.settings.production \
+    DJANGO_SECRET_KEY=build-time-placeholder \
+    DB_NAME=placeholder DB_USER=placeholder DB_PASSWORD=placeholder \
+    DB_HOST=placeholder DB_PORT=5432 \
+    python manage.py compilemessages -l am -l en 2>/dev/null || true
+
 RUN DJANGO_SETTINGS_MODULE=config.settings.production \
     DJANGO_SECRET_KEY=build-time-placeholder \
     DB_NAME=placeholder DB_USER=placeholder DB_PASSWORD=placeholder \

@@ -132,8 +132,7 @@ class _OrderReadOrCancelPermission(BasePermission):
 
 class _OrderStatusUpdatePermission(BasePermission):
     """
-    Allows Order status updates for Kitchen_Staff, Receptionist, Branch_Manager,
-    Tenant_Owner, and Super_Admin (Requirements 4.2, 10.3).
+    Allows Order status updates for Kitchen_Staff and Receptionist (Requirements 4.2, 10.3).
     """
 
     message = "You do not have permission to update order status."
@@ -145,9 +144,6 @@ class _OrderStatusUpdatePermission(BasePermission):
         return user.is_active and user.role in (
             UserRole.KITCHEN_STAFF,
             UserRole.RECEPTIONIST,
-            UserRole.BRANCH_MANAGER,
-            UserRole.TENANT_OWNER,
-            UserRole.SUPER_ADMIN,
         )
 
 

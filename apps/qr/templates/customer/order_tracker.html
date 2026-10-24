@@ -571,6 +571,17 @@ async function pollStatus() {
         currentStatus = newStatus;
         renderPipeline(currentStatus);
         _playNotifSound();
+        const labels = {
+          received:  "{% trans 'Order Received' %}",
+          preparing: "{% trans 'Preparing Your Order' %}",
+          ready:     "{% trans 'Your Order is Ready!' %}",
+          served:    "{% trans 'Order Served — Enjoy!' %}",
+          cancelled: "{% trans 'Order Cancelled' %}",
+        };
+        _notifyCustomer(
+          labels[newStatus] || "{% trans 'Order Status Changed' %}",
+          `{% trans 'Order' %} #${ORDER_NUMBER}: ${STATUS_LABELS[newStatus] || newStatus}`
+        );
       }
       setConnBadge('polling');
 
@@ -728,15 +739,15 @@ function connectWebSocket() {
       /* Notify customer via browser notification + sound */
       _playNotifSound();
       const labels = {
-        received:  "Order Received",
-        preparing: "Preparing Your Order",
-        ready:     "Your Order is Ready!",
-        served:    "Order Served — Enjoy!",
-        cancelled: "Order Cancelled",
+        received:  "{% trans 'Order Received' %}",
+        preparing: "{% trans 'Preparing Your Order' %}",
+        ready:     "{% trans 'Your Order is Ready!' %}",
+        served:    "{% trans 'Order Served — Enjoy!' %}",
+        cancelled: "{% trans 'Order Cancelled' %}",
       };
       _notifyCustomer(
-        labels[newStatus] || "Order Status Changed",
-        `Order #${ORDER_NUMBER}: ${newStatus}`
+        labels[newStatus] || "{% trans 'Order Status Changed' %}",
+        `{% trans 'Order' %} #${ORDER_NUMBER}: ${STATUS_LABELS[newStatus] || newStatus}`
       );
 
       /* Stop WebSocket on terminal states */

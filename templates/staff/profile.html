@@ -89,6 +89,15 @@
 
 {% block extra_scripts %}
 <script>
+const PROFILE_I18N = {
+  qrFail: "{% trans 'Failed to generate QR code. Please try again.' %}",
+  validCode: "{% trans 'Please enter a valid 6-digit code.' %}",
+  verifyFail: "{% trans 'Verification failed' %}",
+  invalidCode: "{% trans 'Invalid code. Please try again.' %}",
+  enterPassword: "{% trans 'Please enter your password.' %}",
+  disableFail: "{% trans 'Failed to disable 2FA' %}",
+};
+
 let currentSecret = '';
 let currentOtpAuthUri = '';
 
@@ -115,7 +124,7 @@ function showEnable2faFlow() {
     })
     .catch(function(err) {
       console.error('2FA setup failed:', err);
-      showEnableError('Failed to generate QR code. Please try again.');
+      showEnableError(PROFILE_I18N.qrFail);
     });
 
   document.getElementById('enable2fa-step1').scrollIntoView({behavior:'smooth'});
@@ -141,7 +150,7 @@ function showEnableError(msg) {
 function verify2faCode() {
   var code = document.getElementById('2fa-verify-code').value.trim();
   if (!code || code.length !== 6) {
-    showEnableError('Please enter a valid 6-digit code.');
+    showEnableError(PROFILE_I18N.validCode);
     return;
   }
 
@@ -155,7 +164,7 @@ function verify2faCode() {
   })
     .then(function(r) {
       if (r.ok) return r.json();
-      return r.json().then(function(err) { throw new Error(err.error ? err.error.message : 'Verification failed'); });
+      return r.json().then(function(err) { throw new Error(err.error ? err.error.message : PROFILE_I18N.verifyFail); });
     })
     .then(function() {
       bootstrap.Modal.getInstance(document.getElementById('enable2faModal')).hide();
@@ -163,7 +172,7 @@ function verify2faCode() {
     })
     .catch(function(err) {
       document.getElementById('2fa-verify-btn').disabled = false;
-      showEnableError(err.message || 'Invalid code. Please try again.');
+      showEnableError(err.message || PROFILE_I18N.invalidCode);
     });
 }
 
@@ -176,7 +185,7 @@ function showDisable2faModal() {
 function disable2fa() {
   var password = document.getElementById('disable2fa-password').value;
   if (!password) {
-    document.getElementById('disable2fa-error').textContent = 'Please enter your password.';
+    document.getElementById('disable2fa-error').textContent = PROFILE_I18N.enterPassword;
     document.getElementById('disable2fa-error').classList.remove('d-none');
     return;
   }
@@ -189,7 +198,7 @@ function disable2fa() {
   })
     .then(function(r) {
       if (r.ok) return r.json();
-      return r.json().then(function(err) { throw new Error(err.error ? err.error.message : 'Failed to disable 2FA'); });
+      return r.json().then(function(err) { throw new Error(err.error ? err.error.message : PROFILE_I18N.disableFail); });
     })
     .then(function() {
       bootstrap.Modal.getInstance(document.getElementById('disable2faModal')).hide();

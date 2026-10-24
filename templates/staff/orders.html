@@ -51,6 +51,7 @@ const CURRENCY = '{{ currency|default:"ETB" }}';
 const ORDERS_I18N = {
   noOrders: '{% trans "No orders found." %}',
   cancelConfirm: '{% trans "Cancel this order?" %}',
+  cancelBtn: '{% trans "Cancel" %}',
   _statusLabels: {
     confirmed: '{% trans "Confirmed" %}',
     received: '{% trans "Received" %}',
@@ -96,7 +97,7 @@ async function loadOrders() {
     tbody.innerHTML = items.map(o => {
       const nextStatus = NEXT[o.status];
       var cancelBtn = o.status !== 'ready' && o.status !== 'served' && o.status !== 'cancelled'
-        ? `<button class="btn btn-sm btn-outline-danger order-action-btn" onclick="cancelOrder('${o.id}')" title="Cancel"><i class="bi bi-x-lg"></i><span class="ms-1">Cancel</span></button>`
+        ? `<button class="btn btn-sm btn-outline-danger order-action-btn" onclick="cancelOrder('${o.id}')" title="${ORDERS_I18N.cancelBtn}"><i class="bi bi-x-lg"></i><span class="ms-1">${ORDERS_I18N.cancelBtn}</span></button>`
         : '';
       const actionBtn = nextStatus
         ? `<button class="btn btn-sm btn-outline-primary order-action-btn" onclick="updateStatus('${o.id}','${nextStatus}')" title="${_orderStatus(nextStatus)}"><i class="bi bi-arrow-right"></i><span class="ms-1">${_orderStatus(nextStatus)}</span></button>`

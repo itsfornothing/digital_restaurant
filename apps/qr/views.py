@@ -310,4 +310,4 @@ class QRCodeImageView(APIView):
 
 
 class QRCodeViewSet(AuditLogMixin, viewsets.GenericViewSet):
-    permission_classes = [IsBranchManager | IsTenantOwner | IsSuperAdmin]
+    permission_classes = [IsBranchManager]

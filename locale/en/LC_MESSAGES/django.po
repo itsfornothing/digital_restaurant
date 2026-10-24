@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: restaurant-platform 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-01-01 00:00+0000\n"
+"POT-Creation-Date: 2026-10-24 08:57+0000\n"
 "PO-Revision-Date: 2024-01-01 00:00+0000\n"
 "Last-Translator: Restaurant Platform Team\n"
 "Language-Team: English\n"
@@ -16,496 +16,2366 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-# ---------------------------------------------------------------------------
-# Navigation
-# ---------------------------------------------------------------------------
-
-msgid "Home"
-msgstr "Home"
-
-msgid "Menu"
-msgstr "Menu"
-
-msgid "Orders"
-msgstr "Orders"
-
-msgid "Dashboard"
-msgstr "Dashboard"
-
-msgid "Settings"
-msgstr "Settings"
-
-msgid "Logout"
-msgstr "Logout"
-
-msgid "Login"
-msgstr "Login"
-
-msgid "Profile"
-msgstr "Profile"
-
-msgid "Back"
-msgstr "Back"
-
-# ---------------------------------------------------------------------------
-# Order status labels
-# ---------------------------------------------------------------------------
-
-msgid "Confirmed"
-msgstr "Confirmed"
-
-msgid "Received"
-msgstr "Received"
-
-msgid "Preparing"
-msgstr "Preparing"
-
-msgid "Ready"
-msgstr "Ready"
-
-msgid "Served"
-msgstr "Served"
-
-msgid "Cancelled"
-msgstr "Cancelled"
-
-msgid "Pending"
-msgstr "Pending"
-
-# ---------------------------------------------------------------------------
-# Common actions
-# ---------------------------------------------------------------------------
-
-msgid "Save"
-msgstr "Save"
-
-msgid "Cancel"
-msgstr "Cancel"
-
-msgid "Edit"
-msgstr "Edit"
-
-msgid "Delete"
-msgstr "Delete"
-
-msgid "Add"
-msgstr "Add"
-
-msgid "Search"
-msgstr "Search"
-
-msgid "Filter"
-msgstr "Filter"
-
-msgid "Export"
-msgstr "Export"
-
-msgid "Import"
-msgstr "Import"
-
-msgid "Submit"
-msgstr "Submit"
-
-msgid "Confirm"
-msgstr "Confirm"
-
-msgid "Close"
-msgstr "Close"
-
-msgid "View"
-msgstr "View"
-
-msgid "Download"
-msgstr "Download"
-
-msgid "Print"
-msgstr "Print"
-
-msgid "Refresh"
-msgstr "Refresh"
-
-msgid "Update"
-msgstr "Update"
-
-msgid "Create"
-msgstr "Create"
-
-msgid "Remove"
-msgstr "Remove"
-
-# ---------------------------------------------------------------------------
-# Error messages
-# ---------------------------------------------------------------------------
-
-msgid "Not Found"
-msgstr "Not Found"
-
-msgid "Access Denied"
-msgstr "Access Denied"
-
-msgid "Invalid Input"
-msgstr "Invalid Input"
-
-msgid "Server Error"
-msgstr "Server Error"
-
-msgid "Page not found"
-msgstr "Page not found"
-
-msgid "An error occurred. Please try again."
-msgstr "An error occurred. Please try again."
-
-msgid "Required field"
-msgstr "Required field"
-
-msgid "This field is required."
-msgstr "This field is required."
-
-msgid "This field may not be blank."
-msgstr "This field may not be blank."
-
-msgid "Permission denied."
-msgstr "Permission denied."
-
-msgid "Authentication required."
-msgstr "Authentication required."
-
-# ---------------------------------------------------------------------------
-# Menu-related strings
-# ---------------------------------------------------------------------------
-
-msgid "Menu Items"
-msgstr "Menu Items"
-
-msgid "Categories"
-msgstr "Categories"
-
-msgid "Price"
-msgstr "Price"
-
-msgid "Description"
-msgstr "Description"
-
-msgid "Dietary Tags"
-msgstr "Dietary Tags"
-
-msgid "Nutrition"
-msgstr "Nutrition"
-
-msgid "Calories"
-msgstr "Calories"
-
-msgid "Protein"
-msgstr "Protein"
-
-msgid "Carbohydrates"
-msgstr "Carbohydrates"
-
-msgid "Fat"
-msgstr "Fat"
-
-msgid "Allergens"
-msgstr "Allergens"
-
-msgid "Preparation Time"
-msgstr "Preparation Time"
-
-msgid "Available"
-msgstr "Available"
-
-msgid "Unavailable"
-msgstr "Unavailable"
-
-msgid "Seasonal"
-msgstr "Seasonal"
-
-msgid "Archived"
-msgstr "Archived"
-
-msgid "Vegetarian"
-msgstr "Vegetarian"
-
-msgid "Vegan"
-msgstr "Vegan"
-
-msgid "Gluten-Free"
-msgstr "Gluten-Free"
-
-msgid "Dairy-Free"
-msgstr "Dairy-Free"
-
-msgid "Halal"
-msgstr "Halal"
-
-msgid "Spicy"
-msgstr "Spicy"
-
-msgid "Seafood"
-msgstr "Seafood"
-
-msgid "Desserts"
-msgstr "Desserts"
-
-msgid "Beverages"
-msgstr "Beverages"
-
-msgid "Add to Cart"
-msgstr "Add to Cart"
-
-msgid "View Menu"
-msgstr "View Menu"
-
-# ---------------------------------------------------------------------------
-# Authentication strings
-# ---------------------------------------------------------------------------
-
-msgid "Email"
-msgstr "Email"
-
-msgid "Password"
-msgstr "Password"
-
-msgid "Sign In"
-msgstr "Sign In"
-
-msgid "Sign Out"
-msgstr "Sign Out"
-
-msgid "Forgot Password"
-msgstr "Forgot Password"
-
-msgid "Reset Password"
-msgstr "Reset Password"
-
-msgid "New Password"
-msgstr "New Password"
-
-msgid "Confirm Password"
-msgstr "Confirm Password"
-
-msgid "Remember me"
-msgstr "Remember me"
-
-msgid "Two-Factor Authentication"
-msgstr "Two-Factor Authentication"
-
-msgid "Enter verification code"
-msgstr "Enter verification code"
-
-msgid "Invalid credentials"
-msgstr "Invalid credentials"
-
-msgid "Account locked"
-msgstr "Account locked"
-
-# ---------------------------------------------------------------------------
-# Financial strings
-# ---------------------------------------------------------------------------
-
-msgid "Income"
-msgstr "Income"
-
-msgid "Expenses"
-msgstr "Expenses"
-
-msgid "Profit"
-msgstr "Profit"
-
-msgid "Revenue"
-msgstr "Revenue"
-
-msgid "Total"
-msgstr "Total"
-
-msgid "Net Profit"
-msgstr "Net Profit"
-
-msgid "Tax"
-msgstr "Tax"
-
-msgid "VAT"
-msgstr "VAT"
-
-msgid "Service Charge"
-msgstr "Service Charge"
-
-msgid "Subtotal"
-msgstr "Subtotal"
-
-msgid "Amount"
-msgstr "Amount"
-
-msgid "Date"
-msgstr "Date"
-
-msgid "Period"
-msgstr "Period"
-
-msgid "Daily"
-msgstr "Daily"
-
-msgid "Weekly"
-msgstr "Weekly"
-
-msgid "Monthly"
-msgstr "Monthly"
-
-msgid "Annual"
-msgstr "Annual"
-
-msgid "Financial Report"
-msgstr "Financial Report"
-
-# ---------------------------------------------------------------------------
-# Inventory strings
-# ---------------------------------------------------------------------------
-
-msgid "Stock"
-msgstr "Stock"
-
-msgid "Low Stock"
-msgstr "Low Stock"
-
-msgid "Out of Stock"
-msgstr "Out of Stock"
-
-msgid "Expiry Warning"
-msgstr "Expiry Warning"
-
-msgid "Inventory"
-msgstr "Inventory"
-
-msgid "Supplier"
-msgstr "Supplier"
-
-msgid "Quantity"
-msgstr "Quantity"
-
-msgid "Unit"
-msgstr "Unit"
-
-msgid "Reorder Level"
-msgstr "Reorder Level"
-
-msgid "Expiry Date"
-msgstr "Expiry Date"
+#: apps/qr/templates/customer/base.html:10
+#: apps/qr/templates/customer/base.html:15
+msgid "Digital Menu"
+msgstr "Digital Menu"
+
+#: apps/qr/templates/customer/base.html:10
+msgid ""
+"Browse our menu, filter by dietary preferences, and place your order online."
+msgstr "Browse our menu, filter by dietary preferences, and place your order online."
+
+#: apps/qr/templates/customer/base.html:239
+msgid "Skip to main content"
+msgstr "Skip to main content"
+
+#: apps/qr/templates/customer/base.html:244
+msgid "Main navigation"
+msgstr "Main navigation"
+
+#: apps/qr/templates/customer/base.html:250
+msgid "Go to menu"
+msgstr "Go to menu"
+
+#: apps/qr/templates/customer/base.html:255
+#: apps/qr/templates/customer/qr_invalid.html:75
+msgid "logo"
+msgstr "logo"
+
+#: apps/qr/templates/customer/base.html:264
+msgid "Restaurant"
+msgstr "Restaurant"
 
 # ---------------------------------------------------------------------------
 # Table / Order strings
 # ---------------------------------------------------------------------------
+#: apps/qr/templates/customer/base.html:270
+#: apps/qr/templates/customer/cart.html:165
+#: apps/qr/templates/customer/order_tracker.html:244
+#| msgid "Table Number"
+msgid "Table number"
+msgstr "Table number"
 
-msgid "Table Number"
-msgstr "Table Number"
-
-msgid "Special Instructions"
-msgstr "Special Instructions"
-
-msgid "Place Order"
-msgstr "Place Order"
-
-msgid "Order Total"
-msgstr "Order Total"
-
-msgid "Order Number"
-msgstr "Order Number"
-
-msgid "Order Status"
-msgstr "Order Status"
-
-msgid "Order Details"
-msgstr "Order Details"
-
-msgid "Your Order"
-msgstr "Your Order"
-
-msgid "Cart"
-msgstr "Cart"
-
-msgid "Items"
-msgstr "Items"
-
+#: apps/qr/templates/customer/base.html:272
+#: apps/qr/templates/customer/cart.html:167
+#: apps/qr/templates/customer/order_tracker.html:247
+#: apps/qr/templates/customer/test_entry.html:45 templates/staff/base.html:226
+#: templates/staff/dashboard.html:128 templates/staff/kds.html:27
+#: templates/staff/orders.html:36 templates/staff/orders.html:109
+#: templates/staff/qr_codes.html:79 templates/staff/reception.html:25
+#: templates/staff/tables.html:63
 msgid "Table"
 msgstr "Table"
 
+#: apps/qr/templates/customer/base.html:277
+#: apps/qr/templates/customer/base.html:279
+#| msgid "Place Order"
+msgid "Track Order"
+msgstr "Track Order"
+
+#: apps/qr/templates/customer/base.html:277
+msgid "track your active order"
+msgstr "track your active order"
+
+#: apps/qr/templates/customer/base.html:285
+msgid "Language"
+msgstr "Language"
+
+#: apps/qr/templates/customer/base.html:302
+msgid "Open cart"
+msgstr "Open cart"
+
+#: apps/qr/templates/customer/base.html:319
+msgid "Main content"
+msgstr "Main content"
+
+#: apps/qr/templates/customer/base.html:336
+#: apps/qr/templates/customer/cart.html:5
+#: apps/qr/templates/customer/cart.html:156
+#| msgid "Your Order"
+msgid "Your Cart"
+msgstr "Your Cart"
+
+#: apps/qr/templates/customer/base.html:342
+#| msgid "Close"
+msgid "Close cart"
+msgstr "Close cart"
+
+#: apps/qr/templates/customer/base.html:348
+msgid "Cart"
+msgstr "Cart"
+
+#: apps/qr/templates/customer/base.html:349 templates/staff/base.html:177
+#: templates/staff/branch_comparison.html:50
+#: templates/staff/branch_comparison.html:120
+#: templates/staff/financials.html:105 templates/staff/orders.html:3
+#: templates/staff/orders.html:5
+msgid "Orders"
+msgstr "Orders"
+
+#: apps/qr/templates/customer/base.html:361
+#: apps/qr/templates/customer/order_tracker.html:394
+#: templates/staff/orders.html:36 templates/staff/orders.html:111
+msgid "Total"
+msgstr "Total"
+
+#: apps/qr/templates/customer/base.html:370
+msgid "Review your order and proceed to checkout"
+msgstr "Review your order and proceed to checkout"
+
+#: apps/qr/templates/customer/base.html:372
+#| msgid "Place Order"
+msgid "Review Order"
+msgstr "Review Order"
+
+#: apps/qr/templates/customer/base.html:405
+#: templates/staff/branch_comparison.html:56 templates/staff/dashboard.html:87
+#: templates/staff/dashboard.html:97 templates/staff/dashboard.html:112
+#: templates/staff/expenses.html:26 templates/staff/financials.html:82
+#: templates/staff/inventory.html:29 templates/staff/menu.html:28
+#: templates/staff/orders.html:40 templates/staff/tables.html:25
+#| msgid "Loading..."
+msgid "Loading…"
+msgstr "Loading…"
+
+#: apps/qr/templates/customer/base.html:413 templates/staff/dashboard.html:129
+msgid "No active orders"
+msgstr "No active orders"
+
+#: apps/qr/templates/customer/base.html:417
+#: apps/qr/templates/customer/order_tracker.html:575
+#: apps/qr/templates/customer/order_tracker.html:742
+#| msgid "Received"
+msgid "Order Received"
+msgstr "Order Received"
+
+#: apps/qr/templates/customer/base.html:418
+#: apps/qr/templates/customer/order_tracker.html:297
+#: templates/staff/dashboard.html:135 templates/staff/kds.html:49
+#: templates/staff/orders.html:21 templates/staff/orders.html:58
+#: templates/staff/reception.html:32
+msgid "Preparing"
+msgstr "Preparing"
+
+#: apps/qr/templates/customer/base.html:419
+msgid "Ready to Serve"
+msgstr "Ready to Serve"
+
+#: apps/qr/templates/customer/base.html:420
+#: apps/qr/templates/customer/order_tracker.html:321
+#: templates/staff/dashboard.html:137 templates/staff/kds.html:51
+#: templates/staff/orders.html:23 templates/staff/orders.html:60
+#: templates/staff/reception.html:34
+msgid "Served"
+msgstr "Served"
+
+#: apps/qr/templates/customer/base.html:421 templates/staff/dashboard.html:138
+#: templates/staff/kds.html:52 templates/staff/orders.html:24
+#: templates/staff/orders.html:61 templates/staff/reception.html:35
+msgid "Cancelled"
+msgstr "Cancelled"
+
+#: apps/qr/templates/customer/base.html:428
+msgid "Track"
+msgstr "Track"
+
+#: apps/qr/templates/customer/base.html:433
+msgid "Could not load orders."
+msgstr "Could not load orders."
+
+#: apps/qr/templates/customer/cart.html:149
+#: apps/qr/templates/customer/order_tracker.html:205
+msgid "Back to menu"
+msgstr "Back to menu"
+
+#: apps/qr/templates/customer/cart.html:152
+#: apps/qr/templates/customer/order_tracker.html:208
+msgid "Back to Menu"
+msgstr "Back to Menu"
+
+#: apps/qr/templates/customer/cart.html:177
+#: apps/qr/templates/customer/cart.html:688
+msgid "Your cart is empty."
+msgstr "Your cart is empty."
+
+#: apps/qr/templates/customer/cart.html:180
+msgid "Browse the Menu"
+msgstr "Browse the Menu"
+
+#: apps/qr/templates/customer/cart.html:187
+msgid "Cart items"
+msgstr "Cart items"
+
+#: apps/qr/templates/customer/cart.html:188
+msgid "Items in your cart"
+msgstr "Items in your cart"
+
+#: apps/qr/templates/customer/cart.html:196
+msgid "Pairs well with your order"
+msgstr "Pairs well with your order"
+
+#: apps/qr/templates/customer/cart.html:200
+msgid "Pairs Well With Your Order"
+msgstr "Pairs Well With Your Order"
+
+#: apps/qr/templates/customer/cart.html:202
+msgid "Popular Pairings"
+msgstr "Popular Pairings"
+
+#: apps/qr/templates/customer/cart.html:216
+msgid "Order Total"
+msgstr "Order Total"
+
+#: apps/qr/templates/customer/cart.html:221
+#: apps/qr/templates/customer/order_tracker.html:395
+#| msgid "Order Total"
+msgid "Order total"
+msgstr "Order total"
+
+#: apps/qr/templates/customer/cart.html:232
+#| msgid "Place Order"
+msgid "Place your order"
+msgstr "Place your order"
+
+#: apps/qr/templates/customer/cart.html:244
+msgid "Place Order"
+msgstr "Place Order"
+
+#: apps/qr/templates/customer/cart.html:246
+#| msgid "Place Order"
+msgid "Placing order…"
+msgstr "Placing order…"
+
+#: apps/qr/templates/customer/cart.html:248
+#| msgid "Place Order"
+msgid "Placing Order…"
+msgstr "Placing Order…"
+
+#: apps/qr/templates/customer/cart.html:266
+msgid "Close notification"
+msgstr "Close notification"
+
+#: apps/qr/templates/customer/cart.html:388
+#: apps/qr/templates/customer/menu.html:540 templates/staff/menu.html:264
+msgid "Add"
+msgstr "Add"
+
+#: apps/qr/templates/customer/cart.html:420
+#| msgid "Add to Cart"
+msgid "Item added to cart!"
+msgstr "Item added to cart!"
+
+#: apps/qr/templates/customer/cart.html:433
+#: apps/qr/templates/customer/menu.html:305
+#| msgid "Special Instructions"
+msgid "Special instructions"
+msgstr "Special instructions"
+
+#: apps/qr/templates/customer/cart.html:445
+msgid "each"
+msgstr "each"
+
+#: apps/qr/templates/customer/cart.html:456
+msgid "Decrease quantity of"
+msgstr "Decrease quantity of"
+
+#: apps/qr/templates/customer/cart.html:461 templates/staff/inventory.html:27
+#: templates/staff/inventory.html:43
+msgid "Quantity"
+msgstr "Quantity"
+
+#: apps/qr/templates/customer/cart.html:467
+msgid "Increase quantity of"
+msgstr "Increase quantity of"
+
+#: apps/qr/templates/customer/cart.html:473 templates/staff/menu.html:292
+msgid "Remove"
+msgstr "Remove"
+
+#: apps/qr/templates/customer/cart.html:473
+msgid "from cart"
+msgstr "from cart"
+
+#: apps/qr/templates/customer/cart.html:478
+msgid "Subtotal"
+msgstr "Subtotal"
+
+#: apps/qr/templates/customer/cart.html:588
+#: apps/qr/templates/customer/cart.html:753
+#| msgid "An error occurred. Please try again."
+msgid "Could not place order. Please try again."
+msgstr "Could not place order. Please try again."
+
+#: apps/qr/templates/customer/cart.html:764
+#: apps/qr/templates/customer/menu.html:472
+#: apps/qr/templates/customer/order_tracker.html:515
+msgid "Network error. Please check your connection and try again."
+msgstr "Network error. Please check your connection and try again."
+
+#: apps/qr/templates/customer/menu.html:5
+#: apps/qr/templates/customer/menu.html:172 templates/staff/base.html:178
+msgid "Menu"
+msgstr "Menu"
+
+#: apps/qr/templates/customer/menu.html:178
+#| msgid "Dietary Tags"
+msgid "Dietary filters"
+msgstr "Dietary filters"
+
+#: apps/qr/templates/customer/menu.html:183
+msgid "Filter menu by dietary category"
+msgstr "Filter menu by dietary category"
+
+#: apps/qr/templates/customer/menu.html:185
+#| msgid "Vegetarian"
+msgid "Filter: Vegetarian"
+msgstr "Filter: Vegetarian"
+
+#: apps/qr/templates/customer/menu.html:185
+#: apps/qr/templates/customer/menu.html:333 templates/staff/menu.html:55
+#: templates/staff/menu.html:159
+msgid "Vegetarian"
+msgstr "Vegetarian"
+
+#: apps/qr/templates/customer/menu.html:186
+#| msgid "Filter"
+msgid "Filter: Vegan"
+msgstr "Filter: Vegan"
+
+#: apps/qr/templates/customer/menu.html:186
+#: apps/qr/templates/customer/menu.html:333 templates/staff/menu.html:59
+#: templates/staff/menu.html:163
+msgid "Vegan"
+msgstr "Vegan"
+
+#: apps/qr/templates/customer/menu.html:187
+#| msgid "Gluten-Free"
+msgid "Filter: Gluten-Free"
+msgstr "Filter: Gluten-Free"
+
+#: apps/qr/templates/customer/menu.html:187
+#: apps/qr/templates/customer/menu.html:333 templates/staff/menu.html:63
+#: templates/staff/menu.html:167
+msgid "Gluten-Free"
+msgstr "Gluten-Free"
+
+#: apps/qr/templates/customer/menu.html:188
+#| msgid "Dairy-Free"
+msgid "Filter: Dairy-Free"
+msgstr "Filter: Dairy-Free"
+
+#: apps/qr/templates/customer/menu.html:188
+#: apps/qr/templates/customer/menu.html:333 templates/staff/menu.html:67
+#: templates/staff/menu.html:171
+msgid "Dairy-Free"
+msgstr "Dairy-Free"
+
+#: apps/qr/templates/customer/menu.html:189
+#| msgid "Filter"
+msgid "Filter: Halal"
+msgstr "Filter: Halal"
+
+#: apps/qr/templates/customer/menu.html:189
+#: apps/qr/templates/customer/menu.html:334 templates/staff/menu.html:71
+#: templates/staff/menu.html:175
+msgid "Halal"
+msgstr "Halal"
+
+#: apps/qr/templates/customer/menu.html:190
+msgid "Filter: Low-Carb"
+msgstr "Filter: Low-Carb"
+
+#: apps/qr/templates/customer/menu.html:190
+#: apps/qr/templates/customer/menu.html:334 templates/staff/menu.html:75
+#: templates/staff/menu.html:179
+msgid "Low-Carb"
+msgstr "Low-Carb"
+
+#: apps/qr/templates/customer/menu.html:191
+#| msgid "Filter"
+msgid "Filter: Keto"
+msgstr "Filter: Keto"
+
+#: apps/qr/templates/customer/menu.html:191
+#: apps/qr/templates/customer/menu.html:334 templates/staff/menu.html:79
+#: templates/staff/menu.html:183
+msgid "Keto"
+msgstr "Keto"
+
+#: apps/qr/templates/customer/menu.html:192
+msgid "Filter: High-Protein"
+msgstr "Filter: High-Protein"
+
+#: apps/qr/templates/customer/menu.html:192
+#: apps/qr/templates/customer/menu.html:334 templates/staff/menu.html:83
+#: templates/staff/menu.html:187
+#| msgid "Protein"
+msgid "High-Protein"
+msgstr "High-Protein"
+
+#: apps/qr/templates/customer/menu.html:193
+#| msgid "Filter"
+msgid "Filter: Spicy"
+msgstr "Filter: Spicy"
+
+#: apps/qr/templates/customer/menu.html:193
+#: apps/qr/templates/customer/menu.html:335 templates/staff/menu.html:87
+#: templates/staff/menu.html:191
+msgid "Spicy"
+msgstr "Spicy"
+
+#: apps/qr/templates/customer/menu.html:194
+#| msgid "Seafood"
+msgid "Filter: Seafood"
+msgstr "Filter: Seafood"
+
+#: apps/qr/templates/customer/menu.html:194
+#: apps/qr/templates/customer/menu.html:335 templates/staff/menu.html:91
+#: templates/staff/menu.html:195
+msgid "Seafood"
+msgstr "Seafood"
+
+#: apps/qr/templates/customer/menu.html:195
+#| msgid "Desserts"
+msgid "Filter: Desserts"
+msgstr "Filter: Desserts"
+
+#: apps/qr/templates/customer/menu.html:195
+#: apps/qr/templates/customer/menu.html:335 templates/staff/menu.html:95
+#: templates/staff/menu.html:199
+msgid "Desserts"
+msgstr "Desserts"
+
+#: apps/qr/templates/customer/menu.html:196
+#| msgid "Beverages"
+msgid "Filter: Beverages"
+msgstr "Filter: Beverages"
+
+#: apps/qr/templates/customer/menu.html:196
+#: apps/qr/templates/customer/menu.html:335 templates/staff/menu.html:99
+#: templates/staff/menu.html:203
+msgid "Beverages"
+msgstr "Beverages"
+
+#: apps/qr/templates/customer/menu.html:197
+msgid "Filter: Children's Meals"
+msgstr "Filter: Children's Meals"
+
+#: apps/qr/templates/customer/menu.html:197
+#: apps/qr/templates/customer/menu.html:335 templates/staff/menu.html:103
+#: templates/staff/menu.html:207
+msgid "Children's Meals"
+msgstr "Children's Meals"
+
+#: apps/qr/templates/customer/menu.html:204
+#| msgid "Search"
+msgid "Search menu"
+msgstr "Search menu"
+
+#: apps/qr/templates/customer/menu.html:211
+msgid "Search menu items…"
+msgstr "Search menu items…"
+
+#: apps/qr/templates/customer/menu.html:212
+msgid "Search menu items"
+msgstr "Search menu items"
+
+#: apps/qr/templates/customer/menu.html:220
+msgid "Clear search"
+msgstr "Clear search"
+
+#: apps/qr/templates/customer/menu.html:230
+msgid "Recommended for you"
+msgstr "Recommended for you"
+
+#: apps/qr/templates/customer/menu.html:234
+msgid "Recommended For You"
+msgstr "Recommended For You"
+
+#: apps/qr/templates/customer/menu.html:236
+msgid "Chef's Picks & Trending"
+msgstr "Chef's Picks & Trending"
+
+# ---------------------------------------------------------------------------
+# Menu-related strings
+# ---------------------------------------------------------------------------
+#: apps/qr/templates/customer/menu.html:249
+#| msgid "Menu Items"
+msgid "Menu items"
+msgstr "Menu items"
+
+#: apps/qr/templates/customer/menu.html:270
+msgid "No items match your search or filters."
+msgstr "No items match your search or filters."
+
+#: apps/qr/templates/customer/menu.html:275
+msgid "Clear all filters"
+msgstr "Clear all filters"
+
+#: apps/qr/templates/customer/menu.html:276
+#| msgid "Filter"
+msgid "Clear Filters"
+msgstr "Clear Filters"
+
+#: apps/qr/templates/customer/menu.html:288
+msgid "Close item details"
+msgstr "Close item details"
+
+#: apps/qr/templates/customer/menu.html:296
+msgid "Decrease quantity"
+msgstr "Decrease quantity"
+
+#: apps/qr/templates/customer/menu.html:298
+msgid "Increase quantity"
+msgstr "Increase quantity"
+
+#: apps/qr/templates/customer/menu.html:302
+#| msgid "Special Instructions"
+msgid "Special instructions (optional)"
+msgstr "Special instructions (optional)"
+
+#: apps/qr/templates/customer/menu.html:304
+msgid "e.g. no onions, extra sauce"
+msgstr "e.g. no onions, extra sauce"
+
+#: apps/qr/templates/customer/menu.html:310
+#: apps/qr/templates/customer/menu.html:653
+msgid "Add to Cart"
+msgstr "Add to Cart"
+
+#: apps/qr/templates/customer/menu.html:463
+msgid "Could not load menu. Please refresh the page."
+msgstr "Could not load menu. Please refresh the page."
+
+#: apps/qr/templates/customer/menu.html:599
+#: apps/qr/templates/customer/menu.html:861 templates/staff/menu.html:48
+#: templates/staff/menu.html:152 templates/staff/menu.html:282
+msgid "Unavailable"
+msgstr "Unavailable"
+
+#: apps/qr/templates/customer/menu.html:606
+#: apps/qr/templates/customer/menu.html:824
+msgid "Calories"
+msgstr "Calories"
+
+#: apps/qr/templates/customer/menu.html:607
+#: apps/qr/templates/customer/menu.html:825
+msgid "Protein"
+msgstr "Protein"
+
+#: apps/qr/templates/customer/menu.html:608
+#: apps/qr/templates/customer/menu.html:826
+msgid "Carbohydrates"
+msgstr "Carbohydrates"
+
+#: apps/qr/templates/customer/menu.html:609
+#: apps/qr/templates/customer/menu.html:827
+msgid "Fat"
+msgstr "Fat"
+
+#: apps/qr/templates/customer/menu.html:610
+#: apps/qr/templates/customer/menu.html:828
+msgid "Sugar"
+msgstr "Sugar"
+
+#: apps/qr/templates/customer/menu.html:611
+#: apps/qr/templates/customer/menu.html:829
+msgid "Sodium"
+msgstr "Sodium"
+
+#: apps/qr/templates/customer/menu.html:612
+#: apps/qr/templates/customer/menu.html:830
+msgid "Fibre"
+msgstr "Fibre"
+
+#: apps/qr/templates/customer/menu.html:621
+#: apps/qr/templates/customer/menu.html:836
+msgid "Allergens"
+msgstr "Allergens"
+
+#: apps/qr/templates/customer/menu.html:636
+msgid "Toggle nutritional information for"
+msgstr "Toggle nutritional information for"
+
+#: apps/qr/templates/customer/menu.html:638
+msgid "Nutrition"
+msgstr "Nutrition"
+
+#: apps/qr/templates/customer/menu.html:672 templates/staff/kds.html:36
+msgid "min"
+msgstr "min"
+
+#: apps/qr/templates/customer/menu.html:752
+msgid "Your cart is empty"
+msgstr "Your cart is empty"
+
+#: apps/qr/templates/customer/menu.html:841
+#| msgid "Nutrition"
+msgid "Nutrition per serving"
+msgstr "Nutrition per serving"
+
+#: apps/qr/templates/customer/menu.html:868
+msgid "min prep time"
+msgstr "min prep time"
+
+#: apps/qr/templates/customer/menu.html:951
+msgid "Order placed successfully!"
+msgstr "Order placed successfully!"
+
+#: apps/qr/templates/customer/order_tracker.html:5
+#: apps/qr/templates/customer/order_tracker.html:212
+#| msgid "Order Total"
+msgid "Order Tracker"
+msgstr "Order Tracker"
+
+#: apps/qr/templates/customer/order_tracker.html:221
+#: apps/qr/templates/customer/order_tracker.html:539
+#: apps/qr/templates/customer/order_tracker.html:543
+#: apps/qr/templates/customer/order_tracker.html:549
+msgid "Connection status"
+msgstr "Connection status"
+
+#: apps/qr/templates/customer/order_tracker.html:221
+#: apps/qr/templates/customer/order_tracker.html:224
+#: apps/qr/templates/customer/order_tracker.html:548
+msgid "Connecting…"
+msgstr "Connecting…"
+
+#: apps/qr/templates/customer/order_tracker.html:235
+#| msgid "Order Number"
+msgid "Order number"
+msgstr "Order number"
+
+#: apps/qr/templates/customer/order_tracker.html:257
+#| msgid "Order Status"
+msgid "Order status progress"
+msgstr "Order status progress"
+
+#: apps/qr/templates/customer/order_tracker.html:260
+#| msgid "Order Status"
+msgid "Order status steps"
+msgstr "Order status steps"
+
+# ---------------------------------------------------------------------------
+# Order status labels
+# ---------------------------------------------------------------------------
+#: apps/qr/templates/customer/order_tracker.html:268
+#| msgid "Confirmed"
+msgid "Status: Confirmed"
+msgstr "Status: Confirmed"
+
+# ---------------------------------------------------------------------------
+# Order status labels
+# ---------------------------------------------------------------------------
+#: apps/qr/templates/customer/order_tracker.html:273
+#: templates/staff/dashboard.html:133 templates/staff/kds.html:47
+#: templates/staff/orders.html:19 templates/staff/orders.html:56
+#: templates/staff/reception.html:30
+msgid "Confirmed"
+msgstr "Confirmed"
+
+#: apps/qr/templates/customer/order_tracker.html:280
+#| msgid "Received"
+msgid "Status: Received"
+msgstr "Status: Received"
+
+#: apps/qr/templates/customer/order_tracker.html:285
+#: templates/staff/dashboard.html:134 templates/staff/kds.html:48
+#: templates/staff/orders.html:20 templates/staff/orders.html:57
+#: templates/staff/reception.html:31
+msgid "Received"
+msgstr "Received"
+
+#: apps/qr/templates/customer/order_tracker.html:292
+#| msgid "Preparing"
+msgid "Status: Preparing"
+msgstr "Status: Preparing"
+
+#: apps/qr/templates/customer/order_tracker.html:304
+#| msgid "Status"
+msgid "Status: Ready"
+msgstr "Status: Ready"
+
+#: apps/qr/templates/customer/order_tracker.html:309
+#: templates/staff/dashboard.html:136 templates/staff/kds.html:50
+#: templates/staff/orders.html:22 templates/staff/orders.html:59
+#: templates/staff/reception.html:33
+msgid "Ready"
+msgstr "Ready"
+
+#: apps/qr/templates/customer/order_tracker.html:316
+#| msgid "Served"
+msgid "Status: Served"
+msgstr "Status: Served"
+
+#: apps/qr/templates/customer/order_tracker.html:340
+msgid "Enjoy your meal!"
+msgstr "Enjoy your meal!"
+
+#: apps/qr/templates/customer/order_tracker.html:341
+msgid "Your order has been served. Thank you!"
+msgstr "Your order has been served. Thank you!"
+
+#: apps/qr/templates/customer/order_tracker.html:349
+#: apps/qr/templates/customer/order_tracker.html:579
+#: apps/qr/templates/customer/order_tracker.html:746
+#: templates/staff/base.html:232
+#| msgid "Cancelled"
+msgid "Order Cancelled"
+msgstr "Order Cancelled"
+
+#: apps/qr/templates/customer/order_tracker.html:350
+msgid "Your order was cancelled. Please ask staff for assistance."
+msgstr "Your order was cancelled. Please ask staff for assistance."
+
+#: apps/qr/templates/customer/order_tracker.html:356
+#| msgid "Order Number"
+msgid "Order summary"
+msgstr "Order summary"
+
+#: apps/qr/templates/customer/order_tracker.html:359
+msgid "Your Order"
+msgstr "Your Order"
+
+#: apps/qr/templates/customer/order_tracker.html:366
+msgid "Items ordered"
+msgstr "Items ordered"
+
+#: apps/qr/templates/customer/order_tracker.html:380
+#| msgid "Settings"
+msgid "servings"
+msgstr "servings"
+
+#: apps/qr/templates/customer/order_tracker.html:388
+msgid "Loading order items…"
+msgstr "Loading order items…"
+
+#: apps/qr/templates/customer/order_tracker.html:407
+msgid "We'll update your order status in real time."
+msgstr "We'll update your order status in real time."
+
+#: apps/qr/templates/customer/order_tracker.html:413
+#| msgid "Place Order"
+msgid "Cancel Order"
+msgstr "Cancel Order"
+
+# ---------------------------------------------------------------------------
+# Order status labels
+# ---------------------------------------------------------------------------
+#: apps/qr/templates/customer/order_tracker.html:441
+#| msgid "Confirmed"
+msgid "Order confirmed"
+msgstr "Order confirmed"
+
+#: apps/qr/templates/customer/order_tracker.html:442
+msgid "Order received by kitchen"
+msgstr "Order received by kitchen"
+
+#: apps/qr/templates/customer/order_tracker.html:443
+msgid "Kitchen is preparing your order"
+msgstr "Kitchen is preparing your order"
+
+#: apps/qr/templates/customer/order_tracker.html:444
+msgid "Your order is ready for collection"
+msgstr "Your order is ready for collection"
+
+#: apps/qr/templates/customer/order_tracker.html:445
+msgid "Your order has been served. Enjoy!"
+msgstr "Your order has been served. Enjoy!"
+
+#: apps/qr/templates/customer/order_tracker.html:446
+msgid "Order has been cancelled"
+msgstr "Order has been cancelled"
+
+#: apps/qr/templates/customer/order_tracker.html:489
+msgid "Are you sure you want to cancel this order?"
+msgstr "Are you sure you want to cancel this order?"
+
+#: apps/qr/templates/customer/order_tracker.html:505
+msgid "Could not cancel order."
+msgstr "Could not cancel order."
+
+#: apps/qr/templates/customer/order_tracker.html:538
+#: apps/qr/templates/customer/order_tracker.html:539
+#: templates/staff/reception.html:18
+msgid "Live"
+msgstr "Live"
+
+#: apps/qr/templates/customer/order_tracker.html:542
+#: apps/qr/templates/customer/order_tracker.html:543
+msgid "Polling"
+msgstr "Polling"
+
+#: apps/qr/templates/customer/order_tracker.html:549
+msgid "Connecting"
+msgstr "Connecting"
+
+#: apps/qr/templates/customer/order_tracker.html:576
+#: apps/qr/templates/customer/order_tracker.html:743
+#| msgid "Your Order"
+msgid "Preparing Your Order"
+msgstr "Preparing Your Order"
+
+#: apps/qr/templates/customer/order_tracker.html:577
+#: apps/qr/templates/customer/order_tracker.html:744
+#| msgid "Your Order"
+msgid "Your Order is Ready!"
+msgstr "Your Order is Ready!"
+
+#: apps/qr/templates/customer/order_tracker.html:578
+#: apps/qr/templates/customer/order_tracker.html:745
+msgid "Order Served — Enjoy!"
+msgstr "Order Served — Enjoy!"
+
+#: apps/qr/templates/customer/order_tracker.html:582
+#: apps/qr/templates/customer/order_tracker.html:749
+#: templates/staff/base.html:233
+#| msgid "Order Status"
+msgid "Order Status Changed"
+msgstr "Order Status Changed"
+
+#: apps/qr/templates/customer/order_tracker.html:583
+#: apps/qr/templates/customer/order_tracker.html:750
+#: templates/staff/base.html:234
+#| msgid "Orders"
+msgid "Order"
+msgstr "Order"
+
+#: apps/qr/templates/customer/qr_invalid.html:10
+msgid "QR Code Error"
+msgstr "QR Code Error"
+
+#: apps/qr/templates/customer/qr_invalid.html:69
+msgid "Site header"
+msgstr "Site header"
+
+#: apps/qr/templates/customer/qr_invalid.html:96
+msgid "QR Code Not Valid"
+msgstr "QR Code Not Valid"
+
+#: apps/qr/templates/customer/qr_invalid.html:102
+msgid ""
+"This QR code is invalid or has expired. Please ask a staff member to provide "
+"a new QR code for your table."
+msgstr "This QR code is invalid or has expired. Please ask a staff member to provide a new QR code for your table."
+
+#: apps/qr/templates/customer/qr_invalid.html:108
+msgid "Error code"
+msgstr "Error code"
+
+#: apps/qr/templates/customer/qr_invalid.html:116
+msgid "Try scanning again"
+msgstr "Try scanning again"
+
+#: apps/qr/templates/customer/qr_invalid.html:119
+msgid "Try Again"
+msgstr "Try Again"
+
+#: apps/qr/templates/customer/qr_invalid.html:125
+msgid "Show this screen to a staff member if the problem persists."
+msgstr "Show this screen to a staff member if the problem persists."
+
+#: apps/qr/templates/customer/qr_invalid.html:136
+msgid "Powered by Restaurant Platform"
+msgstr "Powered by Restaurant Platform"
+
+#: apps/qr/templates/customer/test_entry.html:7
+#: apps/qr/templates/customer/test_entry.html:18
+msgid "Customer Test Entry"
+msgstr "Customer Test Entry"
+
+#: apps/qr/templates/customer/test_entry.html:20
+msgid ""
+"Pick a branch, table, or room to jump into the customer menu without "
+"scanning a QR code."
+msgstr "Pick a branch, table, or room to jump into the customer menu without scanning a QR code."
+
+#: apps/qr/templates/customer/test_entry.html:37
+#| msgid "Table"
+msgid "Tables"
+msgstr "Tables"
+
+#: apps/qr/templates/customer/test_entry.html:52
+msgid "Rooms"
+msgstr "Rooms"
+
+#: apps/qr/templates/customer/test_entry.html:70
+msgid "Select a table or room above, then click Enter."
+msgstr "Select a table or room above, then click Enter."
+
+#: apps/qr/templates/customer/test_entry.html:73
+msgid "Enter Customer Menu"
+msgstr "Enter Customer Menu"
+
+#: templates/staff/base.html:9 templates/staff/base.html:170
+#: templates/staff/login.html:34
+msgid "Staff Portal"
+msgstr "Staff Portal"
+
+#: templates/staff/base.html:168
+msgid "Staff navigation"
+msgstr "Staff navigation"
+
+#: templates/staff/base.html:174 templates/staff/base.html:202
+#: templates/staff/dashboard.html:4 templates/staff/dashboard.html:6
+msgid "Dashboard"
+msgstr "Dashboard"
+
+#: templates/staff/base.html:175 templates/staff/kds.html:3
+#| msgid "Kitchen Staff"
+msgid "Kitchen Display"
+msgstr "Kitchen Display"
+
+#: templates/staff/base.html:176 templates/staff/reception.html:3
+#| msgid "Receptionist"
+msgid "Reception"
+msgstr "Reception"
+
+#: templates/staff/base.html:179 templates/staff/qr_codes.html:3
+msgid "QR Codes"
+msgstr "QR Codes"
+
+#: templates/staff/base.html:180 templates/staff/tables.html:3
+#: templates/staff/tables.html:5
+msgid "Tables &amp; Rooms"
+msgstr "Tables &amp; Rooms"
+
+#: templates/staff/base.html:181 templates/staff/inventory.html:3
+#: templates/staff/inventory.html:5
+msgid "Inventory"
+msgstr "Inventory"
+
+#: templates/staff/base.html:182 templates/staff/branch_comparison.html:48
+#: templates/staff/branch_comparison.html:72
+#: templates/staff/branch_comparison.html:118 templates/staff/expenses.html:3
+#: templates/staff/expenses.html:5 templates/staff/expenses.html:11
+#: templates/staff/financials.html:97
+msgid "Expenses"
+msgstr "Expenses"
+
+#: templates/staff/base.html:183 templates/staff/financials.html:3
+#| msgid "Financial Report"
+msgid "Financials"
+msgstr "Financials"
+
+#: templates/staff/base.html:184
+#| msgid "Financial Report"
+msgid "Branch Report"
+msgstr "Branch Report"
+
+#: templates/staff/base.html:189
+msgid "Profile"
+msgstr "Profile"
+
+#: templates/staff/base.html:190
+msgid "Logout"
+msgstr "Logout"
+
+#: templates/staff/base.html:199
+msgid "Toggle navigation"
+msgstr "Toggle navigation"
+
+#: templates/staff/base.html:225
+#| msgid "Place Order"
+msgid "New Order!"
+msgstr "New Order!"
+
+#: templates/staff/base.html:227
+msgid "more"
+msgstr "more"
+
+#: templates/staff/base.html:228
+msgid "Order Received — Kitchen"
+msgstr "Order Received — Kitchen"
+
+#: templates/staff/base.html:229
+#| msgid "Preparing"
+msgid "Preparing — Kitchen"
+msgstr "Preparing — Kitchen"
+
+#: templates/staff/base.html:230
+msgid "Order Ready to Serve — Reception"
+msgstr "Order Ready to Serve — Reception"
+
+#: templates/staff/base.html:231
+#| msgid "Served"
+msgid "Order Served"
+msgstr "Order Served"
+
+#: templates/staff/base.html:235
+msgid "new"
+msgstr "new"
+
+#: templates/staff/branch_comparison.html:3
+#: templates/staff/branch_comparison.html:4
+msgid "Branch Comparison"
+msgstr "Branch Comparison"
+
+#: templates/staff/branch_comparison.html:16
+msgid "Multi-Branch Performance"
+msgstr "Multi-Branch Performance"
+
+#: templates/staff/branch_comparison.html:18 templates/staff/dashboard.html:23
+#: templates/staff/financials.html:18 templates/staff/financials.html:98
+msgid "Today"
+msgstr "Today"
+
+#: templates/staff/branch_comparison.html:19 templates/staff/dashboard.html:24
+#: templates/staff/financials.html:19 templates/staff/financials.html:99
+msgid "This Week"
+msgstr "This Week"
+
+#: templates/staff/branch_comparison.html:20 templates/staff/dashboard.html:25
+#: templates/staff/financials.html:20 templates/staff/financials.html:100
+msgid "This Month"
+msgstr "This Month"
+
+#: templates/staff/branch_comparison.html:46 templates/staff/profile.html:18
 msgid "Branch"
 msgstr "Branch"
 
 # ---------------------------------------------------------------------------
-# Staff / roles
+# Financial strings
 # ---------------------------------------------------------------------------
+#: templates/staff/branch_comparison.html:47
+#: templates/staff/branch_comparison.html:71
+#: templates/staff/branch_comparison.html:117 templates/staff/dashboard.html:47
+#: templates/staff/financials.html:96
+msgid "Income"
+msgstr "Income"
 
-msgid "Staff"
-msgstr "Staff"
+#: templates/staff/branch_comparison.html:49
+#: templates/staff/branch_comparison.html:119
+msgid "Profit"
+msgstr "Profit"
 
-msgid "Manager"
-msgstr "Manager"
+#: templates/staff/branch_comparison.html:51
+#: templates/staff/branch_comparison.html:121
+#| msgid "Orders"
+msgid "Avg Order"
+msgstr "Avg Order"
 
-msgid "Kitchen Staff"
-msgstr "Kitchen Staff"
+#: templates/staff/branch_comparison.html:52
+#: templates/staff/branch_comparison.html:122
+#| msgid "Items"
+msgid "Top Item"
+msgstr "Top Item"
 
+# ---------------------------------------------------------------------------
+# Financial strings
+# ---------------------------------------------------------------------------
+#: templates/staff/branch_comparison.html:66
+#| msgid "Income"
+msgid "Highest Income"
+msgstr "Highest Income"
+
+#: templates/staff/branch_comparison.html:67
+#| msgid "Expenses"
+msgid "Lowest Expenses"
+msgstr "Lowest Expenses"
+
+#: templates/staff/branch_comparison.html:68
+msgid "Highest Margin"
+msgstr "Highest Margin"
+
+#: templates/staff/branch_comparison.html:69
+msgid "No branch data available yet."
+msgstr "No branch data available yet."
+
+#: templates/staff/branch_comparison.html:70
+msgid "No data."
+msgstr "No data."
+
+#: templates/staff/branch_comparison.html:73
+msgid "Failed to load data."
+msgstr "Failed to load data."
+
+#: templates/staff/dashboard.html:35
+#| msgid "Place Order"
+msgid "Active Orders"
+msgstr "Active Orders"
+
+# ---------------------------------------------------------------------------
+# Menu-related strings
+# ---------------------------------------------------------------------------
+#: templates/staff/dashboard.html:59 templates/staff/menu.html:11
+msgid "Menu Items"
+msgstr "Menu Items"
+
+#: templates/staff/dashboard.html:71
+#| msgid "Low Stock"
+msgid "Low Stock Alerts"
+msgstr "Low Stock Alerts"
+
+#: templates/staff/dashboard.html:85
+#| msgid "Place Order"
+msgid "Recent Orders"
+msgstr "Recent Orders"
+
+#: templates/staff/dashboard.html:89
+msgid "View All Orders"
+msgstr "View All Orders"
+
+#: templates/staff/dashboard.html:95
+#| msgid "Inventory"
+msgid "Inventory Alerts"
+msgstr "Inventory Alerts"
+
+#: templates/staff/dashboard.html:99
+#| msgid "Inventory"
+msgid "View Inventory"
+msgstr "View Inventory"
+
+#: templates/staff/dashboard.html:110 templates/staff/financials.html:80
+msgid "Top Selling Items"
+msgstr "Top Selling Items"
+
+#: templates/staff/dashboard.html:130
+msgid "All stock levels OK"
+msgstr "All stock levels OK"
+
+#: templates/staff/dashboard.html:131
+msgid "No orders yet for this period."
+msgstr "No orders yet for this period."
+
+#: templates/staff/dashboard.html:209 templates/staff/dashboard.html:213
+msgid "sold"
+msgstr "sold"
+
+#: templates/staff/expenses.html:13 templates/staff/inventory.html:13
+#: templates/staff/menu.html:17 templates/staff/orders.html:27
+msgid "CSV"
+msgstr "CSV"
+
+#: templates/staff/expenses.html:15 templates/staff/expenses.html:34
+#| msgid "Expenses"
+msgid "Record Expense"
+msgstr "Record Expense"
+
+#: templates/staff/expenses.html:24 templates/staff/expenses.html:53
+#: templates/staff/expenses.html:99
+msgid "Date"
+msgstr "Date"
+
+#: templates/staff/expenses.html:24 templates/staff/expenses.html:36
+#: templates/staff/expenses.html:100 templates/staff/menu.html:40
+#: templates/staff/menu.html:144
+msgid "Description"
+msgstr "Description"
+
+#: templates/staff/expenses.html:24 templates/staff/expenses.html:39
+#: templates/staff/expenses.html:101 templates/staff/inventory.html:27
+#: templates/staff/inventory.html:41 templates/staff/inventory.html:89
+#: templates/staff/menu.html:27
+#| msgid "Categories"
+msgid "Category"
+msgstr "Category"
+
+#: templates/staff/expenses.html:24 templates/staff/expenses.html:51
+#: templates/staff/expenses.html:102
+msgid "Amount"
+msgstr "Amount"
+
+#: templates/staff/expenses.html:24 templates/staff/menu.html:27
+#: templates/staff/menu.html:330 templates/staff/orders.html:36
+#: templates/staff/orders.html:114 templates/staff/qr_codes.html:51
+#: templates/staff/qr_codes.html:227 templates/staff/tables.html:22
+msgid "Actions"
+msgstr "Actions"
+
+#: templates/staff/expenses.html:41 templates/staff/expenses.html:73
+#: templates/staff/financials.html:107
+msgid "Food Purchases"
+msgstr "Food Purchases"
+
+#: templates/staff/expenses.html:42 templates/staff/expenses.html:74
+#: templates/staff/financials.html:108
+msgid "Staff Salaries"
+msgstr "Staff Salaries"
+
+#: templates/staff/expenses.html:43 templates/staff/expenses.html:75
+#: templates/staff/financials.html:109
+msgid "Utilities"
+msgstr "Utilities"
+
+#: templates/staff/expenses.html:44 templates/staff/expenses.html:76
+#: templates/staff/financials.html:110
+msgid "Rent"
+msgstr "Rent"
+
+#: templates/staff/expenses.html:45 templates/staff/expenses.html:77
+#: templates/staff/financials.html:111
+msgid "Maintenance"
+msgstr "Maintenance"
+
+#: templates/staff/expenses.html:46 templates/staff/expenses.html:78
+#: templates/staff/financials.html:112
+msgid "Marketing"
+msgstr "Marketing"
+
+#: templates/staff/expenses.html:47 templates/staff/expenses.html:79
+#: templates/staff/financials.html:113
+msgid "Transportation"
+msgstr "Transportation"
+
+#: templates/staff/expenses.html:48 templates/staff/expenses.html:80
+#: templates/staff/financials.html:114
+msgid "Miscellaneous"
+msgstr "Miscellaneous"
+
+#: templates/staff/expenses.html:54
+msgid "Notes"
+msgstr "Notes"
+
+#: templates/staff/expenses.html:57 templates/staff/inventory.html:50
+#: templates/staff/menu.html:130 templates/staff/menu.html:221
+#: templates/staff/orders.html:54 templates/staff/tables.html:48
+msgid "Cancel"
+msgstr "Cancel"
+
+# ---------------------------------------------------------------------------
+# Common actions
+# ---------------------------------------------------------------------------
+#: templates/staff/expenses.html:58 templates/staff/inventory.html:51
+#: templates/staff/menu.html:131 templates/staff/tables.html:49
+msgid "Save"
+msgstr "Save"
+
+#: templates/staff/expenses.html:69
+msgid "No expenses recorded yet."
+msgstr "No expenses recorded yet."
+
+#: templates/staff/expenses.html:70
+msgid "Description, amount and date are required"
+msgstr "Description, amount and date are required"
+
+#: templates/staff/expenses.html:71
+msgid "Delete this expense?"
+msgstr "Delete this expense?"
+
+#: templates/staff/financials.html:5
+#| msgid "Financial Report"
+msgid "Financial Dashboard"
+msgstr "Financial Dashboard"
+
+# ---------------------------------------------------------------------------
+# Financial strings
+# ---------------------------------------------------------------------------
+#: templates/staff/financials.html:22
+#| msgid "Income"
+msgid "Income CSV"
+msgstr "Income CSV"
+
+# ---------------------------------------------------------------------------
+# Financial strings
+# ---------------------------------------------------------------------------
+#: templates/staff/financials.html:30
+#| msgid "Income"
+msgid "Total Income"
+msgstr "Total Income"
+
+#: templates/staff/financials.html:36
+#| msgid "Expenses"
+msgid "Total Expenses"
+msgstr "Total Expenses"
+
+#: templates/staff/financials.html:42
+#| msgid "Net Profit"
+msgid "Net Profit / Loss"
+msgstr "Net Profit / Loss"
+
+#: templates/staff/financials.html:61
+msgid "Revenue vs Expenses"
+msgstr "Revenue vs Expenses"
+
+#: templates/staff/financials.html:67
+msgid "Expense Breakdown by Category"
+msgstr "Expense Breakdown by Category"
+
+#: templates/staff/financials.html:70
+msgid "No expense data available."
+msgstr "No expense data available."
+
+#: templates/staff/financials.html:95
+#| msgid "Period"
+msgid "Period:"
+msgstr "Period:"
+
+#: templates/staff/financials.html:101
+msgid "No orders placed this month yet."
+msgstr "No orders placed this month yet."
+
+#: templates/staff/financials.html:102 templates/staff/menu.html:247
+#: templates/staff/menu.html:318
+#| msgid "Items"
+msgid "Item"
+msgstr "Item"
+
+#: templates/staff/financials.html:103
+msgid "Qty Sold"
+msgstr "Qty Sold"
+
+#: templates/staff/financials.html:104
+msgid "Revenue"
+msgstr "Revenue"
+
+#: templates/staff/inventory.html:11
+#| msgid "Inventory"
+msgid "Inventory Items"
+msgstr "Inventory Items"
+
+#: templates/staff/inventory.html:15 templates/staff/menu.html:19
+#| msgid "Items"
+msgid "Add Item"
+msgstr "Add Item"
+
+#: templates/staff/inventory.html:27 templates/staff/inventory.html:40
+#: templates/staff/menu.html:27 templates/staff/menu.html:38
+#: templates/staff/menu.html:142 templates/staff/tables.html:22
+msgid "Name"
+msgstr "Name"
+
+#: templates/staff/inventory.html:27 templates/staff/inventory.html:42
+#: templates/staff/inventory.html:91 templates/staff/kds.html:41
+#: templates/staff/menu.html:247 templates/staff/menu.html:260
+msgid "Unit"
+msgstr "Unit"
+
+#: templates/staff/inventory.html:27 templates/staff/inventory.html:44
+#| msgid "Reorder Level"
+msgid "Reorder At"
+msgstr "Reorder At"
+
+#: templates/staff/inventory.html:27 templates/staff/inventory.html:93
+#| msgid "Expiry Date"
+msgid "Expires"
+msgstr "Expires"
+
+#: templates/staff/inventory.html:27 templates/staff/menu.html:27
+#: templates/staff/menu.html:47 templates/staff/menu.html:151
+#: templates/staff/menu.html:329 templates/staff/orders.html:36
+#: templates/staff/orders.html:112 templates/staff/qr_codes.html:49
+#: templates/staff/qr_codes.html:225 templates/staff/reception.html:28
+msgid "Status"
+msgstr "Status"
+
+#: templates/staff/inventory.html:37
+#| msgid "Inventory"
+msgid "Add Inventory Item"
+msgstr "Add Inventory Item"
+
+#: templates/staff/inventory.html:41
+msgid "General"
+msgstr "General"
+
+#: templates/staff/inventory.html:42
+msgid "kg, L, pcs"
+msgstr "kg, L, pcs"
+
+#: templates/staff/inventory.html:45
+msgid "Purchase Price"
+msgstr "Purchase Price"
+
+#: templates/staff/inventory.html:46
+msgid "Expiry Date"
+msgstr "Expiry Date"
+
+#: templates/staff/inventory.html:62
+msgid "No inventory items yet."
+msgstr "No inventory items yet."
+
+#: templates/staff/inventory.html:63
+msgid "OK"
+msgstr "OK"
+
+#: templates/staff/inventory.html:64
+msgid "Out of Stock"
+msgstr "Out of Stock"
+
+#: templates/staff/inventory.html:65
+msgid "Low Stock"
+msgstr "Low Stock"
+
+#: templates/staff/inventory.html:66
+#| msgid "Out of Stock"
+msgid "out of stock"
+msgstr "out of stock"
+
+#: templates/staff/inventory.html:67
+#| msgid "Low Stock"
+msgid "low stock"
+msgstr "low stock"
+
+#: templates/staff/inventory.html:68
+msgid "Name, quantity and unit are required"
+msgstr "Name, quantity and unit are required"
+
+#: templates/staff/inventory.html:90 templates/staff/kds.html:40
+#: templates/staff/menu.html:247 templates/staff/menu.html:256
+msgid "Qty"
+msgstr "Qty"
+
+#: templates/staff/inventory.html:92
+#| msgid "Reorder Level"
+msgid "Reorder"
+msgstr "Reorder"
+
+#: templates/staff/kds.html:5 templates/staff/kds.html:23
+msgid "Kitchen Display System"
+msgstr "Kitchen Display System"
+
+#: templates/staff/kds.html:24
+#| msgid "Place Order"
+msgid "active order"
+msgstr "active order"
+
+#: templates/staff/kds.html:25
+#| msgid "Place Order"
+msgid "active orders"
+msgstr "active orders"
+
+#: templates/staff/kds.html:26
+msgid "No active orders."
+msgstr "No active orders."
+
+#: templates/staff/kds.html:28
+#| msgid "View Menu"
+msgid "View recipe"
+msgstr "View recipe"
+
+#: templates/staff/kds.html:29
+msgid "Loading recipe…"
+msgstr "Loading recipe…"
+
+#: templates/staff/kds.html:30
+msgid "No recipe configured for"
+msgstr "No recipe configured for"
+
+#: templates/staff/kds.html:31
+#| msgid "An error occurred. Please try again."
+msgid "Failed to load recipe. Please try again."
+msgstr "Failed to load recipe. Please try again."
+
+#: templates/staff/kds.html:32
+msgid "Network error loading recipe."
+msgstr "Network error loading recipe."
+
+#: templates/staff/kds.html:33
+msgid "Recipe viewer"
+msgstr "Recipe viewer"
+
+#: templates/staff/kds.html:34
+msgid "Close recipe modal"
+msgstr "Close recipe modal"
+
+#: templates/staff/kds.html:35
+msgid "Cook time:"
+msgstr "Cook time:"
+
+#: templates/staff/kds.html:37 templates/staff/menu.html:245
+msgid "Ingredients"
+msgstr "Ingredients"
+
+#: templates/staff/kds.html:38
+msgid "No ingredients listed."
+msgstr "No ingredients listed."
+
+#: templates/staff/kds.html:39
+msgid "Ingredient"
+msgstr "Ingredient"
+
+#: templates/staff/kds.html:42
+msgid "Method"
+msgstr "Method"
+
+#: templates/staff/kds.html:43
+#| msgid "Received"
+msgid "Mark Received"
+msgstr "Mark Received"
+
+#: templates/staff/kds.html:44
+#| msgid "Preparing"
+msgid "Start Preparing"
+msgstr "Start Preparing"
+
+#: templates/staff/kds.html:45
+#| msgid "Ready"
+msgid "Mark Ready"
+msgstr "Mark Ready"
+
+#: templates/staff/kds.html:46
+#| msgid "Served"
+msgid "Mark Served"
+msgstr "Mark Served"
+
+#: templates/staff/kds.html:53
+#| msgid "Select"
+msgid "selected"
+msgstr "selected"
+
+#: templates/staff/login.html:6
+#| msgid "Login"
+msgid "Staff Login"
+msgstr "Staff Login"
+
+#: templates/staff/login.html:35
+msgid "Sign in to your account"
+msgstr "Sign in to your account"
+
+#: templates/staff/login.html:39
+msgid "Account created successfully! Please sign in."
+msgstr "Account created successfully! Please sign in."
+
+#: templates/staff/login.html:50
+msgid "Enter the 6-digit code from your authenticator app:"
+msgstr "Enter the 6-digit code from your authenticator app:"
+
+#: templates/staff/login.html:52
+#| msgid "Enter verification code"
+msgid "Verification Code"
+msgstr "Verification Code"
+
+#: templates/staff/login.html:55 templates/staff/profile.html:64
+msgid "Verify"
+msgstr "Verify"
+
+#: templates/staff/login.html:57
+msgid "Back to sign in"
+msgstr "Back to sign in"
+
+# ---------------------------------------------------------------------------
+# Authentication strings
+# ---------------------------------------------------------------------------
+#: templates/staff/login.html:61 templates/staff/profile.html:16
+#: templates/staff/register.html:47 templates/staff/register.html:92
+msgid "Email"
+msgstr "Email"
+
+#: templates/staff/login.html:65 templates/staff/register.html:60
+msgid "Password"
+msgstr "Password"
+
+#: templates/staff/login.html:68
+msgid "Sign In"
+msgstr "Sign In"
+
+#: templates/staff/login.html:70
+msgid "Don't have an account?"
+msgstr "Don't have an account?"
+
+#: templates/staff/login.html:70
+#| msgid "Create"
+msgid "Create one"
+msgstr "Create one"
+
+#: templates/staff/menu.html:3 templates/staff/menu.html:5
+msgid "Menu Management"
+msgstr "Menu Management"
+
+#: templates/staff/menu.html:15
+#| msgid "Archived"
+msgid "Show archived"
+msgstr "Show archived"
+
+#: templates/staff/menu.html:27 templates/staff/menu.html:43
+#: templates/staff/menu.html:147 templates/staff/menu.html:327
+msgid "Price"
+msgstr "Price"
+
+# ---------------------------------------------------------------------------
+# Menu-related strings
+# ---------------------------------------------------------------------------
+#: templates/staff/menu.html:36
+#| msgid "Menu Items"
+msgid "Add Menu Item"
+msgstr "Add Menu Item"
+
+#: templates/staff/menu.html:39 templates/staff/menu.html:143
+msgid "Name (Amharic)"
+msgstr "Name (Amharic)"
+
+#: templates/staff/menu.html:41 templates/staff/menu.html:145
+#| msgid "Description"
+msgid "Description (Amharic)"
+msgstr "Description (Amharic)"
+
+#: templates/staff/menu.html:44 templates/staff/menu.html:148
+msgid "Prep time (min)"
+msgstr "Prep time (min)"
+
+#: templates/staff/menu.html:48 templates/staff/menu.html:152
+#: templates/staff/menu.html:281
+msgid "Available"
+msgstr "Available"
+
+#: templates/staff/menu.html:51 templates/staff/menu.html:155
+msgid "Dietary Tags"
+msgstr "Dietary Tags"
+
+#: templates/staff/menu.html:108 templates/staff/menu.html:212
+#: templates/staff/menu.html:328
+msgid "Categories"
+msgstr "Categories"
+
+#: templates/staff/menu.html:109 templates/staff/menu.html:213
+msgid "Loading categories…"
+msgstr "Loading categories…"
+
+#: templates/staff/menu.html:112
+msgid "Item Image"
+msgstr "Item Image"
+
+#: templates/staff/menu.html:114
+msgid "Optional. JPEG, PNG or WebP. Max 5 MB. Uploaded to Cloudinary CDN."
+msgstr "Optional. JPEG, PNG or WebP. Max 5 MB. Uploaded to Cloudinary CDN."
+
+#: templates/staff/menu.html:120
+msgid "Uploading…"
+msgstr "Uploading…"
+
+# ---------------------------------------------------------------------------
+# Menu-related strings
+# ---------------------------------------------------------------------------
+#: templates/staff/menu.html:139
+#| msgid "Menu Items"
+msgid "Edit Menu Item"
+msgstr "Edit Menu Item"
+
+#: templates/staff/menu.html:216
+msgid "Current Image"
+msgstr "Current Image"
+
+#: templates/staff/menu.html:222
+#| msgid "Update"
+msgid "Update Item"
+msgstr "Update Item"
+
+#: templates/staff/menu.html:231 templates/staff/menu.html:287
+msgid "Recipe"
+msgstr "Recipe"
+
+#: templates/staff/menu.html:236
+#| msgid "Special Instructions"
+msgid "Method / Instructions"
+msgstr "Method / Instructions"
+
+#: templates/staff/menu.html:240
+msgid "Cook Time (minutes)"
+msgstr "Cook Time (minutes)"
+
+#: templates/staff/menu.html:243
+msgid "Save Recipe"
+msgstr "Save Recipe"
+
+#: templates/staff/menu.html:248
+msgid "No ingredients yet."
+msgstr "No ingredients yet."
+
+#: templates/staff/menu.html:252
+#| msgid "Inventory"
+msgid "Inventory Item"
+msgstr "Inventory Item"
+
+#: templates/staff/menu.html:253
+#| msgid "Select"
+msgid "— Select —"
+msgstr "— Select —"
+
+#: templates/staff/menu.html:269 templates/staff/qr_codes.html:67
+msgid "Close"
+msgstr "Close"
+
+# ---------------------------------------------------------------------------
+# Menu-related strings
+# ---------------------------------------------------------------------------
+#: templates/staff/menu.html:280
+#| msgid "Menu Items"
+msgid "No menu items."
+msgstr "No menu items."
+
+#: templates/staff/menu.html:283
+msgid "Archived"
+msgstr "Archived"
+
+#: templates/staff/menu.html:284
+msgid "Edit"
+msgstr "Edit"
+
+#: templates/staff/menu.html:285
+#| msgid "Archived"
+msgid "Archive"
+msgstr "Archive"
+
+#: templates/staff/menu.html:286
+msgid "Restore"
+msgstr "Restore"
+
+#: templates/staff/menu.html:288
+#| msgid "Loading..."
+msgid "Loading\\u2026"
+msgstr "Loading…"
+
+#: templates/staff/menu.html:289
+msgid "No ingredients defined yet."
+msgstr "No ingredients defined yet."
+
+#: templates/staff/menu.html:290
+msgid "Failed to load recipe."
+msgstr "Failed to load recipe."
+
+#: templates/staff/menu.html:291
+msgid "Failed to load."
+msgstr "Failed to load."
+
+#: templates/staff/menu.html:293
+msgid "\\u2014 Select \\u2014"
+msgstr "— Select —"
+
+#: templates/staff/menu.html:294
+msgid "Recipe \\u2014 "
+msgstr "Recipe — "
+
+#: templates/staff/menu.html:295
+msgid "Name and price are required"
+msgstr "Name and price are required"
+
+#: templates/staff/menu.html:296
+msgid ""
+"Please wait for the image to finish uploading, or remove it before saving."
+msgstr "Please wait for the image to finish uploading, or remove it before saving."
+
+#: templates/staff/menu.html:297
+msgid "Archive this menu item?"
+msgstr "Archive this menu item?"
+
+#: templates/staff/menu.html:298
+msgid "Restore this menu item?"
+msgstr "Restore this menu item?"
+
+#: templates/staff/menu.html:299
+msgid "Image must be under 5 MB"
+msgstr "Image must be under 5 MB"
+
+#: templates/staff/menu.html:300
+msgid "Failed to load item details."
+msgstr "Failed to load item details."
+
+#: templates/staff/menu.html:301
+msgid "Please select an inventory item, quantity, and unit."
+msgstr "Please select an inventory item, quantity, and unit."
+
+#: templates/staff/menu.html:302
+msgid "Remove this ingredient?"
+msgstr "Remove this ingredient?"
+
+#: templates/staff/menu.html:303
+msgid "Failed to remove ingredient."
+msgstr "Failed to remove ingredient."
+
+#: templates/staff/menu.html:304
+msgid "No categories defined for this branch."
+msgstr "No categories defined for this branch."
+
+#: templates/staff/menu.html:305
+msgid "Failed to load categories."
+msgstr "Failed to load categories."
+
+#: templates/staff/menu.html:306
+msgid ""
+"This menu item does not have a recipe configured yet. Add ingredients and "
+"instructions below."
+msgstr "This menu item does not have a recipe configured yet. Add ingredients and instructions below."
+
+#: templates/staff/orders.html:13
+#| msgid "Orders"
+msgid "All Orders"
+msgstr "All Orders"
+
+#: templates/staff/orders.html:17
+#| msgid "Active"
+msgid "Active orders"
+msgstr "Active orders"
+
+#: templates/staff/orders.html:18
+#| msgid "Orders"
+msgid "All orders"
+msgstr "All orders"
+
+#: templates/staff/orders.html:25
+msgid "Historical (Served / Cancelled)"
+msgstr "Historical (Served / Cancelled)"
+
+#: templates/staff/orders.html:36 templates/staff/orders.html:108
+#: templates/staff/reception.html:24
+#| msgid "Orders"
+msgid "Order #"
+msgstr "Order #"
+
+#: templates/staff/orders.html:36 templates/staff/orders.html:110
+#: templates/staff/reception.html:26
+msgid "Items"
+msgstr "Items"
+
+#: templates/staff/orders.html:36 templates/staff/orders.html:113
+#| msgid "Place Order"
+msgid "Placed At"
+msgstr "Placed At"
+
+#: templates/staff/orders.html:52
+#| msgid "No results found."
+msgid "No orders found."
+msgstr "No orders found."
+
+#: templates/staff/orders.html:53
+msgid "Cancel this order?"
+msgstr "Cancel this order?"
+
+#: templates/staff/profile.html:3 templates/staff/profile.html:5
+#| msgid "Profile"
+msgid "My Profile"
+msgstr "My Profile"
+
+#: templates/staff/profile.html:14
+msgid "Account Information"
+msgstr "Account Information"
+
+#: templates/staff/profile.html:17 templates/staff/register.html:51
+#: templates/staff/register.html:96
+msgid "Role"
+msgstr "Role"
+
+#: templates/staff/profile.html:26
+msgid "Two-Factor Authentication"
+msgstr "Two-Factor Authentication"
+
+#: templates/staff/profile.html:28
+msgid "2FA is enabled"
+msgstr "2FA is enabled"
+
+#: templates/staff/profile.html:29
+msgid "Your account is protected with time-based one-time passwords."
+msgstr "Your account is protected with time-based one-time passwords."
+
+#: templates/staff/profile.html:30 templates/staff/profile.html:75
+msgid "Disable 2FA"
+msgstr "Disable 2FA"
+
+#: templates/staff/profile.html:32
+msgid "2FA is not enabled"
+msgstr "2FA is not enabled"
+
+#: templates/staff/profile.html:33
+msgid "Add an extra layer of security to your account."
+msgstr "Add an extra layer of security to your account."
+
+#: templates/staff/profile.html:34
+msgid "Enable 2FA"
+msgstr "Enable 2FA"
+
+#: templates/staff/profile.html:45
+#| msgid "Two-Factor Authentication"
+msgid "Enable Two-Factor Authentication"
+msgstr "Enable Two-Factor Authentication"
+
+#: templates/staff/profile.html:50
+msgid ""
+"Scan the QR code below with your authenticator app (Google Authenticator, "
+"Authy, etc.):"
+msgstr "Scan the QR code below with your authenticator app (Google Authenticator, Authy, etc.):"
+
+#: templates/staff/profile.html:56
+msgid "Or enter this secret manually:"
+msgstr "Or enter this secret manually:"
+
+#: templates/staff/profile.html:57
+msgid "I have scanned the QR code"
+msgstr "I have scanned the QR code"
+
+#: templates/staff/profile.html:60
+msgid "Enter the 6-digit verification code from your authenticator app:"
+msgstr "Enter the 6-digit verification code from your authenticator app:"
+
+#: templates/staff/profile.html:79
+msgid "Enter your current password to disable two-factor authentication:"
+msgstr "Enter your current password to disable two-factor authentication:"
+
+#: templates/staff/profile.html:81
+#| msgid "Reset Password"
+msgid "Current password"
+msgstr "Current password"
+
+# ---------------------------------------------------------------------------
+# Order status labels
+# ---------------------------------------------------------------------------
+#: templates/staff/profile.html:84
+#| msgid "Confirmed"
+msgid "Confirm Disable"
+msgstr "Confirm Disable"
+
+#: templates/staff/profile.html:93
+#| msgid "An error occurred. Please try again."
+msgid "Failed to generate QR code. Please try again."
+msgstr "Failed to generate QR code. Please try again."
+
+#: templates/staff/profile.html:94
+msgid "Please enter a valid 6-digit code."
+msgstr "Please enter a valid 6-digit code."
+
+#: templates/staff/profile.html:95
+#| msgid "Enter verification code"
+msgid "Verification failed"
+msgstr "Verification failed"
+
+#: templates/staff/profile.html:96
+#| msgid "An error occurred. Please try again."
+msgid "Invalid code. Please try again."
+msgstr "Invalid code. Please try again."
+
+#: templates/staff/profile.html:97
+msgid "Please enter your password."
+msgstr "Please enter your password."
+
+#: templates/staff/profile.html:98
+msgid "Failed to disable 2FA"
+msgstr "Failed to disable 2FA"
+
+#: templates/staff/qr_codes.html:5
+msgid "QR Code Management"
+msgstr "QR Code Management"
+
+#: templates/staff/qr_codes.html:33
+msgid "Tables, Rooms & QR Codes"
+msgstr "Tables, Rooms & QR Codes"
+
+#: templates/staff/qr_codes.html:34
+msgid "Generate and print QR codes for customers to scan and place orders."
+msgstr "Generate and print QR codes for customers to scan and place orders."
+
+#: templates/staff/qr_codes.html:37
+msgid "Refresh"
+msgstr "Refresh"
+
+#: templates/staff/qr_codes.html:46 templates/staff/qr_codes.html:215
+#| msgid "Actions"
+msgid "Location"
+msgstr "Location"
+
+#: templates/staff/qr_codes.html:47 templates/staff/qr_codes.html:219
+#: templates/staff/tables.html:22
+msgid "Type"
+msgstr "Type"
+
+#: templates/staff/qr_codes.html:48 templates/staff/qr_codes.html:224
+#: templates/staff/qr_codes.html:251
+msgid "QR Code"
+msgstr "QR Code"
+
+#: templates/staff/qr_codes.html:50 templates/staff/qr_codes.html:226
+msgid "Last Generated"
+msgstr "Last Generated"
+
+#: templates/staff/qr_codes.html:55 templates/staff/qr_codes.html:132
+msgid "Loading locations…"
+msgstr "Loading locations…"
+
+#: templates/staff/qr_codes.html:66
+msgid "Table QR Code"
+msgstr "Table QR Code"
+
+#: templates/staff/qr_codes.html:80 templates/staff/tables.html:64
+msgid "Room"
+msgstr "Room"
+
+#: templates/staff/qr_codes.html:81
+msgid "Seats:"
+msgstr "Seats:"
+
+#: templates/staff/qr_codes.html:82
+msgid "No tables or rooms found. Add tables in the Tables section first."
+msgstr "No tables or rooms found. Add tables in the Tables section first."
+
+#: templates/staff/qr_codes.html:83
+msgid "\\u2014"
+msgstr "—"
+
+#: templates/staff/qr_codes.html:84
+msgid "Active"
+msgstr "Active"
+
+#: templates/staff/qr_codes.html:85
+msgid "Not generated"
+msgstr "Not generated"
+
+#: templates/staff/qr_codes.html:86
+msgid "Generate"
+msgstr "Generate"
+
+#: templates/staff/qr_codes.html:87
+msgid "Regenerate"
+msgstr "Regenerate"
+
+#: templates/staff/qr_codes.html:88
+msgid "Generating\\u2026"
+msgstr "Generating…"
+
+#: templates/staff/qr_codes.html:89
+#| msgid "Download"
+msgid "Download PNG"
+msgstr "Download PNG"
+
+#: templates/staff/qr_codes.html:90
+msgid "Print"
+msgstr "Print"
+
+#: templates/staff/qr_codes.html:91
+msgid "View"
+msgstr "View"
+
+#: templates/staff/qr_codes.html:92
+msgid ""
+"Regenerating this QR code will deactivate the current printed QR code for "
+"this table. Customers scanning the old code will no longer be able to order. "
+"Are you sure you want to continue?"
+msgstr "Regenerating this QR code will deactivate the current printed QR code for this table. Customers scanning the old code will no longer be able to order. Are you sure you want to continue?"
+
+#: templates/staff/qr_codes.html:93
+msgid "Failed to generate QR code."
+msgstr "Failed to generate QR code."
+
+#: templates/staff/qr_codes.html:94
+#| msgid "An error occurred. Please try again."
+msgid "Network error. Please try again."
+msgstr "Network error. Please try again."
+
+#: templates/staff/qr_codes.html:286
+msgid "Scan to view menu &amp; order"
+msgstr "Scan to view menu &amp; order"
+
+#: templates/staff/reception.html:5 templates/staff/reception.html:16
+#| msgid "Receptionist"
+msgid "Reception Dashboard"
+msgstr "Reception Dashboard"
+
+#: templates/staff/reception.html:17
+msgid "Connected"
+msgstr "Connected"
+
+#: templates/staff/reception.html:19
+msgid "Reconnecting\\u2026"
+msgstr "Reconnecting…"
+
+#: templates/staff/reception.html:20
+#| msgid "Orders"
+msgid "order"
+msgstr "order"
+
+#: templates/staff/reception.html:21
+#| msgid "Orders"
+msgid "orders"
+msgstr "orders"
+
+#: templates/staff/reception.html:22
+msgid "No orders yet. Waiting for incoming orders\\u2026"
+msgstr "No orders yet. Waiting for incoming orders…"
+
+#: templates/staff/reception.html:23
+msgid "Incoming orders"
+msgstr "Incoming orders"
+
+#: templates/staff/reception.html:27
+msgid "Special Instructions"
+msgstr "Special Instructions"
+
+#: templates/staff/reception.html:29
+msgid "Time"
+msgstr "Time"
+
+#: templates/staff/register.html:6
+msgid "Staff Registration"
+msgstr "Staff Registration"
+
+#: templates/staff/register.html:36 templates/staff/register.html:67
+#: templates/staff/register.html:78
+#| msgid "Create"
+msgid "Create Account"
+msgstr "Create Account"
+
+#: templates/staff/register.html:37
+msgid "Register for a staff account"
+msgstr "Register for a staff account"
+
+#: templates/staff/register.html:53 templates/staff/register.html:98
+#| msgid "Select"
+msgid "Select role..."
+msgstr "Select role..."
+
+#: templates/staff/register.html:54 templates/staff/register.html:99
+#| msgid "Manager"
+msgid "Branch Manager"
+msgstr "Branch Manager"
+
+#: templates/staff/register.html:55 templates/staff/register.html:100
 msgid "Receptionist"
 msgstr "Receptionist"
 
-msgid "Tenant Owner"
-msgstr "Tenant Owner"
+#: templates/staff/register.html:56 templates/staff/register.html:101
+msgid "Kitchen Staff"
+msgstr "Kitchen Staff"
 
-msgid "Role"
-msgstr "Role"
+#: templates/staff/register.html:64
+msgid "Confirm Password"
+msgstr "Confirm Password"
+
+#: templates/staff/register.html:71
+msgid "Already have an account?"
+msgstr "Already have an account?"
+
+#: templates/staff/register.html:71
+#| msgid "Sign In"
+msgid "Sign in"
+msgstr "Sign in"
+
+#: templates/staff/register.html:79
+msgid "Invite Staff — Send an invite for a new staff member"
+msgstr "Invite Staff — Send an invite for a new staff member"
+
+#: templates/staff/register.html:104
+msgid "Send Invite"
+msgstr "Send Invite"
+
+#: templates/staff/register.html:108
+#| msgid "Dashboard"
+msgid "Back to Dashboard"
+msgstr "Back to Dashboard"
+
+#: templates/staff/tables.html:11
+msgid "All Tables &amp; Rooms"
+msgstr "All Tables &amp; Rooms"
+
+#: templates/staff/tables.html:13 templates/staff/tables.html:34
+#: templates/staff/tables.html:65
+#| msgid "Table"
+msgid "Add Table"
+msgstr "Add Table"
+
+#: templates/staff/tables.html:14 templates/staff/tables.html:66
+msgid "Add Room"
+msgstr "Add Room"
+
+#: templates/staff/tables.html:22 templates/staff/tables.html:72
+#: templates/staff/tables.html:137
+msgid "Capacity"
+msgstr "Capacity"
+
+# ---------------------------------------------------------------------------
+# Table / Order strings
+# ---------------------------------------------------------------------------
+#: templates/staff/tables.html:39 templates/staff/tables.html:69
+msgid "Table Number"
+msgstr "Table Number"
+
+#: templates/staff/tables.html:43 templates/staff/tables.html:71
+msgid "Seat Count"
+msgstr "Seat Count"
+
+#: templates/staff/tables.html:67
+#| msgid "Table"
+msgid "Edit Table"
+msgstr "Edit Table"
+
+#: templates/staff/tables.html:68
+#| msgid "Edit"
+msgid "Edit Room"
+msgstr "Edit Room"
+
+#: templates/staff/tables.html:70
+#| msgid "Name"
+msgid "Room Name"
+msgstr "Room Name"
+
+#: templates/staff/tables.html:73
+msgid "No tables or rooms yet."
+msgstr "No tables or rooms yet."
+
+#: templates/staff/tables.html:74
+#| msgid "No results found."
+msgid "No branch found."
+msgstr "No branch found."
+
+#: templates/staff/tables.html:75
+#| msgid "This field is required."
+msgid "Name is required"
+msgstr "Name is required"
+
+#: templates/staff/tables.html:76
+msgid "Delete this location?"
+msgstr "Delete this location?"
+
+#: templates/staff/tables.html:77
+msgid "Failed to delete."
+msgstr "Failed to delete."
+
+#: templates/staff/tables.html:78
+msgid "Failed to save."
+msgstr "Failed to save."
+
+# ---------------------------------------------------------------------------
+# Navigation
+# ---------------------------------------------------------------------------
+#~ msgid "Home"
+#~ msgstr "Home"
+
+#~ msgid "Back"
+#~ msgstr "Back"
+
+#~ msgid "Pending"
+#~ msgstr "Pending"
+
+#~ msgid "Delete"
+#~ msgstr "Delete"
+
+#~ msgid "Export"
+#~ msgstr "Export"
+
+#~ msgid "Import"
+#~ msgstr "Import"
+
+#~ msgid "Submit"
+#~ msgstr "Submit"
+
+#~ msgid "Confirm"
+#~ msgstr "Confirm"
+
+# ---------------------------------------------------------------------------
+# Error messages
+# ---------------------------------------------------------------------------
+#~ msgid "Not Found"
+#~ msgstr "Not Found"
+
+#~ msgid "Access Denied"
+#~ msgstr "Access Denied"
+
+#~ msgid "Invalid Input"
+#~ msgstr "Invalid Input"
+
+#~ msgid "Server Error"
+#~ msgstr "Server Error"
+
+#~ msgid "Page not found"
+#~ msgstr "Page not found"
+
+#~ msgid "Required field"
+#~ msgstr "Required field"
+
+#~ msgid "This field may not be blank."
+#~ msgstr "This field may not be blank."
+
+#~ msgid "Permission denied."
+#~ msgstr "Permission denied."
+
+#~ msgid "Authentication required."
+#~ msgstr "Authentication required."
+
+#~ msgid "Preparation Time"
+#~ msgstr "Preparation Time"
+
+#~ msgid "Seasonal"
+#~ msgstr "Seasonal"
+
+#~ msgid "Sign Out"
+#~ msgstr "Sign Out"
+
+#~ msgid "Forgot Password"
+#~ msgstr "Forgot Password"
+
+#~ msgid "New Password"
+#~ msgstr "New Password"
+
+#~ msgid "Remember me"
+#~ msgstr "Remember me"
+
+#~ msgid "Invalid credentials"
+#~ msgstr "Invalid credentials"
+
+#~ msgid "Account locked"
+#~ msgstr "Account locked"
+
+#~ msgid "Tax"
+#~ msgstr "Tax"
+
+#~ msgid "VAT"
+#~ msgstr "VAT"
+
+#~ msgid "Service Charge"
+#~ msgstr "Service Charge"
+
+#~ msgid "Daily"
+#~ msgstr "Daily"
+
+#~ msgid "Weekly"
+#~ msgstr "Weekly"
+
+#~ msgid "Monthly"
+#~ msgstr "Monthly"
+
+#~ msgid "Annual"
+#~ msgstr "Annual"
+
+# ---------------------------------------------------------------------------
+# Inventory strings
+# ---------------------------------------------------------------------------
+#~ msgid "Stock"
+#~ msgstr "Stock"
+
+#~ msgid "Expiry Warning"
+#~ msgstr "Expiry Warning"
+
+#~ msgid "Supplier"
+#~ msgstr "Supplier"
+
+#~ msgid "Order Details"
+#~ msgstr "Order Details"
+
+# ---------------------------------------------------------------------------
+# Staff / roles
+# ---------------------------------------------------------------------------
+#~ msgid "Staff"
+#~ msgstr "Staff"
+
+#~ msgid "Tenant Owner"
+#~ msgstr "Tenant Owner"
 
 # ---------------------------------------------------------------------------
 # General UI
 # ---------------------------------------------------------------------------
+#~ msgid "Welcome"
+#~ msgstr "Welcome"
 
-msgid "Welcome"
-msgstr "Welcome"
+#~ msgid "Yes"
+#~ msgstr "Yes"
 
-msgid "Loading..."
-msgstr "Loading..."
+#~ msgid "No"
+#~ msgstr "No"
 
-msgid "No results found."
-msgstr "No results found."
+#~ msgid "All"
+#~ msgstr "All"
 
-msgid "Yes"
-msgstr "Yes"
+#~ msgid "None"
+#~ msgstr "None"
 
-msgid "No"
-msgstr "No"
+#~ msgid "Inactive"
+#~ msgstr "Inactive"
 
-msgid "Select"
-msgstr "Select"
+#~ msgid "Details"
+#~ msgstr "Details"
 
-msgid "All"
-msgstr "All"
+#~ msgid "Phone"
+#~ msgstr "Phone"
 
-msgid "None"
-msgstr "None"
+#~ msgid "Address"
+#~ msgstr "Address"
 
-msgid "Active"
-msgstr "Active"
+#~ msgid "are you sure?"
+#~ msgstr "Are you sure?"
 
-msgid "Inactive"
-msgstr "Inactive"
-
-msgid "Name"
-msgstr "Name"
-
-msgid "Status"
-msgstr "Status"
-
-msgid "Actions"
-msgstr "Actions"
-
-msgid "Details"
-msgstr "Details"
-
-msgid "Notes"
-msgstr "Notes"
-
-msgid "Phone"
-msgstr "Phone"
-
-msgid "Address"
-msgstr "Address"
-
-msgid "are you sure?"
-msgstr "Are you sure?"

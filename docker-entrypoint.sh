@@ -29,6 +29,9 @@ python manage.py migrate_schemas --noinput -v 3 2>&1 | tail -50
 echo "[entrypoint] Bootstrapping first tenant (if needed)…"
 python manage.py bootstrap -v 2 2>&1 || echo "[entrypoint] Bootstrap skipped."
 
+echo "[entrypoint] Compiling translations…"
+python manage.py compilemessages -l am -l en 2>&1 | tail -20 || echo "[entrypoint] Message compilation completed with warnings."
+
 echo "[entrypoint] Collecting static files…"
 python manage.py collectstatic --noinput 2>&1 | tail -20 || echo "[entrypoint] Static collection completed with warnings."
 

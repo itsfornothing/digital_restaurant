@@ -59,6 +59,24 @@
 {% block extra_scripts %}
 <script>
 let currentBranchId = '{{ branch_id }}';
+const TABLES_I18N = {
+  table: '{% trans "Table" %}',
+  room: '{% trans "Room" %}',
+  addTable: '{% trans "Add Table" %}',
+  addRoom: '{% trans "Add Room" %}',
+  editTable: '{% trans "Edit Table" %}',
+  editRoom: '{% trans "Edit Room" %}',
+  tableNumber: '{% trans "Table Number" %}',
+  roomName: '{% trans "Room Name" %}',
+  seatCount: '{% trans "Seat Count" %}',
+  capacity: '{% trans "Capacity" %}',
+  noItems: '{% trans "No tables or rooms yet." %}',
+  noBranch: '{% trans "No branch found." %}',
+  nameRequired: '{% trans "Name is required" %}',
+  deleteConfirm: '{% trans "Delete this location?" %}',
+  failedDelete: '{% trans "Failed to delete." %}',
+  failedSave: '{% trans "Failed to save." %}',
+};
 
 function getCsrf() {
   const meta = document.querySelector('meta[name="csrf-token"]');
@@ -93,7 +111,7 @@ async function loadItems() {
   const tbody = document.getElementById('tables-tbody');
   const branchId = await resolveBranchId();
   if (!branchId) {
-    if (tbody) tbody.innerHTML = '<tr><td colspan="4" class="text-center text-muted py-4">No branch found.</td></tr>';
+    if (tbody) tbody.innerHTML = '<tr><td colspan="4" class="text-center text-muted py-4">' + TABLES_I18N.noBranch + '</td></tr>';
     return;
   }
 
@@ -106,16 +124,16 @@ async function loadItems() {
   const tables = toList(rawTables);
   const rooms = toList(rawRooms);
   const allItems = [
-    ...tables.map(t => ({...t, type: 'table', label: `Table ${t.number}`})),
+    ...tables.map(t => ({...t, type: 'table', label: `${TABLES_I18N.table} ${t.number}`})),
     ...rooms.map(r => ({...r, type: 'room', label: r.name})),
   ];
   if (allItems.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="4" class="text-center text-muted py-4">No tables or rooms yet.</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="4" class="text-center text-muted py-4">' + TABLES_I18N.noItems + '</td></tr>';
     return;
   }
   tbody.innerHTML = allItems.map(item => `<tr>
     <td><strong>${item.label}</strong></td>
-    <td><span class="badge ${item.type==='table'?'badge-status-received':'badge-status-preparing'}">${item.type}</span></td>
+    <td><span class="badge ${item.type==='table'?'badge-status-received':'badge-status-preparing'}">${item.type==='table'?TABLES_I18N.table:TABLES_I18N.room}</span></td>
     <td data-label="{% trans 'Capacity' %}">${item.seat_count || item.capacity || '—'}</td>
     <td>
       <button class="btn btn-sm btn-outline-primary me-1" onclick="editItem('${item.id}', '${item.type}')"><i class="bi bi-pencil"></i></button>
@@ -125,22 +143,22 @@ async function loadItems() {
 }
 
 function showAddModal(type) {
-  document.getElementById('tableModalTitle').textContent = type === 'table' ? 'Add Table' : 'Add Room';
+  document.getElementById('tableModalTitle').textContent = type === 'table' ? TABLES_I18N.addTable : TABLES_I18N.addRoom;
   document.getElementById('edit-type').value = type;
   document.getElementById('edit-id').value = '';
   document.getElementById('item-name').value = '';
   document.getElementById('item-capacity').value = '4';
-  document.getElementById('name-label').textContent = type === 'table' ? 'Table Number' : 'Room Name';
-  document.getElementById('capacity-label').textContent = type === 'table' ? 'Seat Count' : 'Capacity';
+  document.getElementById('name-label').textContent = type === 'table' ? TABLES_I18N.tableNumber : TABLES_I18N.roomName;
+  document.getElementById('capacity-label').textContent = type === 'table' ? TABLES_I18N.seatCount : TABLES_I18N.capacity;
   new bootstrap.Modal(document.getElementById('tableModal')).show();
 }
 
 async function editItem(id, type) {
-  document.getElementById('tableModalTitle').textContent = type === 'table' ? 'Edit Table' : 'Edit Room';
+  document.getElementById('tableModalTitle').textContent = type === 'table' ? TABLES_I18N.editTable : TABLES_I18N.editRoom;
   document.getElementById('edit-type').value = type;
   document.getElementById('edit-id').value = id;
-  document.getElementById('name-label').textContent = type === 'table' ? 'Table Number' : 'Room Name';
-  document.getElementById('capacity-label').textContent = type === 'table' ? 'Seat Count' : 'Capacity';
+  document.getElementById('name-label').textContent = type === 'table' ? TABLES_I18N.tableNumber : TABLES_I18N.roomName;
+  document.getElementById('capacity-label').textContent = type === 'table' ? TABLES_I18N.seatCount : TABLES_I18N.capacity;
   // Fetch current values
   const branchId = await resolveBranchId();
   fetch(`/api/v1/branches/${branchId}/${type === 'table' ? 'tables' : 'rooms'}/${id}/`, {credentials:'same-origin'})
@@ -157,7 +175,7 @@ async function saveItem() {
   const type = document.getElementById('edit-type').value;
   const name = document.getElementById('item-name').value.trim();
   const capacity = parseInt(document.getElementById('item-capacity').value) || 1;
-  if (!name) { alert('Name is required'); return; }
+  if (!name) { alert(TABLES_I18N.nameRequired); return; }
 
   const branchId = await resolveBranchId();
   const csrf = getCsrf();
@@ -181,13 +199,13 @@ async function saveItem() {
       const err = await resp.json();
       alert(err.detail || Object.values(err).flat().filter(v => typeof v === 'string').join('\n') || JSON.stringify(err));
     } catch {
-      alert('Failed to save. Server returned ' + resp.status);
+      alert(TABLES_I18N.failedSave + ' (' + resp.status + ')');
     }
   }
 }
 
 async function deleteItem(id, type) {
-  if (!confirm(`Delete this ${type}?`)) return;
+  if (!confirm(TABLES_I18N.deleteConfirm)) return;
   const branchId = await resolveBranchId();
   const csrf = getCsrf();
   const resp = await fetch(`/api/v1/branches/${branchId}/${type === 'table' ? 'tables' : 'rooms'}/${id}/`, {
@@ -195,7 +213,7 @@ async function deleteItem(id, type) {
     headers: {'X-CSRFToken': csrf},
   });
   if (resp.ok) loadItems();
-  else alert('Failed to delete.');
+  else alert(TABLES_I18N.failedDelete);
 }
 
 document.addEventListener('DOMContentLoaded', function() { loadItems(); });

@@ -62,6 +62,17 @@
 {% endblock %}
 {% block extra_scripts %}
 <script>
+const COMPARISON_I18N = {
+  highestIncome: "{% trans 'Highest Income' %}",
+  lowestExpenses: "{% trans 'Lowest Expenses' %}",
+  highestMargin: "{% trans 'Highest Margin' %}",
+  noBranchData: "{% trans 'No branch data available yet.' %}",
+  noData: "{% trans 'No data.' %}",
+  income: "{% trans 'Income' %}",
+  expenses: "{% trans 'Expenses' %}",
+  failedToLoad: "{% trans 'Failed to load data.' %}",
+};
+
 let chartInstance = null;
 
 async function loadBranchData(period) {
@@ -74,26 +85,26 @@ async function loadBranchData(period) {
     const cardsHtml = data.comparison && data.comparison.highest_income_branch ? `
       <div class="col-md-4">
         <div class="card comparison-card p-3">
-          <div class="stat-label">Highest Income</div>
+          <div class="stat-label">${COMPARISON_I18N.highestIncome}</div>
           <div class="stat-value text-success">${data.comparison.highest_income_branch}</div>
           <small>${data.comparison.highest_income} {{ currency }}</small>
         </div>
       </div>
       <div class="col-md-4">
         <div class="card comparison-card p-3" style="border-left-color:var(--secondary-color, #5D7061);">
-          <div class="stat-label">Lowest Expenses</div>
+          <div class="stat-label">${COMPARISON_I18N.lowestExpenses}</div>
           <div class="stat-value text-success">${data.comparison.lowest_expenses_branch}</div>
           <small>${data.comparison.lowest_expenses} {{ currency }}</small>
         </div>
       </div>
       <div class="col-md-4">
         <div class="card comparison-card p-3" style="border-left-color:var(--tertiary-color, #D4A373);">
-          <div class="stat-label">Highest Margin</div>
+          <div class="stat-label">${COMPARISON_I18N.highestMargin}</div>
           <div class="stat-value text-warning">${data.comparison.highest_margin_branch}</div>
           <small>${data.comparison.highest_margin_profit} {{ currency }}</small>
         </div>
       </div>
-    ` : '<div class="col-12"><div class="card p-3 text-center text-secondary">No branch data available yet.</div></div>';
+    ` : `<div class="col-12"><div class="card p-3 text-center text-secondary">${COMPARISON_I18N.noBranchData}</div></div>`;
 
     document.getElementById('comparisonCards').innerHTML = cardsHtml;
 
@@ -112,7 +123,7 @@ async function loadBranchData(period) {
         </tr>
       `).join('');
     } else {
-      tbody.innerHTML = '<tr><td colspan="7" class="text-center py-4 text-secondary">No data.</td></tr>';
+      tbody.innerHTML = `<tr><td colspan="7" class="text-center py-4 text-secondary">${COMPARISON_I18N.noData}</td></tr>`;
     }
 
     // Chart
@@ -124,13 +135,13 @@ async function loadBranchData(period) {
         labels: data.branches.map(b => b.branch_name),
         datasets: [
           {
-            label: 'Income',
+            label: COMPARISON_I18N.income,
             data: data.branches.map(b => parseFloat(b.income)),
             backgroundColor: '#8B3A2A',
             borderRadius: 4,
           },
           {
-            label: 'Expenses',
+            label: COMPARISON_I18N.expenses,
             data: data.branches.map(b => parseFloat(b.expenses)),
             backgroundColor: '#D4A373',
             borderRadius: 4,
@@ -149,7 +160,7 @@ async function loadBranchData(period) {
   } catch (err) {
     console.error('Failed to load branch data:', err);
     document.getElementById('branchTableBody').innerHTML =
-      '<tr><td colspan="7" class="text-center py-4 text-danger">Failed to load data.</td></tr>';
+      `<tr><td colspan="7" class="text-center py-4 text-danger">${COMPARISON_I18N.failedToLoad}</td></tr>`;
   }
 }
 

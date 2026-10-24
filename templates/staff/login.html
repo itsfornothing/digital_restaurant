@@ -15,6 +15,20 @@
 </head>
 <body>
 <div class="card login-card p-4">
+  <div class="d-flex justify-content-end mb-2">
+    <form action="/i18n/setlang/" method="post" style="display:inline;">
+      {% csrf_token %}
+      <input type="hidden" name="next" value="{{ request.get_full_path }}" />
+      <select name="language" class="form-select form-select-sm" style="width:auto;font-size:.75rem;padding:.15rem 1.5rem .15rem .4rem;" onchange="this.form.submit()">
+        {% get_current_language as LANG %}
+        {% get_available_languages as LANGUAGES %}
+        {% get_language_info_list for LANGUAGES as langs %}
+        {% for lang in langs %}
+        <option value="{{ lang.code }}" {% if lang.code == LANG %}selected{% endif %}>{{ lang.name_local }}</option>
+        {% endfor %}
+      </select>
+    </form>
+  </div>
   <div class="text-center mb-4">
     <i class="bi bi-shop" style="font-size:2.5rem;color:#8B3A2A;"></i>
     <h4 class="mt-2 fw-bold">{% trans "Staff Portal" %}</h4>

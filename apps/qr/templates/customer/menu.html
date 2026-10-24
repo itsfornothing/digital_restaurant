@@ -821,23 +821,24 @@ function openItemDetail(itemId) {
   let nutritionHtml = '';
   if (nut) {
     const fields = [
-      ['Calories', nut.calories_kcal, 'kcal'],
-      ['Protein', nut.protein_g, 'g'],
-      ['Carbohydrates', nut.carbs_g, 'g'],
-      ['Fat', nut.fat_g, 'g'],
-      ['Sugar', nut.sugar_g, 'g'],
-      ['Sodium', nut.sodium_mg, 'mg'],
-      ['Fibre', nut.fibre_g, 'g'],
+      ['{% trans "Calories" %}', nut.calories_kcal, 'kcal'],
+      ['{% trans "Protein" %}', nut.protein_g, 'g'],
+      ['{% trans "Carbohydrates" %}', nut.carbs_g, 'g'],
+      ['{% trans "Fat" %}', nut.fat_g, 'g'],
+      ['{% trans "Sugar" %}', nut.sugar_g, 'g'],
+      ['{% trans "Sodium" %}', nut.sodium_mg, 'mg'],
+      ['{% trans "Fibre" %}', nut.fibre_g, 'g'],
     ];
-    const rows = fields.filter(([,v]) => v != null).map(([label, val, unit]) =>
+    let rows = fields.filter(([,v]) => v != null).map(([label, val, unit]) =>
       `<tr><td class="text-muted small">${label}</td><td class="fw-medium small text-end">${val} ${unit}</td></tr>`
     ).join('');
-    if (Array.isArray(nut.allergens) && nut.allergens.length)
-      rows.concat(`<tr><td class="text-muted small">Allergens</td><td class="fw-medium small text-end">${escHtml(nut.allergens.join(', '))}</td></tr>`);
+    if (Array.isArray(nut.allergens) && nut.allergens.length) {
+      rows += `<tr><td class="text-muted small">{% trans "Allergens" %}</td><td class="fw-medium small text-end">${escHtml(nut.allergens.join(', '))}</td></tr>`;
+    }
     if (rows) {
       nutritionHtml = `
         <div class="mt-3">
-          <p class="fw-semibold small mb-1"><i class="bi bi-info-circle me-1"></i>Nutrition per serving</p>
+          <p class="fw-semibold small mb-1"><i class="bi bi-info-circle me-1"></i>{% trans "Nutrition per serving" %}</p>
           <table class="table table-sm table-borderless mb-0"><tbody>${rows}</tbody></table>
         </div>`;
     }
@@ -864,7 +865,7 @@ function openItemDetail(itemId) {
     <h2 class="h5 fw-bold mb-1">${unavailableBadge}${escHtml(translatedName)}</h2>
     <p class="fs-5 fw-bold mb-1" style="color:var(--primary-color);">${CURRENCY_LOCAL} ${price.toFixed(2)}</p>
     <p class="text-muted small mb-2">
-      <i class="bi bi-clock me-1"></i>${prep} min prep time
+      <i class="bi bi-clock me-1"></i>${prep} {% trans "min prep time" %}
     </p>
     ${translatedDesc ? `<p class="mb-2">${escHtml(translatedDesc)}</p>` : ''}
     ${tagBadges || catBadges ? `<div class="mb-2">${tagBadges}${catBadges}</div>` : ''}

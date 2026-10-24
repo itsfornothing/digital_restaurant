@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: restaurant-platform 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-07-08 17:57+0000\n"
+"POT-Creation-Date: 2026-10-24 08:56+0000\n"
 "PO-Revision-Date: 2026-07-02 00:00+0000\n"
 "Last-Translator: Restaurant Platform Team\n"
 "Language-Team: Amharic\n"
@@ -26,132 +26,167 @@ msgid ""
 "Browse our menu, filter by dietary preferences, and place your order online."
 msgstr "ምናሌያችንን ያስሱ፣ በአመጋገብ ምርጫዎች ያጣሩ፣ እና ትዕዛዝዎን በመስመር ላይ ያስገቡ።"
 
-#: apps/qr/templates/customer/base.html:204
+#: apps/qr/templates/customer/base.html:239
 msgid "Skip to main content"
 msgstr "ወደ ዋናው ይዘት ዝለሉ"
 
-#: apps/qr/templates/customer/base.html:209
+#: apps/qr/templates/customer/base.html:244
 msgid "Main navigation"
 msgstr "ዋና አሰሳ"
 
-#: apps/qr/templates/customer/base.html:215
+#: apps/qr/templates/customer/base.html:250
 msgid "Go to menu"
 msgstr "ወደ ምናሌ ሂድ"
 
-#: apps/qr/templates/customer/base.html:220
+#: apps/qr/templates/customer/base.html:255
 #: apps/qr/templates/customer/qr_invalid.html:75
 msgid "logo"
 msgstr "አርማ"
 
-#: apps/qr/templates/customer/base.html:229
+#: apps/qr/templates/customer/base.html:264
 msgid "Restaurant"
 msgstr "ሬስቶራንት"
 
-#: apps/qr/templates/customer/base.html:235
+#: apps/qr/templates/customer/base.html:270
 #: apps/qr/templates/customer/cart.html:165
-#: apps/qr/templates/customer/order_tracker.html:231
+#: apps/qr/templates/customer/order_tracker.html:244
 msgid "Table number"
 msgstr "የጠረጴዛ ቁጥር"
 
-#: apps/qr/templates/customer/base.html:237
+#: apps/qr/templates/customer/base.html:272
 #: apps/qr/templates/customer/cart.html:167
-#: apps/qr/templates/customer/order_tracker.html:234
-#: apps/qr/templates/customer/test_entry.html:45
-#: templates/staff/dashboard.html:87 templates/staff/kds.html:27
-#: templates/staff/orders.html:31 templates/staff/qr_codes.html:40
-#: templates/staff/reception.html:25
+#: apps/qr/templates/customer/order_tracker.html:247
+#: apps/qr/templates/customer/test_entry.html:45 templates/staff/base.html:226
+#: templates/staff/dashboard.html:128 templates/staff/kds.html:27
+#: templates/staff/orders.html:36 templates/staff/orders.html:109
+#: templates/staff/qr_codes.html:79 templates/staff/reception.html:25
+#: templates/staff/tables.html:63
 msgid "Table"
 msgstr "ጠረጴዛ"
 
-#: apps/qr/templates/customer/base.html:242
-#: apps/qr/templates/customer/base.html:244
+#: apps/qr/templates/customer/base.html:277
+#: apps/qr/templates/customer/base.html:279
 msgid "Track Order"
 msgstr "ትዕዛዝ ይከታተሉ"
 
-#: apps/qr/templates/customer/base.html:242
+#: apps/qr/templates/customer/base.html:277
 msgid "track your active order"
 msgstr "ንቁ ትዕዛዝዎን ይከታተሉ"
 
-#: apps/qr/templates/customer/base.html:250
+#: apps/qr/templates/customer/base.html:285
 msgid "Language"
 msgstr "ቋንቋ"
 
-#: apps/qr/templates/customer/base.html:267
+#: apps/qr/templates/customer/base.html:302
 msgid "Open cart"
 msgstr "ወደ ቅርጫት"
 
-#: apps/qr/templates/customer/base.html:284
+#: apps/qr/templates/customer/base.html:319
 msgid "Main content"
 msgstr "ወደ ዋናው ይዘት ዝለሉ"
 
-#: apps/qr/templates/customer/base.html:301
+#: apps/qr/templates/customer/base.html:336
 #: apps/qr/templates/customer/cart.html:5
 #: apps/qr/templates/customer/cart.html:156
 msgid "Your Cart"
 msgstr "የእርስዎ ቅርጫት"
 
-#: apps/qr/templates/customer/base.html:307
+#: apps/qr/templates/customer/base.html:342
 msgid "Close cart"
 msgstr "ወደ ቅርጫት"
 
-#: apps/qr/templates/customer/base.html:313
+#: apps/qr/templates/customer/base.html:348
 msgid "Cart"
 msgstr "ጋሪ"
 
-#: apps/qr/templates/customer/base.html:314 templates/staff/base.html:88
-#: templates/staff/branch_comparison.html:42
+#: apps/qr/templates/customer/base.html:349 templates/staff/base.html:177
+#: templates/staff/branch_comparison.html:50
+#: templates/staff/branch_comparison.html:120
 #: templates/staff/financials.html:105 templates/staff/orders.html:3
 #: templates/staff/orders.html:5
 msgid "Orders"
 msgstr "ትዕዛዞች"
 
-#: apps/qr/templates/customer/base.html:326
-#: apps/qr/templates/customer/order_tracker.html:381
-#: templates/staff/orders.html:31
+#: apps/qr/templates/customer/base.html:361
+#: apps/qr/templates/customer/order_tracker.html:394
+#: templates/staff/orders.html:36 templates/staff/orders.html:111
 msgid "Total"
 msgstr "ጠቅላላ"
 
-#: apps/qr/templates/customer/base.html:335
+#: apps/qr/templates/customer/base.html:370
 msgid "Review your order and proceed to checkout"
 msgstr "ትዕዛዝዎን ይገምግሙ እና ወደ ክፍያ ይቀጥሉ"
 
-#: apps/qr/templates/customer/base.html:337
+#: apps/qr/templates/customer/base.html:372
 msgid "Review Order"
 msgstr "ትዕዛዝ ይገምግሙ"
 
-#: apps/qr/templates/customer/base.html:370
-#: templates/staff/branch_comparison.html:48 templates/staff/dashboard.html:65
-#: templates/staff/dashboard.html:74 templates/staff/expenses.html:26
-#: templates/staff/financials.html:82 templates/staff/inventory.html:29
-#: templates/staff/menu.html:24 templates/staff/orders.html:35
-#: templates/staff/qr_codes.html:21 templates/staff/tables.html:25
+#: apps/qr/templates/customer/base.html:405
+#: templates/staff/branch_comparison.html:56 templates/staff/dashboard.html:87
+#: templates/staff/dashboard.html:97 templates/staff/dashboard.html:112
+#: templates/staff/expenses.html:26 templates/staff/financials.html:82
+#: templates/staff/inventory.html:29 templates/staff/menu.html:28
+#: templates/staff/orders.html:40 templates/staff/tables.html:25
 msgid "Loading…"
 msgstr "እየሰቀለ ነው…"
 
-#: apps/qr/templates/customer/base.html:378 templates/staff/dashboard.html:88
+#: apps/qr/templates/customer/base.html:413 templates/staff/dashboard.html:129
 msgid "No active orders"
 msgstr "ንቁ ትዕዛዞች የሉም"
 
-#: apps/qr/templates/customer/base.html:386
+#: apps/qr/templates/customer/base.html:417
+#: apps/qr/templates/customer/order_tracker.html:575
+#: apps/qr/templates/customer/order_tracker.html:742
+#| msgid "Mark Received"
+msgid "Order Received"
+msgstr "ትዕዛዝ ተቀብሏል"
+
+#: apps/qr/templates/customer/base.html:418
+#: apps/qr/templates/customer/order_tracker.html:297
+#: templates/staff/dashboard.html:135 templates/staff/kds.html:49
+#: templates/staff/orders.html:21 templates/staff/orders.html:58
+#: templates/staff/reception.html:32
+msgid "Preparing"
+msgstr "በዝግጅት ላይ"
+
+#: apps/qr/templates/customer/base.html:419
+msgid "Ready to Serve"
+msgstr "ለማቅረብ ዝግጁ"
+
+#: apps/qr/templates/customer/base.html:420
+#: apps/qr/templates/customer/order_tracker.html:321
+#: templates/staff/dashboard.html:137 templates/staff/kds.html:51
+#: templates/staff/orders.html:23 templates/staff/orders.html:60
+#: templates/staff/reception.html:34
+msgid "Served"
+msgstr "ቀርቧል"
+
+#: apps/qr/templates/customer/base.html:421 templates/staff/dashboard.html:138
+#: templates/staff/kds.html:52 templates/staff/orders.html:24
+#: templates/staff/orders.html:61 templates/staff/reception.html:35
+msgid "Cancelled"
+msgstr "ተሰርዟል"
+
+#: apps/qr/templates/customer/base.html:428
 msgid "Track"
 msgstr "ክትትል"
 
-#: apps/qr/templates/customer/base.html:391
+#: apps/qr/templates/customer/base.html:433
 msgid "Could not load orders."
 msgstr "ትዕዛዙን መቀለስ አልተቻለም።"
 
 #: apps/qr/templates/customer/cart.html:149
-#: apps/qr/templates/customer/order_tracker.html:192
+#: apps/qr/templates/customer/order_tracker.html:205
 msgid "Back to menu"
 msgstr "ወደ ምናሌ ሂድ"
 
 #: apps/qr/templates/customer/cart.html:152
-#: apps/qr/templates/customer/order_tracker.html:195
+#: apps/qr/templates/customer/order_tracker.html:208
 msgid "Back to Menu"
 msgstr "ወደ ምናሌ ሂድ"
 
 #: apps/qr/templates/customer/cart.html:177
-#: apps/qr/templates/customer/cart.html:588
+#: apps/qr/templates/customer/cart.html:688
 msgid "Your cart is empty."
 msgstr "የእርስዎ ቅርጫት ባዶ ነው።"
 
@@ -167,82 +202,105 @@ msgstr "የቅርጫት እቃዎች"
 msgid "Items in your cart"
 msgstr "በቅርጫትዎ ውስጥ ያሉ እቃዎች"
 
+#: apps/qr/templates/customer/cart.html:196
+#| msgid "Place your order"
+msgid "Pairs well with your order"
+msgstr "ከትዕዛዝዎ ጋር የሚስማማ"
+
 #: apps/qr/templates/customer/cart.html:200
+msgid "Pairs Well With Your Order"
+msgstr "ከትዕዛዝዎ ጋር የሚስማማ"
+
+#: apps/qr/templates/customer/cart.html:202
+msgid "Popular Pairings"
+msgstr "ተወዳጅ ጥንዶች"
+
+#: apps/qr/templates/customer/cart.html:216
 msgid "Order Total"
 msgstr "የትዕዛዝ ጠቅላላ"
 
-#: apps/qr/templates/customer/cart.html:205
-#: apps/qr/templates/customer/order_tracker.html:382
+#: apps/qr/templates/customer/cart.html:221
+#: apps/qr/templates/customer/order_tracker.html:395
 msgid "Order total"
 msgstr "የትዕዛዝ ጠቅላላ"
 
-#: apps/qr/templates/customer/cart.html:216
+#: apps/qr/templates/customer/cart.html:232
 msgid "Place your order"
 msgstr "ትዕዛዝዎን ያስገቡ"
 
-#: apps/qr/templates/customer/cart.html:228
+#: apps/qr/templates/customer/cart.html:244
 msgid "Place Order"
 msgstr "ትዕዛዝ ስጥ"
 
-#: apps/qr/templates/customer/cart.html:230
+#: apps/qr/templates/customer/cart.html:246
 msgid "Placing order…"
 msgstr "ትዕዛዝ እየተላለፈ ነው…"
 
-#: apps/qr/templates/customer/cart.html:232
+#: apps/qr/templates/customer/cart.html:248
 msgid "Placing Order…"
 msgstr "ትዕዛዝ እየተላለፈ ነው…"
 
-#: apps/qr/templates/customer/cart.html:250
+#: apps/qr/templates/customer/cart.html:266
 msgid "Close notification"
 msgstr "ማሳወቂያ ዝጋ"
 
-#: apps/qr/templates/customer/cart.html:333
-#: apps/qr/templates/customer/menu.html:289
+#: apps/qr/templates/customer/cart.html:388
+#: apps/qr/templates/customer/menu.html:540 templates/staff/menu.html:264
+msgid "Add"
+msgstr "ጨምር"
+
+#: apps/qr/templates/customer/cart.html:420
+#| msgid "Items in your cart"
+msgid "Item added to cart!"
+msgstr "እቃው ወደ ቅርጫት ታክሏል!"
+
+#: apps/qr/templates/customer/cart.html:433
+#: apps/qr/templates/customer/menu.html:305
 msgid "Special instructions"
 msgstr "ልዩ መመሪያዎች"
 
-#: apps/qr/templates/customer/cart.html:345
+#: apps/qr/templates/customer/cart.html:445
 msgid "each"
 msgstr "እያንዳንዱ"
 
-#: apps/qr/templates/customer/cart.html:356
+#: apps/qr/templates/customer/cart.html:456
 msgid "Decrease quantity of"
 msgstr "ብዛት ቀንስ የ"
 
-#: apps/qr/templates/customer/cart.html:361 templates/staff/inventory.html:27
+#: apps/qr/templates/customer/cart.html:461 templates/staff/inventory.html:27
 #: templates/staff/inventory.html:43
 msgid "Quantity"
 msgstr "ብዛት"
 
-#: apps/qr/templates/customer/cart.html:367
+#: apps/qr/templates/customer/cart.html:467
 msgid "Increase quantity of"
 msgstr "ብዛት ጨምር የ"
 
-#: apps/qr/templates/customer/cart.html:373 templates/staff/menu.html:279
+#: apps/qr/templates/customer/cart.html:473 templates/staff/menu.html:292
 msgid "Remove"
 msgstr "አስወግድ"
 
-#: apps/qr/templates/customer/cart.html:373
+#: apps/qr/templates/customer/cart.html:473
 msgid "from cart"
 msgstr "ወደ ቅርጫት"
 
-#: apps/qr/templates/customer/cart.html:378
+#: apps/qr/templates/customer/cart.html:478
 msgid "Subtotal"
 msgstr "ንዑስ ድምር"
 
-#: apps/qr/templates/customer/cart.html:488
-#: apps/qr/templates/customer/cart.html:653
+#: apps/qr/templates/customer/cart.html:588
+#: apps/qr/templates/customer/cart.html:753
 msgid "Could not place order. Please try again."
 msgstr "ትዕዛዙን ማስገባት አልተቻለም። እባክዎ እንደገና ይሞክሩ።"
 
-#: apps/qr/templates/customer/cart.html:664
-#: apps/qr/templates/customer/menu.html:435
-#: apps/qr/templates/customer/order_tracker.html:502
+#: apps/qr/templates/customer/cart.html:764
+#: apps/qr/templates/customer/menu.html:472
+#: apps/qr/templates/customer/order_tracker.html:515
 msgid "Network error. Please check your connection and try again."
 msgstr "የአውታረ መረብ ስህተት። እባክዎ ግንኙነትዎን ያረጋግጡ እና እንደገና ይሞክሩ።"
 
 #: apps/qr/templates/customer/menu.html:5
-#: apps/qr/templates/customer/menu.html:172 templates/staff/base.html:89
+#: apps/qr/templates/customer/menu.html:172 templates/staff/base.html:178
 msgid "Menu"
 msgstr "ምናሌ"
 
@@ -258,8 +316,9 @@ msgstr "ምናሌን በምግብ ዓይነት ያጣሩ"
 msgid "Filter: Vegetarian"
 msgstr "አጣራ፦ ቬጀቴሪያን"
 
-#: apps/qr/templates/customer/menu.html:185 templates/staff/menu.html:49
-#: templates/staff/menu.html:151
+#: apps/qr/templates/customer/menu.html:185
+#: apps/qr/templates/customer/menu.html:333 templates/staff/menu.html:55
+#: templates/staff/menu.html:159
 msgid "Vegetarian"
 msgstr "ቬጀቴሪያን"
 
@@ -267,8 +326,9 @@ msgstr "ቬጀቴሪያን"
 msgid "Filter: Vegan"
 msgstr "አጣራ፦ ቪጋን"
 
-#: apps/qr/templates/customer/menu.html:186 templates/staff/menu.html:53
-#: templates/staff/menu.html:155
+#: apps/qr/templates/customer/menu.html:186
+#: apps/qr/templates/customer/menu.html:333 templates/staff/menu.html:59
+#: templates/staff/menu.html:163
 msgid "Vegan"
 msgstr "ቪጋን"
 
@@ -276,8 +336,9 @@ msgstr "ቪጋን"
 msgid "Filter: Gluten-Free"
 msgstr "አጣራ፦ ከግሉተን ነፃ"
 
-#: apps/qr/templates/customer/menu.html:187 templates/staff/menu.html:57
-#: templates/staff/menu.html:159
+#: apps/qr/templates/customer/menu.html:187
+#: apps/qr/templates/customer/menu.html:333 templates/staff/menu.html:63
+#: templates/staff/menu.html:167
 msgid "Gluten-Free"
 msgstr "ከግሉተን ነፃ"
 
@@ -285,8 +346,9 @@ msgstr "ከግሉተን ነፃ"
 msgid "Filter: Dairy-Free"
 msgstr "አጣራ፦ ከወተት ነፃ"
 
-#: apps/qr/templates/customer/menu.html:188 templates/staff/menu.html:61
-#: templates/staff/menu.html:163
+#: apps/qr/templates/customer/menu.html:188
+#: apps/qr/templates/customer/menu.html:333 templates/staff/menu.html:67
+#: templates/staff/menu.html:171
 msgid "Dairy-Free"
 msgstr "ከወተት ነፃ"
 
@@ -294,8 +356,9 @@ msgstr "ከወተት ነፃ"
 msgid "Filter: Halal"
 msgstr "አጣራ፦ ሀላል"
 
-#: apps/qr/templates/customer/menu.html:189 templates/staff/menu.html:65
-#: templates/staff/menu.html:167
+#: apps/qr/templates/customer/menu.html:189
+#: apps/qr/templates/customer/menu.html:334 templates/staff/menu.html:71
+#: templates/staff/menu.html:175
 msgid "Halal"
 msgstr "ሀላል"
 
@@ -303,8 +366,9 @@ msgstr "ሀላል"
 msgid "Filter: Low-Carb"
 msgstr "አጣራ፦ ዝቅተኛ ካርቦ"
 
-#: apps/qr/templates/customer/menu.html:190 templates/staff/menu.html:69
-#: templates/staff/menu.html:171
+#: apps/qr/templates/customer/menu.html:190
+#: apps/qr/templates/customer/menu.html:334 templates/staff/menu.html:75
+#: templates/staff/menu.html:179
 msgid "Low-Carb"
 msgstr "ዝቅተኛ ካርቦ"
 
@@ -312,8 +376,9 @@ msgstr "ዝቅተኛ ካርቦ"
 msgid "Filter: Keto"
 msgstr "አጣራ፦ ኬቶ"
 
-#: apps/qr/templates/customer/menu.html:191 templates/staff/menu.html:73
-#: templates/staff/menu.html:175
+#: apps/qr/templates/customer/menu.html:191
+#: apps/qr/templates/customer/menu.html:334 templates/staff/menu.html:79
+#: templates/staff/menu.html:183
 msgid "Keto"
 msgstr "ኬቶ"
 
@@ -321,8 +386,9 @@ msgstr "ኬቶ"
 msgid "Filter: High-Protein"
 msgstr "አጣራ፦ ከፍተኛ ፕሮቲን"
 
-#: apps/qr/templates/customer/menu.html:192 templates/staff/menu.html:77
-#: templates/staff/menu.html:179
+#: apps/qr/templates/customer/menu.html:192
+#: apps/qr/templates/customer/menu.html:334 templates/staff/menu.html:83
+#: templates/staff/menu.html:187
 msgid "High-Protein"
 msgstr "ከፍተኛ ፕሮቲን"
 
@@ -330,8 +396,9 @@ msgstr "ከፍተኛ ፕሮቲን"
 msgid "Filter: Spicy"
 msgstr "አጣራ፦ ቅመም"
 
-#: apps/qr/templates/customer/menu.html:193 templates/staff/menu.html:81
-#: templates/staff/menu.html:183
+#: apps/qr/templates/customer/menu.html:193
+#: apps/qr/templates/customer/menu.html:335 templates/staff/menu.html:87
+#: templates/staff/menu.html:191
 msgid "Spicy"
 msgstr "ቅመም"
 
@@ -339,8 +406,9 @@ msgstr "ቅመም"
 msgid "Filter: Seafood"
 msgstr "አጣራ፦ የባህር ምግብ"
 
-#: apps/qr/templates/customer/menu.html:194 templates/staff/menu.html:85
-#: templates/staff/menu.html:187
+#: apps/qr/templates/customer/menu.html:194
+#: apps/qr/templates/customer/menu.html:335 templates/staff/menu.html:91
+#: templates/staff/menu.html:195
 msgid "Seafood"
 msgstr "የባህር ምግብ"
 
@@ -348,8 +416,9 @@ msgstr "የባህር ምግብ"
 msgid "Filter: Desserts"
 msgstr "አጣራ፦ ጣፋጭ ምግቦች"
 
-#: apps/qr/templates/customer/menu.html:195 templates/staff/menu.html:89
-#: templates/staff/menu.html:191
+#: apps/qr/templates/customer/menu.html:195
+#: apps/qr/templates/customer/menu.html:335 templates/staff/menu.html:95
+#: templates/staff/menu.html:199
 msgid "Desserts"
 msgstr "ጣፋጭ ምግቦች"
 
@@ -357,8 +426,9 @@ msgstr "ጣፋጭ ምግቦች"
 msgid "Filter: Beverages"
 msgstr "አጣራ፦ መጠጦች"
 
-#: apps/qr/templates/customer/menu.html:196 templates/staff/menu.html:93
-#: templates/staff/menu.html:195
+#: apps/qr/templates/customer/menu.html:196
+#: apps/qr/templates/customer/menu.html:335 templates/staff/menu.html:99
+#: templates/staff/menu.html:203
 msgid "Beverages"
 msgstr "መጠጦች"
 
@@ -366,8 +436,9 @@ msgstr "መጠጦች"
 msgid "Filter: Children's Meals"
 msgstr "አጣራ፦ የህፃናት ምግቦች"
 
-#: apps/qr/templates/customer/menu.html:197 templates/staff/menu.html:97
-#: templates/staff/menu.html:199
+#: apps/qr/templates/customer/menu.html:197
+#: apps/qr/templates/customer/menu.html:335 templates/staff/menu.html:103
+#: templates/staff/menu.html:207
 msgid "Children's Meals"
 msgstr "የህፃናት ምግቦች"
 
@@ -387,284 +458,333 @@ msgstr "የምናሌ እቃዎችን ፈልግ"
 msgid "Clear search"
 msgstr "ፍለጋ አጽዳ"
 
-#: apps/qr/templates/customer/menu.html:233
+#: apps/qr/templates/customer/menu.html:230
+msgid "Recommended for you"
+msgstr "ለእርስዎ የተመረጠ"
+
+#: apps/qr/templates/customer/menu.html:234
+msgid "Recommended For You"
+msgstr "ለእርስዎ የተመረጠ"
+
+#: apps/qr/templates/customer/menu.html:236
+msgid "Chef's Picks & Trending"
+msgstr "የሼፉ ምርጦች እና ተወዳጆች"
+
+#: apps/qr/templates/customer/menu.html:249
 msgid "Menu items"
 msgstr "የምናሌ ዝርዝሮች"
 
-#: apps/qr/templates/customer/menu.html:254
+#: apps/qr/templates/customer/menu.html:270
 msgid "No items match your search or filters."
 msgstr "ከፍለጋዎ ወይም ማጣሪያዎ ጋር የሚዛመድ እቃ የለም።"
 
-#: apps/qr/templates/customer/menu.html:259
+#: apps/qr/templates/customer/menu.html:275
 msgid "Clear all filters"
 msgstr "ሁሉንም ማጣሪያዎች አጽዳ"
 
-#: apps/qr/templates/customer/menu.html:260
+#: apps/qr/templates/customer/menu.html:276
 msgid "Clear Filters"
 msgstr "ማጣሪያዎች አጽዳ"
 
-#: apps/qr/templates/customer/menu.html:272
+#: apps/qr/templates/customer/menu.html:288
 msgid "Close item details"
 msgstr "የእቃ ዝርዝሮች ዝጋ"
 
-#: apps/qr/templates/customer/menu.html:280
+#: apps/qr/templates/customer/menu.html:296
 msgid "Decrease quantity"
 msgstr "ብዛት ቀንስ"
 
-#: apps/qr/templates/customer/menu.html:282
+#: apps/qr/templates/customer/menu.html:298
 msgid "Increase quantity"
 msgstr "ብዛት ጨምር"
 
-#: apps/qr/templates/customer/menu.html:286
+#: apps/qr/templates/customer/menu.html:302
 msgid "Special instructions (optional)"
 msgstr "ልዩ መመሪያዎች (አማራጭ)"
 
-#: apps/qr/templates/customer/menu.html:288
+#: apps/qr/templates/customer/menu.html:304
 msgid "e.g. no onions, extra sauce"
 msgstr "ለምሳሌ ሽንኩርት የለም፣ ተጨማሪ ሶስ"
 
-#: apps/qr/templates/customer/menu.html:294
-#: apps/qr/templates/customer/menu.html:546
+#: apps/qr/templates/customer/menu.html:310
+#: apps/qr/templates/customer/menu.html:653
 msgid "Add to Cart"
 msgstr "ወደ ቅርጫት ጨምር"
 
-#: apps/qr/templates/customer/menu.html:426
+#: apps/qr/templates/customer/menu.html:463
 msgid "Could not load menu. Please refresh the page."
 msgstr "ምናሌውን መጫን አልተቻለም። እባክዎ ገፁን እንደገና ያድሱ።"
 
-#: apps/qr/templates/customer/menu.html:492
-#: apps/qr/templates/customer/menu.html:750 templates/staff/menu.html:42
-#: templates/staff/menu.html:144 templates/staff/menu.html:275
+#: apps/qr/templates/customer/menu.html:599
+#: apps/qr/templates/customer/menu.html:861 templates/staff/menu.html:48
+#: templates/staff/menu.html:152 templates/staff/menu.html:282
 msgid "Unavailable"
 msgstr "አይገኝም"
 
-#: apps/qr/templates/customer/menu.html:499
+#: apps/qr/templates/customer/menu.html:606
+#: apps/qr/templates/customer/menu.html:824
 msgid "Calories"
 msgstr "ካሎሪ"
 
-#: apps/qr/templates/customer/menu.html:500
+#: apps/qr/templates/customer/menu.html:607
+#: apps/qr/templates/customer/menu.html:825
 msgid "Protein"
 msgstr "ፕሮቲን"
 
-#: apps/qr/templates/customer/menu.html:501
+#: apps/qr/templates/customer/menu.html:608
+#: apps/qr/templates/customer/menu.html:826
 msgid "Carbohydrates"
 msgstr "ካርቦሃይድሬት"
 
-#: apps/qr/templates/customer/menu.html:502
+#: apps/qr/templates/customer/menu.html:609
+#: apps/qr/templates/customer/menu.html:827
 msgid "Fat"
 msgstr "ስብ"
 
-#: apps/qr/templates/customer/menu.html:503
+#: apps/qr/templates/customer/menu.html:610
+#: apps/qr/templates/customer/menu.html:828
 msgid "Sugar"
 msgstr "ስኳር"
 
-#: apps/qr/templates/customer/menu.html:504
+#: apps/qr/templates/customer/menu.html:611
+#: apps/qr/templates/customer/menu.html:829
 msgid "Sodium"
 msgstr "ሶዲየም"
 
-#: apps/qr/templates/customer/menu.html:505
+#: apps/qr/templates/customer/menu.html:612
+#: apps/qr/templates/customer/menu.html:830
 msgid "Fibre"
 msgstr "ፋይበር"
 
-#: apps/qr/templates/customer/menu.html:514
+#: apps/qr/templates/customer/menu.html:621
+#: apps/qr/templates/customer/menu.html:836
 msgid "Allergens"
 msgstr "አለርጂዎች"
 
-#: apps/qr/templates/customer/menu.html:529
+#: apps/qr/templates/customer/menu.html:636
 msgid "Toggle nutritional information for"
 msgstr "የአመጋገብ መረጃ ለውጥ ለ"
 
-#: apps/qr/templates/customer/menu.html:531
+#: apps/qr/templates/customer/menu.html:638
 msgid "Nutrition"
 msgstr "አመጋገብ"
 
-#: apps/qr/templates/customer/menu.html:565 templates/staff/kds.html:36
+#: apps/qr/templates/customer/menu.html:672 templates/staff/kds.html:36
 msgid "min"
 msgstr "ደቂቃ"
 
-#: apps/qr/templates/customer/menu.html:645
+#: apps/qr/templates/customer/menu.html:752
 msgid "Your cart is empty"
 msgstr "የእርስዎ ቅርጫት ባዶ ነው"
 
-#: apps/qr/templates/customer/menu.html:840
+#: apps/qr/templates/customer/menu.html:841
+#| msgid "Nutrition"
+msgid "Nutrition per serving"
+msgstr "የአመጋገብ ይዘት በአንድ መጠን"
+
+#: apps/qr/templates/customer/menu.html:868
+msgid "min prep time"
+msgstr "ደቂቃ የዝግጅት ጊዜ"
+
+#: apps/qr/templates/customer/menu.html:951
 msgid "Order placed successfully!"
 msgstr "ትዕዛዝ በተሳካ ሁኔታ ተላልፏል!"
 
 #: apps/qr/templates/customer/order_tracker.html:5
-#: apps/qr/templates/customer/order_tracker.html:199
+#: apps/qr/templates/customer/order_tracker.html:212
 msgid "Order Tracker"
 msgstr "የትዕዛዝ ጠቅላላ"
 
-#: apps/qr/templates/customer/order_tracker.html:208
-#: apps/qr/templates/customer/order_tracker.html:519
-#: apps/qr/templates/customer/order_tracker.html:523
-#: apps/qr/templates/customer/order_tracker.html:529
+#: apps/qr/templates/customer/order_tracker.html:221
+#: apps/qr/templates/customer/order_tracker.html:539
+#: apps/qr/templates/customer/order_tracker.html:543
+#: apps/qr/templates/customer/order_tracker.html:549
 msgid "Connection status"
 msgstr "የግንኙነት ሁኔታ"
 
-#: apps/qr/templates/customer/order_tracker.html:208
-#: apps/qr/templates/customer/order_tracker.html:211
-#: apps/qr/templates/customer/order_tracker.html:528
+#: apps/qr/templates/customer/order_tracker.html:221
+#: apps/qr/templates/customer/order_tracker.html:224
+#: apps/qr/templates/customer/order_tracker.html:548
 msgid "Connecting…"
 msgstr "እየገናኘ ነው…"
 
-#: apps/qr/templates/customer/order_tracker.html:222
+#: apps/qr/templates/customer/order_tracker.html:235
 msgid "Order number"
 msgstr "የጠረጴዛ ቁጥር"
 
-#: apps/qr/templates/customer/order_tracker.html:244
+#: apps/qr/templates/customer/order_tracker.html:257
 msgid "Order status progress"
 msgstr "የትዕዛዝ ሁኔታ እድገት"
 
-#: apps/qr/templates/customer/order_tracker.html:247
+#: apps/qr/templates/customer/order_tracker.html:260
 msgid "Order status steps"
 msgstr "የትዕዛዝ ሁኔታ ደረጃዎች"
 
-#: apps/qr/templates/customer/order_tracker.html:255
+#: apps/qr/templates/customer/order_tracker.html:268
 msgid "Status: Confirmed"
 msgstr "ሁኔታ፦ ተረጋግጧል"
 
-#: apps/qr/templates/customer/order_tracker.html:260
-#: templates/staff/dashboard.html:91 templates/staff/kds.html:47
-#: templates/staff/orders.html:16 templates/staff/orders.html:50
+#: apps/qr/templates/customer/order_tracker.html:273
+#: templates/staff/dashboard.html:133 templates/staff/kds.html:47
+#: templates/staff/orders.html:19 templates/staff/orders.html:56
 #: templates/staff/reception.html:30
 msgid "Confirmed"
 msgstr "ተረጋግጧል"
 
-#: apps/qr/templates/customer/order_tracker.html:267
+#: apps/qr/templates/customer/order_tracker.html:280
 msgid "Status: Received"
 msgstr "ሁኔታ፦ ተቀብሏል"
 
-#: apps/qr/templates/customer/order_tracker.html:272
-#: templates/staff/dashboard.html:92 templates/staff/kds.html:48
-#: templates/staff/orders.html:17 templates/staff/orders.html:51
+#: apps/qr/templates/customer/order_tracker.html:285
+#: templates/staff/dashboard.html:134 templates/staff/kds.html:48
+#: templates/staff/orders.html:20 templates/staff/orders.html:57
 #: templates/staff/reception.html:31
 msgid "Received"
 msgstr "ተቀብሏል"
 
-#: apps/qr/templates/customer/order_tracker.html:279
+#: apps/qr/templates/customer/order_tracker.html:292
 msgid "Status: Preparing"
 msgstr "ሁኔታ፦ በዝግጅት ላይ"
 
-#: apps/qr/templates/customer/order_tracker.html:284
-#: templates/staff/dashboard.html:93 templates/staff/kds.html:49
-#: templates/staff/orders.html:18 templates/staff/orders.html:52
-#: templates/staff/reception.html:32
-msgid "Preparing"
-msgstr "በዝግጅት ላይ"
-
-#: apps/qr/templates/customer/order_tracker.html:291
+#: apps/qr/templates/customer/order_tracker.html:304
 msgid "Status: Ready"
 msgstr "ሁኔታ፦ ዝግጁ ነው"
 
-#: apps/qr/templates/customer/order_tracker.html:296
-#: templates/staff/dashboard.html:94 templates/staff/kds.html:50
-#: templates/staff/orders.html:19 templates/staff/orders.html:53
+#: apps/qr/templates/customer/order_tracker.html:309
+#: templates/staff/dashboard.html:136 templates/staff/kds.html:50
+#: templates/staff/orders.html:22 templates/staff/orders.html:59
 #: templates/staff/reception.html:33
 msgid "Ready"
 msgstr "ዝግጁ"
 
-#: apps/qr/templates/customer/order_tracker.html:303
+#: apps/qr/templates/customer/order_tracker.html:316
 msgid "Status: Served"
 msgstr "ሁኔታ፦ ዝግጁ ነው"
 
-#: apps/qr/templates/customer/order_tracker.html:308
-#: templates/staff/dashboard.html:95 templates/staff/kds.html:51
-#: templates/staff/orders.html:20 templates/staff/orders.html:54
-#: templates/staff/reception.html:34
-msgid "Served"
-msgstr "ቀርቧል"
-
-#: apps/qr/templates/customer/order_tracker.html:327
+#: apps/qr/templates/customer/order_tracker.html:340
 msgid "Enjoy your meal!"
 msgstr "በምግብዎ ይደሰቱ!"
 
-#: apps/qr/templates/customer/order_tracker.html:328
+#: apps/qr/templates/customer/order_tracker.html:341
 msgid "Your order has been served. Thank you!"
 msgstr "ትዕዛዝዎ ቀርቧል። እናመሰግናለን!"
 
-#: apps/qr/templates/customer/order_tracker.html:336
+#: apps/qr/templates/customer/order_tracker.html:349
+#: apps/qr/templates/customer/order_tracker.html:579
+#: apps/qr/templates/customer/order_tracker.html:746
+#: templates/staff/base.html:232
 msgid "Order Cancelled"
 msgstr "ትዕዛዙ ተሰርዟል"
 
-#: apps/qr/templates/customer/order_tracker.html:337
+#: apps/qr/templates/customer/order_tracker.html:350
 msgid "Your order was cancelled. Please ask staff for assistance."
 msgstr "ትዕዛዝዎ ተሰርዟል። እባክዎ ለእርዳታ ሰራተኛን ይጠይቁ።"
 
-#: apps/qr/templates/customer/order_tracker.html:343
+#: apps/qr/templates/customer/order_tracker.html:356
 msgid "Order summary"
 msgstr "የትዕዛዝ ጠቅላላ"
 
-#: apps/qr/templates/customer/order_tracker.html:346
+#: apps/qr/templates/customer/order_tracker.html:359
 msgid "Your Order"
 msgstr "ትዕዛዝ ስጥ"
 
-#: apps/qr/templates/customer/order_tracker.html:353
+#: apps/qr/templates/customer/order_tracker.html:366
 msgid "Items ordered"
 msgstr "የታዘዙ እቃዎች"
 
-#: apps/qr/templates/customer/order_tracker.html:367
+#: apps/qr/templates/customer/order_tracker.html:380
 msgid "servings"
 msgstr "አገልግሎቶች"
 
-#: apps/qr/templates/customer/order_tracker.html:375
+#: apps/qr/templates/customer/order_tracker.html:388
 msgid "Loading order items…"
 msgstr "የትዕዛዝ ዝርዝሮች እየጫነ ነው..."
 
-#: apps/qr/templates/customer/order_tracker.html:394
+#: apps/qr/templates/customer/order_tracker.html:407
 msgid "We'll update your order status in real time."
 msgstr "የትዕዛዝ ሁኔታዎን በቅጽበት እናሳውቅዎታለን።"
 
-#: apps/qr/templates/customer/order_tracker.html:400
+#: apps/qr/templates/customer/order_tracker.html:413
 msgid "Cancel Order"
 msgstr "ትዕዛዝ ይቀልሱ"
 
-#: apps/qr/templates/customer/order_tracker.html:428
+#: apps/qr/templates/customer/order_tracker.html:441
 msgid "Order confirmed"
 msgstr "ትዕዛዝ ተረጋግጧል"
 
-#: apps/qr/templates/customer/order_tracker.html:429
+#: apps/qr/templates/customer/order_tracker.html:442
 msgid "Order received by kitchen"
 msgstr "ትዕዛዝ በወጥ ቤት ተቀብሏል"
 
-#: apps/qr/templates/customer/order_tracker.html:430
+#: apps/qr/templates/customer/order_tracker.html:443
 msgid "Kitchen is preparing your order"
 msgstr "ወጥ ቤት ትዕዛዝዎን እያዘጋጀ ነው"
 
-#: apps/qr/templates/customer/order_tracker.html:431
+#: apps/qr/templates/customer/order_tracker.html:444
 msgid "Your order is ready for collection"
 msgstr "ትዕዛዝዎ ለመቀበል ዝግጁ ነው"
 
-#: apps/qr/templates/customer/order_tracker.html:432
+#: apps/qr/templates/customer/order_tracker.html:445
 msgid "Your order has been served. Enjoy!"
 msgstr "ትዕዛዝዎ ቀርቧል። ይደሰቱ!"
 
-#: apps/qr/templates/customer/order_tracker.html:433
+#: apps/qr/templates/customer/order_tracker.html:446
 msgid "Order has been cancelled"
 msgstr "ትዕዛዝ ተሰርዟል"
 
-#: apps/qr/templates/customer/order_tracker.html:476
+#: apps/qr/templates/customer/order_tracker.html:489
 msgid "Are you sure you want to cancel this order?"
 msgstr "እርግጠኛ ነዎት ይህን ትዕዛዝ መቀለስ ይፈልጋሉ?"
 
-#: apps/qr/templates/customer/order_tracker.html:492
+#: apps/qr/templates/customer/order_tracker.html:505
 msgid "Could not cancel order."
 msgstr "ትዕዛዙን መቀለስ አልተቻለም።"
 
-#: apps/qr/templates/customer/order_tracker.html:518
-#: apps/qr/templates/customer/order_tracker.html:519
+#: apps/qr/templates/customer/order_tracker.html:538
+#: apps/qr/templates/customer/order_tracker.html:539
 #: templates/staff/reception.html:18
 msgid "Live"
 msgstr "ቀጥታ"
 
-#: apps/qr/templates/customer/order_tracker.html:522
-#: apps/qr/templates/customer/order_tracker.html:523
+#: apps/qr/templates/customer/order_tracker.html:542
+#: apps/qr/templates/customer/order_tracker.html:543
 msgid "Polling"
 msgstr "ምርመራ ላይ"
 
-#: apps/qr/templates/customer/order_tracker.html:529
+#: apps/qr/templates/customer/order_tracker.html:549
 msgid "Connecting"
 msgstr "እየገናኘ ነው"
+
+#: apps/qr/templates/customer/order_tracker.html:576
+#: apps/qr/templates/customer/order_tracker.html:743
+#| msgid "Kitchen is preparing your order"
+msgid "Preparing Your Order"
+msgstr "ትዕዛዝዎ በዝግጅት ላይ ነው"
+
+#: apps/qr/templates/customer/order_tracker.html:577
+#: apps/qr/templates/customer/order_tracker.html:744
+#| msgid "Your Order"
+msgid "Your Order is Ready!"
+msgstr "ትዕዛዝዎ ዝግጁ ነው!"
+
+#: apps/qr/templates/customer/order_tracker.html:578
+#: apps/qr/templates/customer/order_tracker.html:745
+msgid "Order Served — Enjoy!"
+msgstr "ትዕዛዝ ቀርቧል — መልካም ምግብ!"
+
+#: apps/qr/templates/customer/order_tracker.html:582
+#: apps/qr/templates/customer/order_tracker.html:749
+#: templates/staff/base.html:233
+#| msgid "Order status steps"
+msgid "Order Status Changed"
+msgstr "የትዕዛዝ ሁኔታ ተቀይሯል"
+
+#: apps/qr/templates/customer/order_tracker.html:583
+#: apps/qr/templates/customer/order_tracker.html:750
+#: templates/staff/base.html:234
+#| msgid "Orders"
+msgid "Order"
+msgstr "ትዕዛዝ"
 
 #: apps/qr/templates/customer/qr_invalid.html:10
 msgid "QR Code Error"
@@ -682,7 +802,8 @@ msgstr "QR ኮድ የማይሰራ ነው"
 msgid ""
 "This QR code is invalid or has expired. Please ask a staff member to provide "
 "a new QR code for your table."
-msgstr "ይህ QR ኮድ የማይሰራ ወይም ጊዜው ያለፈበት ነው። እባክዎ ለጠረጴዛዎ አዲስ QR ኮድ እንዲሰጥዎ ሰራተኛን ይጠይቁ።"
+msgstr ""
+"ይህ QR ኮድ የማይሰራ ወይም ጊዜው ያለፈበት ነው። እባክዎ ለጠረጴዛዎ አዲስ QR ኮድ እንዲሰጥዎ ሰራተኛን ይጠይቁ።"
 
 #: apps/qr/templates/customer/qr_invalid.html:108
 msgid "Error code"
@@ -731,63 +852,102 @@ msgstr "ከላይ ጠረጴዛ ወይም ክፍል ይምረጡ፣ ከዚያ Ent
 msgid "Enter Customer Menu"
 msgstr "ወደ ደንበኛ ምናሌ ይግቡ"
 
-#: templates/staff/base.html:9 templates/staff/base.html:81
-#: templates/staff/login.html:20
+#: templates/staff/base.html:9 templates/staff/base.html:170
+#: templates/staff/login.html:34
 msgid "Staff Portal"
 msgstr "የሰራተኛ መግቢያ በር"
 
-#: templates/staff/base.html:85 templates/staff/base.html:113
+#: templates/staff/base.html:168
+#| msgid "Main navigation"
+msgid "Staff navigation"
+msgstr "የሰራተኞች አሰሳ"
+
+#: templates/staff/base.html:174 templates/staff/base.html:202
 #: templates/staff/dashboard.html:4 templates/staff/dashboard.html:6
 msgid "Dashboard"
 msgstr "ዳሽቦርድ"
 
-#: templates/staff/base.html:86 templates/staff/kds.html:3
+#: templates/staff/base.html:175 templates/staff/kds.html:3
 msgid "Kitchen Display"
 msgstr "የወጥ ቤት ማሳያ"
 
-#: templates/staff/base.html:87 templates/staff/reception.html:3
+#: templates/staff/base.html:176 templates/staff/reception.html:3
 msgid "Reception"
 msgstr "እንግዳ ተቀባይ"
 
-#: templates/staff/base.html:90 templates/staff/qr_codes.html:3
+#: templates/staff/base.html:179 templates/staff/qr_codes.html:3
 msgid "QR Codes"
 msgstr "QR ኮዶች"
 
-#: templates/staff/base.html:91 templates/staff/tables.html:3
+#: templates/staff/base.html:180 templates/staff/tables.html:3
 #: templates/staff/tables.html:5
 msgid "Tables &amp; Rooms"
 msgstr "ጠረጴዛዎች እና ክፍሎች"
 
-#: templates/staff/base.html:92 templates/staff/inventory.html:3
+#: templates/staff/base.html:181 templates/staff/inventory.html:3
 #: templates/staff/inventory.html:5
 msgid "Inventory"
 msgstr "ክምችት"
 
-#: templates/staff/base.html:93 templates/staff/branch_comparison.html:40
-#: templates/staff/expenses.html:3 templates/staff/expenses.html:5
-#: templates/staff/expenses.html:11 templates/staff/financials.html:97
+#: templates/staff/base.html:182 templates/staff/branch_comparison.html:48
+#: templates/staff/branch_comparison.html:72
+#: templates/staff/branch_comparison.html:118 templates/staff/expenses.html:3
+#: templates/staff/expenses.html:5 templates/staff/expenses.html:11
+#: templates/staff/financials.html:97
 msgid "Expenses"
 msgstr "ወጪዎች"
 
-#: templates/staff/base.html:94 templates/staff/financials.html:3
+#: templates/staff/base.html:183 templates/staff/financials.html:3
 msgid "Financials"
 msgstr "ፋይናንስ"
 
-#: templates/staff/base.html:95
+#: templates/staff/base.html:184
 msgid "Branch Report"
 msgstr "የቅርንጫፍ ሪፖርት"
 
-#: templates/staff/base.html:100
+#: templates/staff/base.html:189
 msgid "Profile"
 msgstr "መገለጫ"
 
-#: templates/staff/base.html:101
+#: templates/staff/base.html:190
 msgid "Logout"
 msgstr "ውጣ"
 
-#: templates/staff/base.html:110
+#: templates/staff/base.html:199
 msgid "Toggle navigation"
 msgstr "መመሪያ መቀየሪያ ይጫኑ"
+
+#: templates/staff/base.html:225
+#| msgid "Review Order"
+msgid "New Order!"
+msgstr "አዲስ ትዕዛዝ!"
+
+#: templates/staff/base.html:227
+msgid "more"
+msgstr "ተጨማሪ"
+
+#: templates/staff/base.html:228
+#| msgid "Order received by kitchen"
+msgid "Order Received — Kitchen"
+msgstr "ትዕዛዝ ተቀብሏል — ወጥ ቤት"
+
+#: templates/staff/base.html:229
+#| msgid "Preparing"
+msgid "Preparing — Kitchen"
+msgstr "በዝግጅት ላይ — ወጥ ቤት"
+
+#: templates/staff/base.html:230
+msgid "Order Ready to Serve — Reception"
+msgstr "ትዕዛዝ ለማቅረብ ዝግጁ — አስተናጋጅ"
+
+#: templates/staff/base.html:231
+#| msgid "Mark Served"
+msgid "Order Served"
+msgstr "ትዕዛዝ ቀርቧል"
+
+#: templates/staff/base.html:235
+msgid "new"
+msgstr "አዲስ"
 
 #: templates/staff/branch_comparison.html:3
 #: templates/staff/branch_comparison.html:4
@@ -798,93 +958,121 @@ msgstr "የቅርንጫፍ ንጽጽር"
 msgid "Multi-Branch Performance"
 msgstr "የበርካታ ቅርንጫፎች አፈጻጸም"
 
-#: templates/staff/branch_comparison.html:18 templates/staff/financials.html:18
-#: templates/staff/financials.html:98
+#: templates/staff/branch_comparison.html:18 templates/staff/dashboard.html:23
+#: templates/staff/financials.html:18 templates/staff/financials.html:98
 msgid "Today"
 msgstr "ዛሬ"
 
-#: templates/staff/branch_comparison.html:19 templates/staff/financials.html:19
-#: templates/staff/financials.html:99
+#: templates/staff/branch_comparison.html:19 templates/staff/dashboard.html:24
+#: templates/staff/financials.html:19 templates/staff/financials.html:99
 msgid "This Week"
 msgstr "በዚህ ሳምንት"
 
-#: templates/staff/branch_comparison.html:20 templates/staff/financials.html:20
-#: templates/staff/financials.html:100
+#: templates/staff/branch_comparison.html:20 templates/staff/dashboard.html:25
+#: templates/staff/financials.html:20 templates/staff/financials.html:100
 msgid "This Month"
 msgstr "በዚህ ወር"
 
-#: templates/staff/branch_comparison.html:38 templates/staff/profile.html:18
+#: templates/staff/branch_comparison.html:46 templates/staff/profile.html:18
 msgid "Branch"
 msgstr "የቅርንጫፍ ሥራ አስኪያጅ"
 
-#: templates/staff/branch_comparison.html:39 templates/staff/financials.html:96 templates/staff/dashboard.html:21
+#: templates/staff/branch_comparison.html:47
+#: templates/staff/branch_comparison.html:71
+#: templates/staff/branch_comparison.html:117 templates/staff/dashboard.html:47
+#: templates/staff/financials.html:96
 msgid "Income"
 msgstr "ገቢ"
 
-#: templates/staff/branch_comparison.html:41
+#: templates/staff/branch_comparison.html:49
+#: templates/staff/branch_comparison.html:119
 msgid "Profit"
 msgstr "ትርፍ"
 
-#: templates/staff/branch_comparison.html:43
+#: templates/staff/branch_comparison.html:51
+#: templates/staff/branch_comparison.html:121
 msgid "Avg Order"
 msgstr "ትዕዛዝ ስጥ"
 
-#: templates/staff/branch_comparison.html:44
+#: templates/staff/branch_comparison.html:52
+#: templates/staff/branch_comparison.html:122
 msgid "Top Item"
 msgstr "እቃ"
 
-#: templates/staff/dashboard.html:17
+#: templates/staff/branch_comparison.html:66
+#| msgid "Total Income"
+msgid "Highest Income"
+msgstr "ከፍተኛ ገቢ"
+
+#: templates/staff/branch_comparison.html:67
+#| msgid "Total Expenses"
+msgid "Lowest Expenses"
+msgstr "ዝቅተኛ ወጪ"
+
+#: templates/staff/branch_comparison.html:68
+msgid "Highest Margin"
+msgstr "ከፍተኛ ትርፍ ህዳግ"
+
+#: templates/staff/branch_comparison.html:69
+#| msgid "No expense data available."
+msgid "No branch data available yet."
+msgstr "እስካሁን ምንም የቅርንጫፍ መረጃ የለም።"
+
+#: templates/staff/branch_comparison.html:70
+msgid "No data."
+msgstr "ምንም መረጃ የለም።"
+
+#: templates/staff/branch_comparison.html:73
+#| msgid "Failed to load"
+msgid "Failed to load data."
+msgstr "መረጃውን መጫን አልተሳካም።"
+
+#: templates/staff/dashboard.html:35
 msgid "Active Orders"
 msgstr "ንቁ ትዕዛዞች"
 
-#: templates/staff/dashboard.html:39 templates/staff/menu.html:11
+#: templates/staff/dashboard.html:59 templates/staff/menu.html:11
 msgid "Menu Items"
 msgstr "የምናሌ እቃዎች"
 
-#: templates/staff/dashboard.html:50
+#: templates/staff/dashboard.html:71
 msgid "Low Stock Alerts"
 msgstr "ዝቅተኛ ክምችት ማንቂያዎች"
 
-#: templates/staff/dashboard.html:63
+#: templates/staff/dashboard.html:85
 msgid "Recent Orders"
 msgstr "የቅርብ ትዕዛዞች"
 
-#: templates/staff/dashboard.html:67
+#: templates/staff/dashboard.html:89
 msgid "View All Orders"
 msgstr "ሁሉንም ትዕዛዞች ይመልከቱ"
 
-#: templates/staff/dashboard.html:72
+#: templates/staff/dashboard.html:95
 msgid "Inventory Alerts"
 msgstr "የክምችት ማንቂያዎች"
 
-#: templates/staff/dashboard.html:76
+#: templates/staff/dashboard.html:99
 msgid "View Inventory"
 msgstr "ክምችት ይመልከቱ"
 
-#: templates/staff/dashboard.html:89
-msgid "All stock levels OK"
-msgstr "ሁሉም የክምችት ደረጃዎች ደህና ናቸው"
-
-#: templates/staff/dashboard.html:118
-msgid "No orders yet for this period."
-msgstr "ለዚህ ጊዜ ገና ትዕዛዝ የለም።"
-
-#: templates/staff/dashboard.html:125 templates/staff/dashboard.html:131
-msgid "sold"
-msgstr "ተሽጧል"
-
-#: templates/staff/dashboard.html:128 templates/staff/financials.html:80
+#: templates/staff/dashboard.html:110 templates/staff/financials.html:80
 msgid "Top Selling Items"
 msgstr "ከፍተኛ የሚሸጡ እቃዎች"
 
-#: templates/staff/dashboard.html:96 templates/staff/kds.html:52
-#: templates/staff/orders.html:21 templates/staff/orders.html:55
-#: templates/staff/reception.html:35
-msgid "Cancelled"
-msgstr "ተሰርዟል"
+#: templates/staff/dashboard.html:130
+msgid "All stock levels OK"
+msgstr "ሁሉም የክምችት ደረጃዎች ደህና ናቸው"
+
+#: templates/staff/dashboard.html:131
+msgid "No orders yet for this period."
+msgstr "ለዚህ ጊዜ ገና ትዕዛዝ የለም።"
+
+#: templates/staff/dashboard.html:209 templates/staff/dashboard.html:213
+msgid "sold"
+msgstr "ተሽጧል"
 
 #: templates/staff/expenses.html:13 templates/staff/inventory.html:13
-#: templates/staff/menu.html:13 templates/staff/orders.html:23
+#: templates/staff/menu.html:17 templates/staff/orders.html:27
 msgid "CSV"
 msgstr "CSV"
 
@@ -893,27 +1081,32 @@ msgid "Record Expense"
 msgstr "ወጪ መዝግብ"
 
 #: templates/staff/expenses.html:24 templates/staff/expenses.html:53
+#: templates/staff/expenses.html:99
 msgid "Date"
 msgstr "ቀን"
 
 #: templates/staff/expenses.html:24 templates/staff/expenses.html:36
-#: templates/staff/menu.html:35 templates/staff/menu.html:137
+#: templates/staff/expenses.html:100 templates/staff/menu.html:40
+#: templates/staff/menu.html:144
 msgid "Description"
 msgstr "አመጋገብ"
 
 #: templates/staff/expenses.html:24 templates/staff/expenses.html:39
-#: templates/staff/inventory.html:27 templates/staff/inventory.html:41
-#: templates/staff/menu.html:23
+#: templates/staff/expenses.html:101 templates/staff/inventory.html:27
+#: templates/staff/inventory.html:41 templates/staff/inventory.html:89
+#: templates/staff/menu.html:27
 msgid "Category"
 msgstr "ምድብ"
 
 #: templates/staff/expenses.html:24 templates/staff/expenses.html:51
+#: templates/staff/expenses.html:102
 msgid "Amount"
 msgstr "መጠን"
 
-#: templates/staff/expenses.html:24 templates/staff/menu.html:23
-#: templates/staff/orders.html:31 templates/staff/qr_codes.html:18
-#: templates/staff/tables.html:22
+#: templates/staff/expenses.html:24 templates/staff/menu.html:27
+#: templates/staff/menu.html:330 templates/staff/orders.html:36
+#: templates/staff/orders.html:114 templates/staff/qr_codes.html:51
+#: templates/staff/qr_codes.html:227 templates/staff/tables.html:22
 msgid "Actions"
 msgstr "ድርጊቶች"
 
@@ -962,13 +1155,13 @@ msgid "Notes"
 msgstr "ማስታወሻዎች"
 
 #: templates/staff/expenses.html:57 templates/staff/inventory.html:50
-#: templates/staff/menu.html:124 templates/staff/menu.html:213
-#: templates/staff/tables.html:48
+#: templates/staff/menu.html:130 templates/staff/menu.html:221
+#: templates/staff/orders.html:54 templates/staff/tables.html:48
 msgid "Cancel"
 msgstr "ሰርዝ"
 
 #: templates/staff/expenses.html:58 templates/staff/inventory.html:51
-#: templates/staff/menu.html:125 templates/staff/tables.html:49
+#: templates/staff/menu.html:131 templates/staff/tables.html:49
 msgid "Save"
 msgstr "አስቀምጥ"
 
@@ -1024,7 +1217,8 @@ msgstr "ክፍለ ጊዜ:"
 msgid "No orders placed this month yet."
 msgstr "በዚህ ወር ገና ምንም ትዕዛዞች አልተሰጡም።"
 
-#: templates/staff/financials.html:102 templates/staff/menu.html:239
+#: templates/staff/financials.html:102 templates/staff/menu.html:247
+#: templates/staff/menu.html:318
 msgid "Item"
 msgstr "እቃ"
 
@@ -1040,19 +1234,19 @@ msgstr "ገቢ"
 msgid "Inventory Items"
 msgstr "የክምችት እቃዎች"
 
-#: templates/staff/inventory.html:15 templates/staff/menu.html:15
+#: templates/staff/inventory.html:15 templates/staff/menu.html:19
 msgid "Add Item"
 msgstr "እቃ ጨምር"
 
 #: templates/staff/inventory.html:27 templates/staff/inventory.html:40
-#: templates/staff/menu.html:23 templates/staff/menu.html:34
-#: templates/staff/menu.html:136 templates/staff/tables.html:22
+#: templates/staff/menu.html:27 templates/staff/menu.html:38
+#: templates/staff/menu.html:142 templates/staff/tables.html:22
 msgid "Name"
 msgstr "ስም"
 
 #: templates/staff/inventory.html:27 templates/staff/inventory.html:42
-#: templates/staff/kds.html:41 templates/staff/menu.html:239
-#: templates/staff/menu.html:252
+#: templates/staff/inventory.html:91 templates/staff/kds.html:41
+#: templates/staff/menu.html:247 templates/staff/menu.html:260
 msgid "Unit"
 msgstr "ክፍል"
 
@@ -1060,14 +1254,15 @@ msgstr "ክፍል"
 msgid "Reorder At"
 msgstr "እንደገና ማዘዣ ደረጃ"
 
-#: templates/staff/inventory.html:27
+#: templates/staff/inventory.html:27 templates/staff/inventory.html:93
 msgid "Expires"
 msgstr "የሚያበቃበት ቀን"
 
-#: templates/staff/inventory.html:27 templates/staff/menu.html:23
-#: templates/staff/menu.html:41 templates/staff/menu.html:143
-#: templates/staff/orders.html:31 templates/staff/qr_codes.html:18
-#: templates/staff/reception.html:28
+#: templates/staff/inventory.html:27 templates/staff/menu.html:27
+#: templates/staff/menu.html:47 templates/staff/menu.html:151
+#: templates/staff/menu.html:329 templates/staff/orders.html:36
+#: templates/staff/orders.html:112 templates/staff/qr_codes.html:49
+#: templates/staff/qr_codes.html:225 templates/staff/reception.html:28
 msgid "Status"
 msgstr "ሁኔታ"
 
@@ -1079,6 +1274,10 @@ msgstr "የክምችት እቃ ጨምር"
 msgid "General"
 msgstr "አጠቃላይ"
 
+#: templates/staff/inventory.html:42
+msgid "kg, L, pcs"
+msgstr "ኪ.ግ፣ ሊትር፣ ፍሬ"
+
 #: templates/staff/inventory.html:45
 msgid "Purchase Price"
 msgstr "የግዢ ዋጋ"
@@ -1086,6 +1285,47 @@ msgstr "የግዢ ዋጋ"
 #: templates/staff/inventory.html:46
 msgid "Expiry Date"
 msgstr "የማብቂያ ቀን"
+
+#: templates/staff/inventory.html:62
+#| msgid "No menu items yet."
+msgid "No inventory items yet."
+msgstr "እስካሁን ምንም የክምችት እቃዎች የሉም።"
+
+#: templates/staff/inventory.html:63
+msgid "OK"
+msgstr "ጥሩ"
+
+#: templates/staff/inventory.html:64
+msgid "Out of Stock"
+msgstr "አልቋል"
+
+#: templates/staff/inventory.html:65
+#| msgid "Low Stock Alerts"
+msgid "Low Stock"
+msgstr "ዝቅተኛ ክምችት"
+
+#: templates/staff/inventory.html:66
+msgid "out of stock"
+msgstr "አልቋል"
+
+#: templates/staff/inventory.html:67
+msgid "low stock"
+msgstr "ዝቅተኛ ክምችት"
+
+#: templates/staff/inventory.html:68
+#| msgid "Description, amount and date are required"
+msgid "Name, quantity and unit are required"
+msgstr "ስም፣ መጠን እና መለኪያ ያስፈልጋሉ"
+
+#: templates/staff/inventory.html:90 templates/staff/kds.html:40
+#: templates/staff/menu.html:247 templates/staff/menu.html:256
+msgid "Qty"
+msgstr "ብዛት"
+
+#: templates/staff/inventory.html:92
+#| msgid "order"
+msgid "Reorder"
+msgstr "እንደገና እዘዝ"
 
 #: templates/staff/kds.html:5 templates/staff/kds.html:23
 msgid "Kitchen Display System"
@@ -1135,7 +1375,7 @@ msgstr "የምግብ አሰራር መስኮት ዝጋ"
 msgid "Cook time:"
 msgstr "የማብሰያ ጊዜ፦"
 
-#: templates/staff/kds.html:37 templates/staff/menu.html:237
+#: templates/staff/kds.html:37 templates/staff/menu.html:245
 msgid "Ingredients"
 msgstr "ንጥረ ነገሮች"
 
@@ -1146,11 +1386,6 @@ msgstr "ምንም ንጥረ ነገሮች አልተዘረዘሩም።"
 #: templates/staff/kds.html:39
 msgid "Ingredient"
 msgstr "ንጥረ ነገር"
-
-#: templates/staff/kds.html:40 templates/staff/menu.html:239
-#: templates/staff/menu.html:248
-msgid "Qty"
-msgstr "ብዛት"
 
 #: templates/staff/kds.html:42
 msgid "Method"
@@ -1180,32 +1415,50 @@ msgstr "ተመርጧል"
 msgid "Staff Login"
 msgstr "የሰራተኛ መግቢያ"
 
-#: templates/staff/login.html:21
+#: templates/staff/login.html:35
 msgid "Sign in to your account"
 msgstr "ወደ መለያዎ ይግቡ"
 
-#: templates/staff/login.html:25
+#: templates/staff/login.html:39
 msgid "Account created successfully! Please sign in."
 msgstr "መለያ በተሳካ ሁኔታ ተፈጥሯል! እባክዎ ይግቡ።"
 
-#: templates/staff/login.html:35 templates/staff/profile.html:16
-#: templates/staff/register.html:33 templates/staff/register.html:78
+#: templates/staff/login.html:50
+#| msgid "Enter the 6-digit verification code from your authenticator app:"
+msgid "Enter the 6-digit code from your authenticator app:"
+msgstr "ከማረጋገጫ መተግበሪያዎ ባለ 6-አሃዝ ኮድ ያስገቡ፦"
+
+#: templates/staff/login.html:52
+msgid "Verification Code"
+msgstr "የማረጋገጫ ኮድ"
+
+#: templates/staff/login.html:55 templates/staff/profile.html:64
+msgid "Verify"
+msgstr "አረጋግጥ"
+
+#: templates/staff/login.html:57
+#| msgid "Back to menu"
+msgid "Back to sign in"
+msgstr "ወደ መግቢያ ተመለስ"
+
+#: templates/staff/login.html:61 templates/staff/profile.html:16
+#: templates/staff/register.html:47 templates/staff/register.html:92
 msgid "Email"
 msgstr "ኢሜይል"
 
-#: templates/staff/login.html:39 templates/staff/register.html:46
+#: templates/staff/login.html:65 templates/staff/register.html:60
 msgid "Password"
 msgstr "የይለፍ ቃል"
 
-#: templates/staff/login.html:42
+#: templates/staff/login.html:68
 msgid "Sign In"
 msgstr "ግባ"
 
-#: templates/staff/login.html:46
+#: templates/staff/login.html:70
 msgid "Don't have an account?"
 msgstr "መለያ የለዎትም?"
 
-#: templates/staff/login.html:46
+#: templates/staff/login.html:70
 msgid "Create one"
 msgstr "አዲስ ይፍጠሩ"
 
@@ -1213,170 +1466,247 @@ msgstr "አዲስ ይፍጠሩ"
 msgid "Menu Management"
 msgstr "የምናሌ አስተዳደር"
 
-#: templates/staff/menu.html:23 templates/staff/menu.html:37
-#: templates/staff/menu.html:139
-msgid "Price"
-msgstr "ዋጋ"
-
-#: templates/staff/menu.html:23 templates/staff/menu.html:223
-#: templates/staff/menu.html:276
-msgid "Recipe"
-msgstr "የምግብ አሰራር"
-
-#: templates/staff/menu.html:32
-msgid "Add Menu Item"
-msgstr "የምናሌ ዝርዝሮች"
-
-#: templates/staff/menu.html:38 templates/staff/menu.html:140
-msgid "Prep time (min)"
-msgstr "የዝግጅት ጊዜ (ደቂቃ)"
-
-#: templates/staff/menu.html:42 templates/staff/menu.html:144
-#: templates/staff/menu.html:274
-msgid "Available"
-msgstr "ይገኛል"
-
-#: templates/staff/menu.html:45 templates/staff/menu.html:147
-msgid "Dietary Tags"
-msgstr "የምግብ ዓይነት ማጣሪያዎች"
-
-#: templates/staff/menu.html:102 templates/staff/menu.html:204
-msgid "Categories"
-msgstr "ካሎሪ"
-
-#: templates/staff/menu.html:103 templates/staff/menu.html:205
-msgid "Loading categories…"
-msgstr "የትዕዛዝ ዝርዝሮች እየጫነ ነው..."
-
-#: templates/staff/menu.html:106
-msgid "Item Image"
-msgstr "የእቃ ምስል"
-
-#: templates/staff/menu.html:108
-msgid "Optional. JPEG, PNG or WebP. Max 5 MB. Uploaded to Cloudinary CDN."
-msgstr "አማራጭ። JPEG፣ PNG ወይም WebP። ከፍተኛ 5ሜባ። ወደ Cloudinary CDN ተሰቅሏል።"
-
-#: templates/staff/menu.html:114
-msgid "Uploading…"
-msgstr "እየሰቀለ ነው…"
-
-#: templates/staff/menu.html:133
-msgid "Edit Menu Item"
-msgstr "የምናሌ ዝርዝሮች"
-
-#: templates/staff/menu.html:208
-msgid "Current Image"
-msgstr "የአሁኑ ምስል"
-
-#: templates/staff/menu.html:214
-msgid "Update Item"
-msgstr "እቃ አዘምን"
-
-#: templates/staff/menu.html:228
-msgid "Method / Instructions"
-msgstr "ልዩ መመሪያዎች"
-
-#: templates/staff/menu.html:232
-msgid "Cook Time (minutes)"
-msgstr "የማብሰያ ጊዜ (ደቂቃዎች)"
-
-#: templates/staff/menu.html:235
-msgid "Save Recipe"
-msgstr "የምግብ አሰራር አስቀምጥ"
-
-#: templates/staff/menu.html:240 templates/staff/menu.html:281
-msgid "No ingredients yet."
-msgstr "እስካሁን ምንም ንጥረ ነገሮች የሉም።"
-
-#: templates/staff/menu.html:244
-msgid "Inventory Item"
-msgstr "የክምችት እቃ"
-
-#: templates/staff/menu.html:245
-msgid "— Select —"
-msgstr "— ምረጥ —"
-
-#: templates/staff/menu.html:256
-msgid "Add"
-msgstr "ጨምር"
-
-#: templates/staff/menu.html:261
-msgid "Close"
-msgstr "ቅርጫት ዝጋ"
-
-#: templates/staff/menu.html:272
-msgid "No menu items yet."
-msgstr "እስካሁን ምንም የምናሌ እቃዎች የሉም።"
-
-#: templates/staff/menu.html:273
-msgid "Archived"
-msgstr "በማህደር ላይ"
-
-#: templates/staff/menu.html:277
-msgid "Edit"
-msgstr "አርትዕ"
-
-#: templates/staff/menu.html:278
-msgid "Archive"
-msgstr "በማህደር ውስጥ አስቀምጥ"
-
-#: templates/staff/menu.html:279
-msgid "Restore"
-msgstr "መልስ"
-
-#: templates/staff/menu.html:14
+#: templates/staff/menu.html:15
 msgid "Show archived"
 msgstr "በማህደር ውስጥ ያሉትን አሳይ"
 
+#: templates/staff/menu.html:27 templates/staff/menu.html:43
+#: templates/staff/menu.html:147 templates/staff/menu.html:327
+msgid "Price"
+msgstr "ዋጋ"
+
+#: templates/staff/menu.html:36
+msgid "Add Menu Item"
+msgstr "የምናሌ ዝርዝሮች"
+
+#: templates/staff/menu.html:39 templates/staff/menu.html:143
+msgid "Name (Amharic)"
+msgstr "ስም (በአማርኛ)"
+
+#: templates/staff/menu.html:41 templates/staff/menu.html:145
+#| msgid "Description"
+msgid "Description (Amharic)"
+msgstr "መግለጫ (በአማርኛ)"
+
+#: templates/staff/menu.html:44 templates/staff/menu.html:148
+msgid "Prep time (min)"
+msgstr "የዝግጅት ጊዜ (ደቂቃ)"
+
+#: templates/staff/menu.html:48 templates/staff/menu.html:152
+#: templates/staff/menu.html:281
+msgid "Available"
+msgstr "ይገኛል"
+
+#: templates/staff/menu.html:51 templates/staff/menu.html:155
+msgid "Dietary Tags"
+msgstr "የምግብ ዓይነት ማጣሪያዎች"
+
+#: templates/staff/menu.html:108 templates/staff/menu.html:212
+#: templates/staff/menu.html:328
+msgid "Categories"
+msgstr "ካሎሪ"
+
+#: templates/staff/menu.html:109 templates/staff/menu.html:213
+msgid "Loading categories…"
+msgstr "የትዕዛዝ ዝርዝሮች እየጫነ ነው..."
+
+#: templates/staff/menu.html:112
+msgid "Item Image"
+msgstr "የእቃ ምስል"
+
+#: templates/staff/menu.html:114
+msgid "Optional. JPEG, PNG or WebP. Max 5 MB. Uploaded to Cloudinary CDN."
+msgstr "አማራጭ። JPEG፣ PNG ወይም WebP። ከፍተኛ 5ሜባ። ወደ Cloudinary CDN ተሰቅሏል።"
+
+#: templates/staff/menu.html:120
+msgid "Uploading…"
+msgstr "እየሰቀለ ነው…"
+
+#: templates/staff/menu.html:139
+msgid "Edit Menu Item"
+msgstr "የምናሌ ዝርዝሮች"
+
+#: templates/staff/menu.html:216
+msgid "Current Image"
+msgstr "የአሁኑ ምስል"
+
+#: templates/staff/menu.html:222
+msgid "Update Item"
+msgstr "እቃ አዘምን"
+
+#: templates/staff/menu.html:231 templates/staff/menu.html:287
+msgid "Recipe"
+msgstr "የምግብ አሰራር"
+
+#: templates/staff/menu.html:236
+msgid "Method / Instructions"
+msgstr "ልዩ መመሪያዎች"
+
+#: templates/staff/menu.html:240
+msgid "Cook Time (minutes)"
+msgstr "የማብሰያ ጊዜ (ደቂቃዎች)"
+
+#: templates/staff/menu.html:243
+msgid "Save Recipe"
+msgstr "የምግብ አሰራር አስቀምጥ"
+
+#: templates/staff/menu.html:248
+msgid "No ingredients yet."
+msgstr "እስካሁን ምንም ንጥረ ነገሮች የሉም።"
+
+#: templates/staff/menu.html:252
+msgid "Inventory Item"
+msgstr "የክምችት እቃ"
+
+#: templates/staff/menu.html:253
+msgid "— Select —"
+msgstr "— ምረጥ —"
+
+#: templates/staff/menu.html:269 templates/staff/qr_codes.html:67
+msgid "Close"
+msgstr "ቅርጫት ዝጋ"
+
 #: templates/staff/menu.html:280
+#| msgid "No menu items yet."
+msgid "No menu items."
+msgstr "ምንም የምናሌ እቃዎች የሉም።"
+
+#: templates/staff/menu.html:283
+msgid "Archived"
+msgstr "በማህደር ላይ"
+
+#: templates/staff/menu.html:284
+msgid "Edit"
+msgstr "አርትዕ"
+
+#: templates/staff/menu.html:285
+msgid "Archive"
+msgstr "በማህደር ውስጥ አስቀምጥ"
+
+#: templates/staff/menu.html:286
+msgid "Restore"
+msgstr "መልስ"
+
+#: templates/staff/menu.html:288
 msgid "Loading\\u2026"
 msgstr "እንደገና እየተገናኘ ነው…"
 
-#: templates/staff/menu.html:282
+#: templates/staff/menu.html:289
+#| msgid "No ingredients yet."
+msgid "No ingredients defined yet."
+msgstr "እስካሁን ምንም ንጥረ ነገሮች አልተገለጹም።"
+
+#: templates/staff/menu.html:290
 msgid "Failed to load recipe."
 msgstr "የምግብ አሰራር መጫን አልተሳካም።"
 
-#: templates/staff/menu.html:283
-msgid "Failed to load"
-msgstr "መጫን አልተሳካም"
+#: templates/staff/menu.html:291
+#| msgid "Failed to load"
+msgid "Failed to load."
+msgstr "መጫን አልተሳካም።"
 
-#: templates/staff/menu.html:284
+#: templates/staff/menu.html:293
 msgid "\\u2014 Select \\u2014"
 msgstr "— ምረጥ —"
 
-#: templates/staff/menu.html:285
+#: templates/staff/menu.html:294
 msgid "Recipe \\u2014 "
 msgstr "የምግብ አሰራር"
 
-#: templates/staff/orders.html:12
+#: templates/staff/menu.html:295
+#| msgid "Description, amount and date are required"
+msgid "Name and price are required"
+msgstr "ስም እና ዋጋ ያስፈልጋሉ"
+
+#: templates/staff/menu.html:296
+msgid ""
+"Please wait for the image to finish uploading, or remove it before saving."
+msgstr "እባክዎ ምስሉ እስኪሰቀል ይጠብቁ፣ ወይም ከማስቀመጥዎ በፊት ያስወግዱት።"
+
+#: templates/staff/menu.html:297
+#| msgid "Search menu items"
+msgid "Archive this menu item?"
+msgstr "ይህንን የምናሌ እቃ ወደ ማህደር ማስገባት ይፈልጋሉ?"
+
+#: templates/staff/menu.html:298
+#| msgid "Search menu items"
+msgid "Restore this menu item?"
+msgstr "ይህንን የምናሌ እቃ ወደነበረበት መመለስ ይፈልጋሉ?"
+
+#: templates/staff/menu.html:299
+msgid "Image must be under 5 MB"
+msgstr "የምስሉ መጠን ከ 5 ሜጋባይት በታች መሆን አለበት"
+
+#: templates/staff/menu.html:300
+#| msgid "Failed to load recipe."
+msgid "Failed to load item details."
+msgstr "የእቃውን ዝርዝሮች መጫን አልተሳካም።"
+
+#: templates/staff/menu.html:301
+msgid "Please select an inventory item, quantity, and unit."
+msgstr "እባክዎ የክምችት እቃ፣ መጠን እና መለኪያ ይምረጡ።"
+
+#: templates/staff/menu.html:302
+msgid "Remove this ingredient?"
+msgstr "ይህንን ንጥረ ነገር ማስወገድ ይፈልጋሉ?"
+
+#: templates/staff/menu.html:303
+#| msgid "Failed to load recipe."
+msgid "Failed to remove ingredient."
+msgstr "ንጥረ ነገሩን ማስወገድ አልተሳካም።"
+
+#: templates/staff/menu.html:304
+#| msgid "No orders yet for this period."
+msgid "No categories defined for this branch."
+msgstr "ለዚህ ቅርንጫፍ የተገለጹ ምድቦች የሉም።"
+
+#: templates/staff/menu.html:305
+#| msgid "Failed to load recipe."
+msgid "Failed to load categories."
+msgstr "ምድቦችን መጫን አልተሳካም።"
+
+#: templates/staff/menu.html:306
+msgid ""
+"This menu item does not have a recipe configured yet. Add ingredients and "
+"instructions below."
+msgstr "ይህ የምናሌ እቃ ገና የተዘጋጀ የምግብ አሰራር የለውም። ከታች ንጥረ ነገሮችን እና መመሪያዎችን ያክሉ።"
+
+#: templates/staff/orders.html:13
 msgid "All Orders"
 msgstr "ትዕዛዝ ስጥ"
 
-#: templates/staff/orders.html:15
+#: templates/staff/orders.html:17
 msgid "Active orders"
 msgstr "ንቁ ትዕዛዞች"
 
-#: templates/staff/orders.html:15
+#: templates/staff/orders.html:18
+#| msgid "All Orders"
+msgid "All orders"
+msgstr "ሁሉም ትዕዛዞች"
+
+#: templates/staff/orders.html:25
 msgid "Historical (Served / Cancelled)"
 msgstr "ታሪክ (ተረክቧል / ተሰርዟል)"
 
-#: templates/staff/orders.html:31 templates/staff/reception.html:24
+#: templates/staff/orders.html:36 templates/staff/orders.html:108
+#: templates/staff/reception.html:24
 msgid "Order #"
 msgstr "ትእዛዝ #"
 
-#: templates/staff/orders.html:31 templates/staff/reception.html:26
+#: templates/staff/orders.html:36 templates/staff/orders.html:110
+#: templates/staff/reception.html:26
 msgid "Items"
 msgstr "እቃዎች"
 
-#: templates/staff/orders.html:31
+#: templates/staff/orders.html:36 templates/staff/orders.html:113
 msgid "Placed At"
 msgstr "ትዕዛዝ ስጥ"
 
-#: templates/staff/orders.html:47
+#: templates/staff/orders.html:52
 msgid "No orders found."
 msgstr "ንቁ ትዕዛዞች የሉም።"
 
-#: templates/staff/orders.html:48
+#: templates/staff/orders.html:53
 msgid "Cancel this order?"
 msgstr "ንቁ ትዕዛዝ"
 
@@ -1388,8 +1718,8 @@ msgstr "የእኔ መገለጫ"
 msgid "Account Information"
 msgstr "የመለያ መረጃ"
 
-#: templates/staff/profile.html:17 templates/staff/register.html:37
-#: templates/staff/register.html:82
+#: templates/staff/profile.html:17 templates/staff/register.html:51
+#: templates/staff/register.html:96
 msgid "Role"
 msgstr "ሚና"
 
@@ -1405,7 +1735,7 @@ msgstr "2FA ነቅቷል"
 msgid "Your account is protected with time-based one-time passwords."
 msgstr "መለያዎ በጊዜ-ተኮር የአንድ ጊዜ የይለፍ ቃሎች የተጠበቀ ነው።"
 
-#: templates/staff/profile.html:30 templates/staff/profile.html:74
+#: templates/staff/profile.html:30 templates/staff/profile.html:75
 msgid "Disable 2FA"
 msgstr "2FA አሰናክል"
 
@@ -1435,101 +1765,167 @@ msgstr "ከታች ያለውን QR ኮድ በማረጋገጫ መተግበሪያ�
 msgid "Or enter this secret manually:"
 msgstr "ወይም ይህን ሚስጥር በእጅ ያስገቡ፦"
 
-#: templates/staff/profile.html:59
+#: templates/staff/profile.html:57
+msgid "I have scanned the QR code"
+msgstr "የQR ኮዱን ስካን አድርጌያለሁ"
+
+#: templates/staff/profile.html:60
 msgid "Enter the 6-digit verification code from your authenticator app:"
 msgstr "ከማረጋገጫ መተግበሪያዎ ባለ 6-አሃዝ ኮድ ያስገቡ፦"
 
-#: templates/staff/profile.html:63
-msgid "Verify"
-msgstr "አረጋግጥ"
-
-#: templates/staff/profile.html:78
+#: templates/staff/profile.html:79
 msgid "Enter your current password to disable two-factor authentication:"
 msgstr "ሁለት-ደረጃ ማረጋገጫን ለማሰናከል የአሁኑን የይለፍ ቃል ያስገቡ፦"
 
-#: templates/staff/profile.html:80
+#: templates/staff/profile.html:81
 msgid "Current password"
 msgstr "የአሁኑ የይለፍ ቃል"
 
-#: templates/staff/profile.html:83
+#: templates/staff/profile.html:84
 msgid "Confirm Disable"
 msgstr "ተረጋግጧል"
+
+#: templates/staff/profile.html:93
+#| msgid "Failed to load recipe. Please try again."
+msgid "Failed to generate QR code. Please try again."
+msgstr "የQR ኮድ ማመንጨት አልተሳካም። እባክዎ እንደገና ይሞክሩ።"
+
+#: templates/staff/profile.html:94
+msgid "Please enter a valid 6-digit code."
+msgstr "እባክዎ ትክክለኛ ባለ 6-አሃዝ ኮድ ያስገቡ።"
+
+#: templates/staff/profile.html:95
+msgid "Verification failed"
+msgstr "ማረጋገጥ አልተሳካም"
+
+#: templates/staff/profile.html:96
+#| msgid "Failed to load recipe. Please try again."
+msgid "Invalid code. Please try again."
+msgstr "ልክ ያልሆነ ኮድ። እባክዎ እንደገና ይሞክሩ።"
+
+#: templates/staff/profile.html:97
+#| msgid "Place your order"
+msgid "Please enter your password."
+msgstr "እባክዎ የይለፍ ቃልዎን ያስገቡ።"
+
+#: templates/staff/profile.html:98
+#| msgid "Failed to load"
+msgid "Failed to disable 2FA"
+msgstr "2FA ማሰናከል አልተሳካም"
 
 #: templates/staff/qr_codes.html:5
 msgid "QR Code Management"
 msgstr "የQR ኮድ አስተዳደር"
 
-#: templates/staff/qr_codes.html:11
-msgid "Tables &amp; QR Codes"
-msgstr "ጠረጴዛዎች እና QR ኮዶች"
+#: templates/staff/qr_codes.html:33
+#| msgid "Tables &amp; QR Codes"
+msgid "Tables, Rooms & QR Codes"
+msgstr "ጠረጴዛዎች፣ ክፍሎች እና የQR ኮዶች"
 
-#: templates/staff/qr_codes.html:18
+#: templates/staff/qr_codes.html:34
+msgid "Generate and print QR codes for customers to scan and place orders."
+msgstr "ደንበኞች ስካን አድርገው እንዲያዙ የQR ኮዶችን ያመንጩ እና ያትሙ።"
+
+#: templates/staff/qr_codes.html:37
+msgid "Refresh"
+msgstr "አድስ"
+
+#: templates/staff/qr_codes.html:46 templates/staff/qr_codes.html:215
 msgid "Location"
 msgstr "ቦታ"
 
-#: templates/staff/qr_codes.html:18 templates/staff/tables.html:22
+#: templates/staff/qr_codes.html:47 templates/staff/qr_codes.html:219
+#: templates/staff/tables.html:22
 msgid "Type"
 msgstr "አይነት"
 
-#: templates/staff/qr_codes.html:18 templates/staff/qr_codes.html:30
+#: templates/staff/qr_codes.html:48 templates/staff/qr_codes.html:224
+#: templates/staff/qr_codes.html:251
 msgid "QR Code"
 msgstr "የQR ኮድ ስህተት"
 
-#: templates/staff/qr_codes.html:18
+#: templates/staff/qr_codes.html:50 templates/staff/qr_codes.html:226
 msgid "Last Generated"
 msgstr "መጨረሻ የተፈጠረ"
 
-#: templates/staff/qr_codes.html:41
+#: templates/staff/qr_codes.html:55 templates/staff/qr_codes.html:132
+#| msgid "Loading categories…"
+msgid "Loading locations…"
+msgstr "ቦታዎች እየጫኑ ነው…"
+
+#: templates/staff/qr_codes.html:66
+#| msgid "Tables &amp; QR Codes"
+msgid "Table QR Code"
+msgstr "የጠረጴዛ QR ኮድ"
+
+#: templates/staff/qr_codes.html:80 templates/staff/tables.html:64
 msgid "Room"
 msgstr "ክፍል"
 
-#: templates/staff/qr_codes.html:42
+#: templates/staff/qr_codes.html:81
 msgid "Seats:"
 msgstr "መቀመጫዎች:"
 
-#: templates/staff/qr_codes.html:43
-msgid "No tables or rooms yet. Create one in the Menu section first."
-msgstr "ጠረጴዛዎች ወይም ክፍሎች ገና የሉም። በመጀመሪያ በምናሌ ክፍል ውስጥ ይፍጠሩ።"
+#: templates/staff/qr_codes.html:82
+#| msgid "No tables or rooms yet. Create one in the Menu section first."
+msgid "No tables or rooms found. Add tables in the Tables section first."
+msgstr "ምንም ጠረጴዛዎች ወይም ክፍሎች አልተገኙም። በመጀመሪያ በጠረጴዛዎች ክፍል ውስጥ ጠረጴዛዎችን ያክሉ።"
 
-#: templates/staff/qr_codes.html:44
+#: templates/staff/qr_codes.html:83
 msgid "\\u2014"
 msgstr "የምግብ አሰራር"
 
-#: templates/staff/qr_codes.html:45
+#: templates/staff/qr_codes.html:84
 msgid "Active"
 msgstr "ንቁ"
 
-#: templates/staff/qr_codes.html:46
+#: templates/staff/qr_codes.html:85
 msgid "Not generated"
 msgstr "አልተፈጠረም"
 
-#: templates/staff/qr_codes.html:47
+#: templates/staff/qr_codes.html:86
 msgid "Generate"
 msgstr "ፍጠር"
 
-#: templates/staff/qr_codes.html:48
+#: templates/staff/qr_codes.html:87
 msgid "Regenerate"
 msgstr "እንደገና ፍጠር"
 
-#: templates/staff/qr_codes.html:49
+#: templates/staff/qr_codes.html:88
 msgid "Generating\\u2026"
 msgstr "እንደገና እየተገናኘ ነው…"
 
-#: templates/staff/qr_codes.html:50
-msgid "Download"
-msgstr "አውርድ"
+#: templates/staff/qr_codes.html:89
+#| msgid "Download"
+msgid "Download PNG"
+msgstr "PNG አውርድ"
 
-#: templates/staff/qr_codes.html:51
+#: templates/staff/qr_codes.html:90
 msgid "Print"
 msgstr "አትም"
 
-#: templates/staff/qr_codes.html:52
+#: templates/staff/qr_codes.html:91
+msgid "View"
+msgstr "ተመልከት"
+
+#: templates/staff/qr_codes.html:92
+msgid ""
+"Regenerating this QR code will deactivate the current printed QR code for "
+"this table. Customers scanning the old code will no longer be able to order. "
+"Are you sure you want to continue?"
+msgstr "ይህንን የQR ኮድ እንደገና ማመንጨት ለዚህ ጠረጴዛ አሁን የታተመውን የQR ኮድ ያቦዝነዋል። የድሮውን ኮድ የሚቃኙ ደንበኞች ከዚያ በኋላ ማዘዝ አይችሉም። እርግጠኛ ነዎት መቀጠል ይፈልጋሉ?"
+
+#: templates/staff/qr_codes.html:93
 msgid "Failed to generate QR code."
 msgstr "የQR ኮድ መፍጠር አልተሳካም።"
 
-#: templates/staff/qr_codes.html:53
+#: templates/staff/qr_codes.html:94
 msgid "Network error. Please try again."
 msgstr "የአውታረ መረብ ስህተት። እባክዎ እንደገና ይሞክሩ።"
+
+#: templates/staff/qr_codes.html:286
+msgid "Scan to view menu &amp; order"
+msgstr "ምናሌውን ለማየት እና ለማዘዝ ስካን ያድርጉ"
 
 #: templates/staff/reception.html:5 templates/staff/reception.html:16
 msgid "Reception Dashboard"
@@ -1571,55 +1967,53 @@ msgstr "ሰዓት"
 msgid "Staff Registration"
 msgstr "የሰራተኛ ምዝገባ"
 
-#: templates/staff/register.html:22 templates/staff/register.html:53
+#: templates/staff/register.html:36 templates/staff/register.html:67
+#: templates/staff/register.html:78
 msgid "Create Account"
 msgstr "መለያ ፍጠር"
 
-#: templates/staff/register.html:23
+#: templates/staff/register.html:37
 msgid "Register for a staff account"
 msgstr "ለሰራተኛ መለያ ይመዝገቡ"
 
-#: templates/staff/register.html:39 templates/staff/register.html:84
+#: templates/staff/register.html:53 templates/staff/register.html:98
 msgid "Select role..."
 msgstr "ሚና ይምረጡ..."
 
-#: templates/staff/register.html:40 templates/staff/register.html:85
+#: templates/staff/register.html:54 templates/staff/register.html:99
 msgid "Branch Manager"
 msgstr "የቅርንጫፍ ሥራ አስኪያጅ"
 
-#: templates/staff/register.html:41 templates/staff/register.html:86
+#: templates/staff/register.html:55 templates/staff/register.html:100
 msgid "Receptionist"
 msgstr "እንግዳ ተቀባይ"
 
-#: templates/staff/register.html:42 templates/staff/register.html:87
+#: templates/staff/register.html:56 templates/staff/register.html:101
 msgid "Kitchen Staff"
 msgstr "የወጥ ቤት ሰራተኛ"
 
-#: templates/staff/register.html:50
+#: templates/staff/register.html:64
 msgid "Confirm Password"
 msgstr "ተረጋግጧል"
 
-#: templates/staff/register.html:57
+#: templates/staff/register.html:71
 msgid "Already have an account?"
 msgstr "መለያ አለዎት?"
 
-#: templates/staff/register.html:57
+#: templates/staff/register.html:71
 msgid "Sign in"
 msgstr "ግባ"
 
-#: templates/staff/register.html:64
-msgid "Invite Staff"
-msgstr "ሰራተኛ ጋብዝ"
+#: templates/staff/register.html:79
+#| msgid "Send an invite for a new staff member"
+msgid "Invite Staff — Send an invite for a new staff member"
+msgstr "ሰራተኛ ጋብዝ — ለአዲስ ሰራተኛ ግብዣ ይላኩ"
 
-#: templates/staff/register.html:65
-msgid "Send an invite for a new staff member"
-msgstr "ለአዲስ ሰራተኛ ግብዣ ይላኩ"
-
-#: templates/staff/register.html:90
+#: templates/staff/register.html:104
 msgid "Send Invite"
 msgstr "ግብዣ ላክ"
 
-#: templates/staff/register.html:94
+#: templates/staff/register.html:108
 msgid "Back to Dashboard"
 msgstr "ወደ ዳሽቦርድ ተመለስ"
 
@@ -1628,25 +2022,74 @@ msgid "All Tables &amp; Rooms"
 msgstr "ሁሉም ጠረጴዛዎች እና ክፍሎች"
 
 #: templates/staff/tables.html:13 templates/staff/tables.html:34
+#: templates/staff/tables.html:65
 msgid "Add Table"
 msgstr "ጠረጴዛ"
 
-#: templates/staff/tables.html:14
+#: templates/staff/tables.html:14 templates/staff/tables.html:66
 msgid "Add Room"
 msgstr "ክፍሎች"
 
-#: templates/staff/tables.html:22
+#: templates/staff/tables.html:22 templates/staff/tables.html:72
+#: templates/staff/tables.html:137
 msgid "Capacity"
 msgstr "አቅም"
 
-#: templates/staff/tables.html:39
+#: templates/staff/tables.html:39 templates/staff/tables.html:69
 msgid "Table Number"
 msgstr "የጠረጴዛ ቁጥር"
 
-#: templates/staff/tables.html:43
+#: templates/staff/tables.html:43 templates/staff/tables.html:71
 msgid "Seat Count"
 msgstr "የመቀመጫ ብዛት"
+
+#: templates/staff/tables.html:67
+#| msgid "Add Table"
+msgid "Edit Table"
+msgstr "ጠረጴዛ አርትዕ"
+
+#: templates/staff/tables.html:68
+#| msgid "Add Room"
+msgid "Edit Room"
+msgstr "ክፍል አርትዕ"
+
+#: templates/staff/tables.html:70
+#| msgid "Name"
+msgid "Room Name"
+msgstr "የክፍል ስም"
+
+#: templates/staff/tables.html:73
+msgid "No tables or rooms yet."
+msgstr "እስካሁን ምንም ጠረጴዛዎች ወይም ክፍሎች የሉም።"
+
+#: templates/staff/tables.html:74
+#| msgid "No orders found."
+msgid "No branch found."
+msgstr "ምንም ቅርንጫፍ አልተገኘም።"
+
+#: templates/staff/tables.html:75
+msgid "Name is required"
+msgstr "ስም ያስፈልጋል"
+
+#: templates/staff/tables.html:76
+#| msgid "Delete this expense?"
+msgid "Delete this location?"
+msgstr "ይህንን ቦታ መሰረዝ ይፈልጋሉ?"
+
+#: templates/staff/tables.html:77
+#| msgid "Failed to load recipe."
+msgid "Failed to delete."
+msgstr "መሰረዝ አልተሳካም።"
+
+#: templates/staff/tables.html:78
+#| msgid "Failed to load"
+msgid "Failed to save."
+msgstr "ማስቀመጥ አልተሳካም።"
+
+#~ msgid "Invite Staff"
+#~ msgstr "ሰራተኛ ጋብዝ"
 
 #~| msgid "Preparation Time"
 #~ msgid "Estimated preparation time"
 #~ msgstr "የሚጠበቅ የዝግጅት ጊዜ"
+

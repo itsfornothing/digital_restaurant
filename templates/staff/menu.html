@@ -292,6 +292,18 @@ const MENU_I18N = {
   remove: '{% trans "Remove" %}',
   selectDash: '{% trans "\u2014 Select \u2014" %}',
   recipeDash: '{% trans "Recipe \u2014 " %}',
+  namePriceRequired: '{% trans "Name and price are required" %}',
+  waitImage: '{% trans "Please wait for the image to finish uploading, or remove it before saving." %}',
+  archiveConfirm: '{% trans "Archive this menu item?" %}',
+  restoreConfirm: '{% trans "Restore this menu item?" %}',
+  imageTooLarge: '{% trans "Image must be under 5 MB" %}',
+  failedItemDetails: '{% trans "Failed to load item details." %}',
+  selectInventoryItem: '{% trans "Please select an inventory item, quantity, and unit." %}',
+  removeIngredientConfirm: '{% trans "Remove this ingredient?" %}',
+  failedRemoveIngredient: '{% trans "Failed to remove ingredient." %}',
+  noCategories: '{% trans "No categories defined for this branch." %}',
+  failedLoadCategories: '{% trans "Failed to load categories." %}',
+  noRecipeConfigured: '{% trans "This menu item does not have a recipe configured yet. Add ingredients and instructions below." %}',
 };
 
 async function loadMenu() {
@@ -330,13 +342,13 @@ async function loadMenu() {
 async function saveMenuItem() {
   const name = document.getElementById('mi-name').value.trim();
   const price = document.getElementById('mi-price').value;
-  if (!name || !price) { alert('Name and price are required'); return; }
+  if (!name || !price) { alert(MENU_I18N.namePriceRequired); return; }
 
   // Block save if image is still uploading
   const imageUrlInput = document.getElementById('mi-image-url');
   const imageFile = document.getElementById('mi-image').files[0];
   if (imageFile && !imageUrlInput.value) {
-    alert('Please wait for the image to finish uploading, or remove it before saving.');
+    alert(MENU_I18N.waitImage);
     return;
   }
 
@@ -393,14 +405,14 @@ async function saveMenuItem() {
 }
 
 async function archiveItem(id) {
-  if (!confirm('Archive this menu item?')) return;
+  if (!confirm(MENU_I18N.archiveConfirm)) return;
   const csrf = document.cookie.split('; ').find(r=>r.startsWith('csrftoken='))?.split('=')[1]||'';
   await fetch(`/api/v1/menu-items/${id}/archive/`, {method:'POST',credentials:'same-origin',headers:{'X-CSRFToken':csrf}});
   loadMenu();
 }
 
 async function restoreItem(id) {
-  if (!confirm('Restore this menu item?')) return;
+  if (!confirm(MENU_I18N.restoreConfirm)) return;
   const csrf = document.cookie.split('; ').find(r=>r.startsWith('csrftoken='))?.split('=')[1]||'';
   await fetch(`/api/v1/menu-items/${id}/`, {
     method:'PATCH', credentials:'same-origin',
@@ -431,7 +443,7 @@ async function handleImageChange(inputEl) {
   if (!file) return;
 
   if (file.size > 5 * 1024 * 1024) {
-    alert('Image must be under 5 MB');
+    alert(MENU_I18N.imageTooLarge);
     this.value = '';
     return;
   }
@@ -503,7 +515,7 @@ async function loadCategoriesForEdit() {
     const data = await response.json();
     const categories = Array.isArray(data) ? data : (data.results || []);
     if (categories.length === 0) {
-      container.innerHTML = '<p class="text-muted">No categories defined for this branch.</p>';
+      container.innerHTML = '<p class="text-muted">' + MENU_I18N.noCategories + '</p>';
       return;
     }
     let html = '';
@@ -518,7 +530,7 @@ async function loadCategoriesForEdit() {
     container.innerHTML = html;
   } catch (err) {
     console.error('Failed to load categories for edit:', err);
-    container.innerHTML = '<p class="text-danger">Failed to load categories.</p>';
+    container.innerHTML = '<p class="text-danger">' + MENU_I18N.failedLoadCategories + '</p>';
   }
 }
 
@@ -559,7 +571,7 @@ async function editMenuItem(id) {
     new bootstrap.Modal(document.getElementById('editItemModal')).show();
   } catch (err) {
     console.error('Failed to load item for edit:', err);
-    alert('Failed to load item details.');
+    alert(MENU_I18N.failedItemDetails);
   }
 }
 
@@ -567,7 +579,7 @@ async function updateMenuItem() {
   const id = document.getElementById('edit-mi-id').value;
   const name = document.getElementById('edit-mi-name').value.trim();
   const price = document.getElementById('edit-mi-price').value;
-  if (!name || !price) { alert('Name and price are required'); return; }
+  if (!name || !price) { alert(MENU_I18N.namePriceRequired); return; }
 
   const csrf = document.cookie.split('; ').find(r=>r.startsWith('csrftoken='))?.split('=')[1]||'';
 
@@ -611,7 +623,7 @@ async function loadCategories() {
     const data = await response.json();
     const categories = Array.isArray(data) ? data : (data.results || []);
     if (categories.length === 0) {
-      container.innerHTML = '<p class="text-muted">No categories defined for this branch.</p>';
+      container.innerHTML = '<p class="text-muted">' + MENU_I18N.noCategories + '</p>';
       return;
     }
     let html = '';
@@ -626,7 +638,7 @@ async function loadCategories() {
     container.innerHTML = html;
   } catch (err) {
     console.error('Failed to load categories:', err);
-    container.innerHTML = '<p class="text-danger">Failed to load categories.</p>';
+    container.innerHTML = '<p class="text-danger">' + MENU_I18N.failedLoadCategories + '</p>';
   }
 }
 
@@ -668,7 +680,7 @@ async function loadRecipeModal(itemId, itemName) {
       renderIngredients(recipe.ingredients || []);
     } else if (resp.status === 404) {
       document.getElementById('recipe-method').insertAdjacentHTML('beforebegin',
-        '<div id="recipe-empty-banner" class="alert alert-info py-2 small mb-2" style="background:#edf2ee;color:#5D7061;border:1px solid #5D7061;">No recipe yet. Fill in the fields below and click <strong>Save</strong> to create one.</div>');
+        '<div id="recipe-empty-banner" class="alert alert-info py-2 small mb-2" style="background:#edf2ee;color:#5D7061;border:1px solid #5D7061;"><i class="bi bi-info-circle me-1"></i>' + MENU_I18N.noRecipeConfigured + '</div>');
       document.getElementById('ingredient-tbody').innerHTML = '<tr><td colspan="4" class="text-muted text-center">' + MENU_I18N.noIngredients + '</td></tr>';
     } else {
       console.error('[Recipe] HTTP', resp.status);
@@ -738,7 +750,7 @@ async function addIngredient() {
   const unit = document.getElementById('add-ingredient-unit').value.trim();
 
   if (!inventoryItemId || !qty || !unit) {
-    alert('Please select an inventory item, quantity, and unit.');
+    alert(MENU_I18N.selectInventoryItem);
     return;
   }
 
@@ -771,7 +783,7 @@ async function addIngredient() {
 }
 
 async function removeIngredient(ingredientId) {
-  if (!confirm('Remove this ingredient?')) return;
+  if (!confirm(MENU_I18N.removeIngredientConfirm)) return;
   const csrf = document.cookie.split('; ').find(function(r) { return r.startsWith('csrftoken='); })?.split('=')[1] || '';
 
   const resp = await fetch('/api/v1/menu-items/' + currentRecipeItemId + '/recipe/ingredients/' + ingredientId + '/', {
@@ -787,7 +799,7 @@ async function removeIngredient(ingredientId) {
       renderIngredients(recipe.ingredients || []);
     }
   } else {
-    alert('Failed to remove ingredient.');
+    alert(MENU_I18N.failedRemoveIngredient);
   }
 }
 
